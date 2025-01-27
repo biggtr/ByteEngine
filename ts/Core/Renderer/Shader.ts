@@ -1,38 +1,70 @@
-
-function CompileShader(gl: WebGLRenderingContext, shaderSource: string, type: number) : WebGLShader | null
+interface ShaderSources
 {
-  const shader = gl.createShader(type);
-  if(!shader) 
-  {
-    console.error("Could not create a shader");
-    return null;
-  }
-  gl.shaderSource(shader, shaderSource);
-  gl.compileShader(shader);
-  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS))
-  {
-    console.error('An error occurred compiling the shaders: ' + gl.getShaderInfoLog(shader));
-    gl.deleteShader(shader);
-    return null;
-  }
-  return shader;
+  VertexShaderSource: string,
+  FragmentShaderSource: string
 }
-
-function CreateProgram(gl :WebGLRenderingContext, vertexShader :WebGLShader, fragmentShader: WebGLShader) : WebGLProgram | null
+class Shader
 {
+  private m_shaderPath: string;
+  private m_shaderProgram: WebGLProgram;
+  private m_shaderSources: ShaderSources
+  private m_webgl: WebGLRenderingContext;
 
-  const program = gl.createProgram();
-  gl.attachShader(program, vertexShader);
-  gl.attachShader(program, fragmentShader);
-  gl.linkProgram(program);
-  
-  var success = gl.getProgramParameter(program, gl.LINK_STATUS);
-  if (success)
+  constructor(shaderPath: string, webglContext: WebGLRenderingContext)
   {
-    return program;
+    this.m_webgl = webglContext;
+    if(!shaderPath.search(".shader"))
+    {
+      throw new Error("Its not a shader file..!");
+    }
+    this.m_shaderSources = this.ParseShader(shaderPath) as ShaderSources;
+    this.m_shaderProgram = this.CreateProgram(this.m_shaderSources.VertexShaderSource, this.m_shaderSources.FragmentShaderSource) as WebGLProgram;
   }
- 
-  console.log(gl.getProgramInfoLog(program));
-  gl.deleteProgram(program);
-  return null;
+
+  private CompileShader(shaderSource: string, type: number) : WebGLShader | null
+  {
+    const shader = this.m_webgl.createShader(type);
+    if(!shader) 
+    {
+      console.error("Could not create a shader");
+      return null;
+    }
+    this.m_webgl.shaderSource(shader, shaderSource);
+    this.m_webgl.compileShader(shader);
+    if (!this.m_webgl.getShaderParameter(shader, this.m_webgl.COMPILE_STATUS))
+    {
+      console.error('An error occurred compiling the shaders: ' + this.m_webgl.getShaderInfoLog(shader));
+      this.m_webgl.deleteShader(shader);
+      return null;
+    }
+    return shader;
+  }
+
+  private CreateProgram(vertexShader :WebGLShader, fragmentShader: WebGLShader) : WebGLProgram | null
+  {
+
+    const program = this.m_webgl.createProgram();
+    this.m_webgl.attachShader(program, vertexShader);
+    this.m_webgl.attachShader(program, fragmentShader);
+    this.m_webgl.linkProgram(program);
+    
+    var success = this.m_webgl.getProgramParameter(program, this.m_webgl.LINK_STATUS);
+    if (success)
+    {
+      return program;
+    }
+   
+    console.log(this.m_webgl.getProgramInfoLog(program));
+    this.m_webgl.deleteProgram(program);
+    return null;
+  }
+
+  private ParseShader(shaderPath: string) : ShaderSources | null
+  {
+    if(true)
+    {
+      return { VertexShaderSource : "Bla", FragmentShaderSource : "dsaf"};
+    }
+       return null;
+  }
 }

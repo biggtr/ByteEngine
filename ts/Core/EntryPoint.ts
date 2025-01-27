@@ -1,10 +1,3 @@
-const canvas = document.getElementById("glcanvas") as HTMLCanvasElement
-const gl = canvas.getContext("webgl") as WebGLRenderingContext
-if(!gl)
-{
-    console.error("Failed To Get Webgl Context!!");
-}
-
 const vsSource = `
   attribute vec4 aVertexPosition;
   void main() {
