@@ -1,24 +1,14 @@
-interface ShaderSources
-{
-  VertexShaderSource: string,
-  FragmentShaderSource: string
-}
+import * as fs from 'fs';
 class Shader
 {
-  private m_shaderPath: string;
   private m_shaderProgram: WebGLProgram;
-  private m_shaderSources: ShaderSources
   private m_webgl: WebGLRenderingContext;
 
-  constructor(shaderPath: string, webglContext: WebGLRenderingContext)
+  constructor(vertexShaderPath: string,fragmentShaderPath:string, webglContext: WebGLRenderingContext)
   {
     this.m_webgl = webglContext;
-    if(!shaderPath.search(".shader"))
-    {
-      throw new Error("Its not a shader file..!");
-    }
-    this.m_shaderSources = this.ParseShader(shaderPath) as ShaderSources;
-    this.m_shaderProgram = this.CreateProgram(this.m_shaderSources.VertexShaderSource, this.m_shaderSources.FragmentShaderSource) as WebGLProgram;
+    const {vertexShader, fragmentShader} = this.ParseShader(vertexShaderPath, fragmentShaderPath);
+    this.m_shaderProgram = this.CreateProgram(vertexShader, fragmentShader) as WebGLProgram;
   }
 
   private CompileShader(shaderSource: string, type: number) : WebGLShader | null
@@ -59,12 +49,22 @@ class Shader
     return null;
   }
 
-  private ParseShader(shaderPath: string) : ShaderSources | null
+  private LoadShaderSources(shaderPath: string): string 
   {
-    if(true)
-    {
-      return { VertexShaderSource : "Bla", FragmentShaderSource : "dsaf"};
+    try {
+        const data = fs.readFileSync(shaderPath, "utf8");
+        return data;
+    }catch (err) {
+        throw new Error(`Error reading shader file at ${shaderPath}: ${err}`);
     }
-       return null;
+  }  
+  private ParseShader(vertexShaderPath: string, fragmentShaderPath: string) : {vertexShader: WebGLShader, fragmentShader: WebGLShader}
+  {
+    const VertexShaderSource = this.LoadShaderSources(vertexShaderPath);
+    const FragmentShaderSource = this.LoadShaderSources(fragmentShaderPath);
+
+    const vertexShader =  this.CompileShader(VertexShaderSource, this.m_webgl.VERTEX_SHADER) as WebGLShader;
+    const fragmentShader =  this.CompileShader(FragmentShaderSource, this.m_webgl.FRAGMENT_SHADER) as WebGLShader;
+    return {vertexShader, fragmentShader};
   }
 }
