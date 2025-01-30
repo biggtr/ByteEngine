@@ -1,7 +1,7 @@
-class WebGLContext
+export class WebGLContext
 {
   private m_htmlCanvas: HTMLCanvasElement;
-  private m_webGL: WebGLRenderingContext;
+  private m_webGL: WebGL2RenderingContext;
 
   constructor(canvasID: string)
   {
@@ -10,25 +10,25 @@ class WebGLContext
     {
       throw new Error(`Canvas with id ${canvasID} is not found.`);
     }
-    this.m_webGL = this.CreateWebGLContext() as WebGLRenderingContext;
+    this.m_webGL = this.CreateWebGLContext() as WebGL2RenderingContext;
     if(!this.m_webGL)
     {
       throw new Error(`Couldn't intialize WebGL Context`);
     }
   }
 
-  private CreateWebGLContext() : WebGLRenderingContext | null
+  private CreateWebGLContext() : WebGL2RenderingContext | null
   {
 
-    const gl= this.m_htmlCanvas.getContext("webgl") as WebGLRenderingContext;
+    const gl= this.m_htmlCanvas.getContext("webgl2") as WebGL2RenderingContext;
     if (!gl)
     {
       throw new Error('WebGL is not supported in this browser.');
       return null;
     }
-    return gl as WebGLRenderingContext;
+    return gl as WebGL2RenderingContext;
   }
-  public GetWebGL() : WebGLRenderingContext
+  public GetWebGL() : WebGL2RenderingContext
   {
     return this.m_webGL;
   }

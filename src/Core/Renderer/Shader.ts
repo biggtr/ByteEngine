@@ -1,16 +1,26 @@
-import * as fs from 'fs';
-class Shader
+export class Shader
 {
-  private m_shaderProgram: WebGLProgram;
+  private m_shaderProgram: WebGLProgram | null = null;
   private m_webgl: WebGLRenderingContext;
 
-  constructor(vertexShaderPath: string,fragmentShaderPath:string, webglContext: WebGLRenderingContext)
+  constructor(webglContext: WebGLRenderingContext)
   {
     this.m_webgl = webglContext;
-    const {vertexShader, fragmentShader} = this.ParseShader(vertexShaderPath, fragmentShaderPath);
-    this.m_shaderProgram = this.CreateProgram(vertexShader, fragmentShader) as WebGLProgram;
   }
+  public async Init(vertexShaderPath: string,fragmentShaderPath:string)
+  {
+    const {vertexShader, fragmentShader} = await this.ParseShader(vertexShaderPath, fragmentShaderPath);
+    this.m_shaderProgram = this.CreateProgram(vertexShader, fragmentShader) as WebGLProgram;
 
+  }
+  public Bind()
+  {
+    this.m_webgl.useProgram(this.m_shaderProgram);
+  }
+  public GetAttributeLocation(attributeName: string) : GLint
+  {
+    return this.m_webgl.getAttribLocation(this.m_shaderProgram as WebGLProgram, attributeName);
+  }
   private CompileShader(shaderSource: string, type: number) : WebGLShader | null
   {
     const shader = this.m_webgl.createShader(type);
@@ -49,19 +59,22 @@ class Shader
     return null;
   }
 
-  private LoadShaderSources(shaderPath: string): string 
+  private async LoadShaderSources(shaderPath: string): Promise<string> 
   {
-    try {
-        const data = fs.readFileSync(shaderPath, "utf8");
-        return data;
-    }catch (err) {
-        throw new Error(`Error reading shader file at ${shaderPath}: ${err}`);
-    }
-  }  
-  private ParseShader(vertexShaderPath: string, fragmentShaderPath: string) : {vertexShader: WebGLShader, fragmentShader: WebGLShader}
+      try {
+          const response = await fetch(shaderPath);
+          if (!response.ok) {
+              throw new Error(`Error reading shader file at ${shaderPath}: ${response.statusText}`);
+          }
+          return await response.text();
+      } catch (err) {
+          throw new Error(`Error reading shader file at ${shaderPath}: ${err}`);
+      }
+  }
+  private async ParseShader(vertexShaderPath: string, fragmentShaderPath: string) : Promise<{vertexShader: WebGLShader, fragmentShader: WebGLShader}>
   {
-    const VertexShaderSource = this.LoadShaderSources(vertexShaderPath);
-    const FragmentShaderSource = this.LoadShaderSources(fragmentShaderPath);
+    const VertexShaderSource = await this.LoadShaderSources(vertexShaderPath);
+    const FragmentShaderSource = await this.LoadShaderSources(fragmentShaderPath);
 
     const vertexShader =  this.CompileShader(VertexShaderSource, this.m_webgl.VERTEX_SHADER) as WebGLShader;
     const fragmentShader =  this.CompileShader(FragmentShaderSource, this.m_webgl.FRAGMENT_SHADER) as WebGLShader;
