@@ -1,5 +1,6 @@
 import { Shader } from "./Renderer/Shader"; 
 import { WebGLContext } from "./Renderer/WebGLContext"; 
+import { VertexBuffer }  from "./Renderer/Buffers"
 
 async function main()
 {
@@ -9,15 +10,17 @@ async function main()
   const webgl = webglContext.GetWebGL();
   const ourShader = new Shader(webgl);
   await ourShader.Init("../../public/assets/shaders/basic_vert.glsl", "../../public/assets/shaders/basic_frag.glsl");
+
+ 
+  var vertices = new Float32Array([
+    0.0,  0.5,   // Vertex 1 (x, y)
+   -0.5, -0.5,   // Vertex 2 (x, y)
+    0.5, -0.5    // Vertex 3 (x, y)
+  ]);
+
+  const vertexBuffer = new VertexBuffer(webgl);
+  vertexBuffer.CreateBuffer(vertices)
   var positionAttributeLocation = ourShader.GetAttributeLocation("a_position");
-  var positionBuffer = webgl.createBuffer();
-  webgl.bindBuffer(webgl.ARRAY_BUFFER, positionBuffer);
-  var positions = [
-  0, 0,
-  0, 0.5,
-  0.7, 0,
-  ];
-  webgl.bufferData(webgl.ARRAY_BUFFER, new Float32Array(positions), webgl.STATIC_DRAW);
   var VAO = webgl.createVertexArray();
   webgl.bindVertexArray(VAO);
   webgl.enableVertexAttribArray(positionAttributeLocation);
