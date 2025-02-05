@@ -18,6 +18,7 @@ export class VertexBuffer
     this.m_webgl.bufferData(this.m_webgl.ARRAY_BUFFER, data, this.m_webgl.STATIC_DRAW);
 
   }
+
 }
 
 
