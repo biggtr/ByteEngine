@@ -1,6 +1,4 @@
-
-
-class Texture
+export class Texture
 {
 
     m_webgl: WebGLRenderingContext;
@@ -11,7 +9,7 @@ class Texture
         this.m_texture = this.m_webgl.createTexture();
     }
       
-    private async CreateTexture(filePath: string)
+    public async CreateTexture(filePath: string)
     {
         const image = await this.LoadFromImage(filePath);
         this.m_webgl.bindTexture(this.m_webgl.TEXTURE_2D, this.m_texture);
@@ -20,6 +18,7 @@ class Texture
         this.m_webgl.texParameteri(this.m_webgl.TEXTURE_2D, this.m_webgl.TEXTURE_WRAP_S, this.m_webgl.CLAMP_TO_EDGE); 
         this.m_webgl.texParameteri(this.m_webgl.TEXTURE_2D, this.m_webgl.TEXTURE_WRAP_T, this.m_webgl.CLAMP_TO_EDGE);
         this.m_webgl.texImage2D(this.m_webgl.TEXTURE_2D, 0, this.m_webgl.RGBA,this.m_webgl.RGBA, this.m_webgl.UNSIGNED_BYTE, image);
+        this.m_webgl.bindTexture(this.m_webgl.TEXTURE_2D, null);
     }
     private async LoadFromImage(filePath: string): Promise<HTMLImageElement>
     {
@@ -52,13 +51,14 @@ class Texture
 
     }
 
-    public Bind()
+    public Bind(slot: GLenum = 0)
     {
-    
+        this.m_webgl.activeTexture(this.m_webgl.TEXTURE0 + slot);
+        this.m_webgl.bindTexture(this.m_webgl.TEXTURE_2D, this.m_texture);
     } 
 
     public UnBind()
     {
-
+        this.m_webgl.bindTexture(this.m_webgl.TEXTURE_2D, 0);
     }
 }
