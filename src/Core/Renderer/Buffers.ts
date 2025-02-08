@@ -1,27 +1,75 @@
 
-
 export class VertexBuffer
 {
-  private m_buffer: WebGLBuffer;
-  private m_webgl: WebGLRenderingContext;
+  private m_Buffer: WebGLBuffer;
+  private m_Webgl: WebGLRenderingContext;
   constructor(webgl: WebGLRenderingContext)
   {
 
-    this.m_webgl = webgl;
-    this.m_buffer = this.m_webgl.createBuffer();
+    this.m_Webgl = webgl;
+    this.m_Buffer = this.m_Webgl.createBuffer();
   } 
 
   public CreateBuffer(data: Float32Array)
   {
 
-    this.m_webgl.bindBuffer(this.m_webgl.ARRAY_BUFFER, this.m_buffer);
-    this.m_webgl.bufferData(this.m_webgl.ARRAY_BUFFER, data, this.m_webgl.STATIC_DRAW);
+    this.m_Webgl.bindBuffer(this.m_Webgl.ARRAY_BUFFER, this.m_Buffer);
+    this.m_Webgl.bufferData(this.m_Webgl.ARRAY_BUFFER, data, this.m_Webgl.STATIC_DRAW);
 
   }
 
 }
 
+class BufferElement {
+    type: number;
+    count: number;
+    normalized: boolean;
 
+    constructor(type: number, count: number, normalized: boolean = false) {
+        this.type = type;
+        this.count = count;
+        this.normalized = normalized;
+    }
+
+    static getSizeOfType(type: number): number {
+        switch (type) {
+            case WebGL2RenderingContext.FLOAT: return 4;
+            case WebGL2RenderingContext.UNSIGNED_INT: return 4;
+            case WebGL2RenderingContext.UNSIGNED_BYTE: return 1;
+            default: throw new Error("Unknown type!");
+        }
+    }
+
+}
+export class BufferLayout
+{
+    private m_BufferLayoutElements: Array<BufferElement>;
+    private m_Stride: number;
+    constructor()
+    {
+        this.m_BufferLayoutElements = [];
+        this.m_Stride = 0;
+    }
+    pushFloat(count: number): void 
+    {
+        
+       this.m_BufferLayoutElements.push(new BufferElement(WebGL2RenderingContext.FLOAT, count, false));
+       this.m_Stride += BufferElement.getSizeOfType(WebGL2RenderingContext.FLOAT) * count;
+    }
+
+    pushUnsignedInt(count: number): void 
+    {
+        this.m_BufferLayoutElements.push(new BufferElement(WebGL2RenderingContext.UNSIGNED_INT, count, false));
+        this.m_Stride += BufferElement.getSizeOfType(WebGL2RenderingContext.UNSIGNED_INT) * count;
+    }
+
+    pushUnsignedByte(count: number): void 
+    {
+        this.m_BufferLayoutElements.push(new BufferElement(WebGL2RenderingContext.UNSIGNED_BYTE, count, true));
+        this.m_Stride += BufferElement.getSizeOfType(WebGL2RenderingContext.UNSIGNED_BYTE) * count;
+    }
+
+}
 class IndexBuffer
 {
 
