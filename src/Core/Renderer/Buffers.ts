@@ -20,7 +20,7 @@ export class VertexBuffer
 
 }
 
-class BufferElement {
+export class BufferElement {
     type: number;
     count: number;
     normalized: boolean;
@@ -31,7 +31,7 @@ class BufferElement {
         this.normalized = normalized;
     }
 
-    static getSizeOfType(type: number): number {
+    static GetSizeOfType(type: number): number {
         switch (type) {
             case WebGL2RenderingContext.FLOAT: return 4;
             case WebGL2RenderingContext.UNSIGNED_INT: return 4;
@@ -50,23 +50,33 @@ export class BufferLayout
         this.m_BufferLayoutElements = [];
         this.m_Stride = 0;
     }
-    pushFloat(count: number): void 
+    public PushFloat(count: number): void 
     {
         
        this.m_BufferLayoutElements.push(new BufferElement(WebGL2RenderingContext.FLOAT, count, false));
        this.m_Stride += BufferElement.getSizeOfType(WebGL2RenderingContext.FLOAT) * count;
     }
 
-    pushUnsignedInt(count: number): void 
+    public PushUnsignedInt(count: number): void 
     {
         this.m_BufferLayoutElements.push(new BufferElement(WebGL2RenderingContext.UNSIGNED_INT, count, false));
         this.m_Stride += BufferElement.getSizeOfType(WebGL2RenderingContext.UNSIGNED_INT) * count;
     }
 
-    pushUnsignedByte(count: number): void 
+    public PushUnsignedByte(count: number): void 
     {
         this.m_BufferLayoutElements.push(new BufferElement(WebGL2RenderingContext.UNSIGNED_BYTE, count, true));
         this.m_Stride += BufferElement.getSizeOfType(WebGL2RenderingContext.UNSIGNED_BYTE) * count;
+    }
+
+    public GetBufferElements(): Array<BufferElement>
+    {
+        return this.m_BufferLayoutElements;
+    }
+
+    public GetStride(): number
+    {
+        return this.m_Stride;
     }
 
 }
