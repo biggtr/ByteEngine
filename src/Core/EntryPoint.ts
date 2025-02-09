@@ -1,8 +1,8 @@
 import { Shader } from "./Renderer/Shader"; 
 import { WebGLContext } from "./Renderer/WebGLContext"; 
-import { VertexBuffer }  from "./Renderer/Buffers"
+import { VertexBuffer, BufferLayout }  from "./Renderer/Buffers"
 import { Texture } from "./Renderer/Texture";
-
+import { VertexArray } from "./Renderer/VertexArray";
 async function main()
 {
 
@@ -14,44 +14,26 @@ async function main()
 
 
     var positions = new Float32Array([
-        -0.5,  0.5,  
-        -0.5, -0.5,        
-        0.5, -0.5, 
-        -0.5,  0.5, 
-         0.5, -0.5, 
-         0.5,  0.5  
+        -0.5,  0.5, 0.0,  1.0,  
+        -0.5, -0.5,0.0,  0.0,  
+        0.5, -0.5, 1.0,  0.0,  
+        -0.5,  0.5, 0.0,  1.0,  
+        0.5, -0.5, 1.0,  0.0,  
+         0.5,  0.5, 1.0,  1.0, 
     ]);
 
-    var texCoords = new Float32Array([
-        0.0,  1.0,  
-        0.0,  0.0,  
-        1.0,  0.0,  
-        0.0,  1.0,  
-        1.0,  0.0,  
-        1.0,  1.0   
-    ]);
-        
 
     const PositionBuffer = new VertexBuffer(webgl);
     PositionBuffer.CreateBuffer(positions)
-    var positionAttributeLocation = ourShader.GetAttributeLocation("a_position");
 
-    var VAO = webgl.createVertexArray();
-    webgl.bindVertexArray(VAO);
-    webgl.enableVertexAttribArray(positionAttributeLocation);
-    var size = 2;          
-    var type = webgl.FLOAT;
-    var normalize = false; 
-    var stride = 0;       
-    var offset = 0;      
-    webgl.vertexAttribPointer(
-      positionAttributeLocation, size, type, normalize, stride, offset)
+    var bufferLayout = new BufferLayout();
 
-    const texCoordBuffer = new VertexBuffer(webgl);
-    texCoordBuffer.CreateBuffer(texCoords);
-    var texCoordAtrributeLocation = ourShader.GetAttributeLocation("a_texCoord")
-    webgl.enableVertexAttribArray(texCoordAtrributeLocation);
-    webgl.vertexAttribPointer(texCoordAtrributeLocation, size, type, normalize, stride, offset);
+    bufferLayout.PushFloat(2); //position
+    bufferLayout.PushFloat(2); //texCoords
+    var VAO = new VertexArray(webgl);
+    VAO.AddBufferLayout(bufferLayout);
+    VAO.Bind();
+    
 
     var imageLocation = ourShader.GetUniformLocation("u_image");
     
@@ -63,7 +45,6 @@ async function main()
     webgl.clearColor(0, 0, 0, 0);
     webgl.clear(webgl.COLOR_BUFFER_BIT);
 
-    webgl.bindVertexArray(VAO);
     ourShader.Bind();
     webgl.uniform1i(imageLocation, 0);
 

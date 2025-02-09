@@ -54,19 +54,19 @@ export class BufferLayout
     {
         
        this.m_BufferLayoutElements.push(new BufferElement(WebGL2RenderingContext.FLOAT, count, false));
-       this.m_Stride += BufferElement.getSizeOfType(WebGL2RenderingContext.FLOAT) * count;
+       this.m_Stride += BufferElement.GetSizeOfType(WebGL2RenderingContext.FLOAT) * count;
     }
 
     public PushUnsignedInt(count: number): void 
     {
         this.m_BufferLayoutElements.push(new BufferElement(WebGL2RenderingContext.UNSIGNED_INT, count, false));
-        this.m_Stride += BufferElement.getSizeOfType(WebGL2RenderingContext.UNSIGNED_INT) * count;
+        this.m_Stride += BufferElement.GetSizeOfType(WebGL2RenderingContext.UNSIGNED_INT) * count;
     }
 
     public PushUnsignedByte(count: number): void 
     {
         this.m_BufferLayoutElements.push(new BufferElement(WebGL2RenderingContext.UNSIGNED_BYTE, count, true));
-        this.m_Stride += BufferElement.getSizeOfType(WebGL2RenderingContext.UNSIGNED_BYTE) * count;
+        this.m_Stride += BufferElement.GetSizeOfType(WebGL2RenderingContext.UNSIGNED_BYTE) * count;
     }
 
     public GetBufferElements(): Array<BufferElement>
