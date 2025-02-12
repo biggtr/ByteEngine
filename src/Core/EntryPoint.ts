@@ -1,6 +1,6 @@
 import { Shader } from "./Renderer/Shader"; 
 import { WebGLContext } from "./Renderer/WebGLContext"; 
-import { VertexBuffer, BufferLayout }  from "./Renderer/Buffers"
+import { VertexBuffer, BufferLayout, BufferElement }  from "./Renderer/Buffers"
 import { Texture } from "./Renderer/Texture";
 import { VertexArray } from "./Renderer/VertexArray";
 async function main()
@@ -13,7 +13,7 @@ async function main()
     await ourShader.Init("/assets/shaders/texture.vert", "/assets/shaders/texture.frag");
 
 
-    var positions = new Float32Array([
+    var squareData = new Float32Array([
         -0.5,  0.5, 0.0,  1.0,  
         -0.5, -0.5,0.0,  0.0,  
         0.5, -0.5, 1.0,  0.0,  
@@ -23,15 +23,15 @@ async function main()
     ]);
 
 
-    const PositionBuffer = new VertexBuffer(webgl);
-    PositionBuffer.CreateBuffer(positions)
+    const squareVBO = new VertexBuffer(webgl);
+    squareVBO.CreateBuffer(squareData)
+    const positionElement = new BufferElement(webgl.FLOAT, "position", 2);
+    const texCoordsElement = new BufferElement(webgl.FLOAT, "texture",2);
+    var bufferLayout = new BufferLayout([positionElement, texCoordsElement]);
+    squareVBO.SetLayout(bufferLayout);
 
-    var bufferLayout = new BufferLayout();
-
-    bufferLayout.PushFloat(2); //position
-    bufferLayout.PushFloat(2); //texCoords
     var VAO = new VertexArray(webgl);
-    VAO.AddBufferLayout(bufferLayout);
+    VAO.AddVertexBuffer(squareVBO);
     VAO.Bind();
     
 

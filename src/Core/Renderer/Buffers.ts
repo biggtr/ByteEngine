@@ -1,34 +1,18 @@
 
-export class VertexBuffer
-{
-  private m_Buffer: WebGLBuffer;
-  private m_Webgl: WebGLRenderingContext;
-  constructor(webgl: WebGLRenderingContext)
-  {
-
-    this.m_Webgl = webgl;
-    this.m_Buffer = this.m_Webgl.createBuffer();
-  } 
-
-  public CreateBuffer(data: Float32Array)
-  {
-
-    this.m_Webgl.bindBuffer(this.m_Webgl.ARRAY_BUFFER, this.m_Buffer);
-    this.m_Webgl.bufferData(this.m_Webgl.ARRAY_BUFFER, data, this.m_Webgl.STATIC_DRAW);
-
-  }
-
-}
-
 export class BufferElement {
+    name: string
     type: number;
     count: number;
     normalized: boolean;
+    offset: number;
 
-    constructor(type: number, count: number, normalized: boolean = false) {
+    constructor(type: number, name: string,  count: number, normalized: boolean = false) {
+        this.name = name;
         this.type = type;
         this.count = count;
         this.normalized = normalized;
+        this.offset = 0;
+
     }
 
     static GetSizeOfType(type: number): number {
@@ -45,30 +29,25 @@ export class BufferLayout
 {
     private m_BufferLayoutElements: Array<BufferElement>;
     private m_Stride: number;
-    constructor()
+    constructor(bufferLayoutElements: Array<BufferElement>)
     {
-        this.m_BufferLayoutElements = [];
+        this.m_BufferLayoutElements = bufferLayoutElements;
         this.m_Stride = 0;
+        this.CalculateOffsetAndStride();
     }
-    public PushFloat(count: number): void 
+    public CalculateOffsetAndStride(): void
     {
+        this.m_Stride = 0;
+        var offset = 0;
         
-       this.m_BufferLayoutElements.push(new BufferElement(WebGL2RenderingContext.FLOAT, count, false));
-       this.m_Stride += BufferElement.GetSizeOfType(WebGL2RenderingContext.FLOAT) * count;
-    }
+        this.m_BufferLayoutElements.forEach((element)=>{
+            
+            element.offset = offset;
+            this.m_Stride += element.count * BufferElement.GetSizeOfType(element.type);
+            offset += element.count * BufferElement.GetSizeOfType(element.type);
 
-    public PushUnsignedInt(count: number): void 
-    {
-        this.m_BufferLayoutElements.push(new BufferElement(WebGL2RenderingContext.UNSIGNED_INT, count, false));
-        this.m_Stride += BufferElement.GetSizeOfType(WebGL2RenderingContext.UNSIGNED_INT) * count;
+        })
     }
-
-    public PushUnsignedByte(count: number): void 
-    {
-        this.m_BufferLayoutElements.push(new BufferElement(WebGL2RenderingContext.UNSIGNED_BYTE, count, true));
-        this.m_Stride += BufferElement.GetSizeOfType(WebGL2RenderingContext.UNSIGNED_BYTE) * count;
-    }
-
     public GetBufferElements(): Array<BufferElement>
     {
         return this.m_BufferLayoutElements;
@@ -78,9 +57,42 @@ export class BufferLayout
     {
         return this.m_Stride;
     }
-
+ 
 }
-class IndexBuffer
+
+export class VertexBuffer
+{
+    private m_Buffer: WebGLBuffer;
+    private m_Webgl: WebGLRenderingContext;
+    private m_BufferLayout: BufferLayout | null = null;
+    constructor(webgl: WebGLRenderingContext)
+    {
+        this.m_Webgl = webgl;
+        this.m_Buffer = this.m_Webgl.createBuffer();
+    } 
+
+    
+    public Bind()
+    {
+        this.m_Webgl.bindBuffer(this.m_Webgl.ARRAY_BUFFER, this.m_Buffer);
+    }
+    public CreateBuffer(data: Float32Array)
+    {
+        this.m_Webgl.bindBuffer(this.m_Webgl.ARRAY_BUFFER, this.m_Buffer);
+        this.m_Webgl.bufferData(this.m_Webgl.ARRAY_BUFFER, data, this.m_Webgl.STATIC_DRAW);
+    }
+
+    public SetLayout(bufferLayout: BufferLayout)
+    {
+        this.m_BufferLayout = bufferLayout;
+    }
+    public GetLayout(): BufferLayout | null
+    {
+        return this.m_BufferLayout;
+    }
+}
+
+export class IndexBuffer
 {
 
 }
