@@ -43,7 +43,7 @@ async function main()
     var imageLocation = ourShader.GetUniformLocation("u_image");
     
     var texture = new Texture(webgl);
-    await texture.CreateTexture("/assets/textures/basic.png")
+    await texture.CreateTexture("/assets/textures/lavaTexture.jpg")
     texture.Bind(0);
 
     webgl.viewport(0, 0, webgl.canvas.width, webgl.canvas.height);

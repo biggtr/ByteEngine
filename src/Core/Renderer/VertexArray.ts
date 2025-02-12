@@ -5,12 +5,11 @@ export class VertexArray
     private m_Webgl: WebGL2RenderingContext;
     private m_VertexArray: WebGLVertexArrayObject;
     private m_VertexBuffers: Array<VertexBuffer> = [];
-    private m_IndexBuffer: IndexBuffer | null;
+    private m_IndexBuffer: IndexBuffer | null = null;
     constructor(webgl: WebGL2RenderingContext)
     {
         this.m_Webgl = webgl;
         this.m_VertexArray = this.m_Webgl.createVertexArray();
-        this.m_IndexBuffer = null;
     }
 
     public Bind()
@@ -44,6 +43,10 @@ export class VertexArray
         this.m_Webgl.bindVertexArray(this.m_VertexArray);
         indexBuffer.Bind();
         this.m_IndexBuffer = indexBuffer;
+    }
+    public GetIndexBuffer(): IndexBuffer | null
+    {
+        return this.m_IndexBuffer;
     }
 
 }
