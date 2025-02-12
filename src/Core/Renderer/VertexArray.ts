@@ -41,6 +41,8 @@ export class VertexArray
 
     public SetIndexBuffer(indexBuffer: IndexBuffer)
     {
+        this.m_Webgl.bindVertexArray(this.m_VertexArray);
+        indexBuffer.Bind();
         this.m_IndexBuffer = indexBuffer;
     }
 

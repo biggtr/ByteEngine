@@ -95,4 +95,28 @@ export class VertexBuffer
 export class IndexBuffer
 {
 
+    private m_Webgl: WebGLRenderingContext;
+    private m_IndexBuffer: WebGLBuffer 
+    private m_Count: number = 0;
+    constructor(webgl: WebGLRenderingContext)
+    {
+        this.m_Webgl = webgl;
+        this.m_IndexBuffer = this.m_Webgl.createBuffer();
+    }
+
+    public Bind()
+    {
+        this.m_Webgl.bindBuffer(this.m_Webgl.ELEMENT_ARRAY_BUFFER, this.m_IndexBuffer);
+    }
+    public Create(indices: Uint32Array, count: number): void
+    {
+        this.m_Count = count;
+        this.m_Webgl.bindBuffer(this.m_Webgl.ELEMENT_ARRAY_BUFFER, this.m_IndexBuffer);
+        this.m_Webgl.bufferData(this.m_Webgl.ELEMENT_ARRAY_BUFFER, indices, this.m_Webgl.STATIC_DRAW);
+    }
+    public GetIndicesCount()
+    {
+        return this.m_Count; 
+    }
+
 }
