@@ -3,6 +3,8 @@ import { WebGLContext } from "./Renderer/WebGLContext";
 import { VertexBuffer, BufferLayout, BufferElement, IndexBuffer }  from "./Renderer/Buffers"
 import { Texture } from "./Renderer/Texture";
 import { VertexArray } from "./Renderer/VertexArray";
+import { RendererAPI } from "./Renderer/RendererAPI";
+import { Vector4 } from "./Math/Vectors";
 async function main()
 {
 
@@ -46,15 +48,15 @@ async function main()
     await texture.CreateTexture("/assets/textures/lavaTexture.jpg")
     texture.Bind(0);
 
+    RendererAPI.Init(webgl);
+    let color = new Vector4(0,0,0,0);
     webgl.viewport(0, 0, webgl.canvas.width, webgl.canvas.height);
-    webgl.clearColor(0, 0, 0, 0);
-    webgl.clear(webgl.COLOR_BUFFER_BIT);
+    RendererAPI.ClearColor(color);
+    RendererAPI.Clear();
 
-    ourShader.Bind();
     webgl.uniform1i(imageLocation, 0);
+    RendererAPI.DrawIndexed(ourShader, VAO);
 
-    var primitiveType = webgl.TRIANGLES;
-    webgl.drawElements(primitiveType, squareEBO.GetIndicesCount(), webgl.UNSIGNED_INT, 0);
 
 }
 main()
