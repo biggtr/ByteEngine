@@ -33,7 +33,6 @@ export class Matrix3
 
         if (param instanceof Vector3)
         {
-
             return new Vector3(
                 this.m_Data[0] * param.x + this.m_Data[3] * param.y + this.m_Data[6] * param.z,
                 this.m_Data[1] * param.x + this.m_Data[4] * param.y + this.m_Data[7] * param.z,
@@ -58,4 +57,6 @@ export class Matrix3
         }
         throw new Error("Invalid parameter type for Multiply method.");
     }
+
+    public 
 }
