@@ -33,6 +33,7 @@ export class Matrix3
 
         if (param instanceof Vector3)
         {
+
             return new Vector3(
                 this.m_Data[0] * param.x + this.m_Data[3] * param.y + this.m_Data[6] * param.z,
                 this.m_Data[1] * param.x + this.m_Data[4] * param.y + this.m_Data[7] * param.z,
@@ -58,5 +59,24 @@ export class Matrix3
         throw new Error("Invalid parameter type for Multiply method.");
     }
 
-    public 
+    public static Identity(): Matrix3
+    {
+        return new Matrix3();
+    }
+
+    public static Scale(sx: number, sy: number): Matrix3
+    {
+        var scaleMatrix = new Matrix3();
+        scaleMatrix.m_Data[0] = sx;
+        scaleMatrix.m_Data[4] = sy;
+        return scaleMatrix
+    }
+    public static Translate(tx: number, ty: number): Matrix3
+    {
+        var translationMatrix = new Matrix3();
+        translationMatrix.m_Data[6] = tx;
+        translationMatrix.m_Data[7] = ty;
+        return translationMatrix;
+    }
+    
 }
