@@ -64,6 +64,15 @@ export class Matrix3
         return new Matrix3();
     }
 
+    public static Rotate(angle: number): Matrix3
+    {
+        var rotationMatrix = new Matrix3();
+        rotationMatrix.m_Data[0] =  Math.cos(angle);
+        rotationMatrix.m_Data[3] = -Math.sin(angle);
+        rotationMatrix.m_Data[1] =  Math.sin(angle);
+        rotationMatrix.m_Data[4] =  Math.cos(angle);
+        return rotationMatrix;
+    }
     public static Scale(sx: number, sy: number): Matrix3
     {
         var scaleMatrix = new Matrix3();
