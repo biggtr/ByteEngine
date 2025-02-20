@@ -17,6 +17,10 @@ export class Matrix3
     {
         return this.m_Data[col * 3 + row];
     }
+    public GetAll()
+    {
+        return this.m_Data;
+    }
 
 
     /*[
@@ -87,7 +91,7 @@ export class Matrix3
         translationMatrix.m_Data[7] = ty;
         return translationMatrix;
     }
-    public static Ortho(right: number, left: number, top: number, bot: number): Matrix3
+    public static Ortho(left: number, right: number, bot: number, top: number): Matrix3
     {
         var horizontalLength = 1 / right - left;
         var verticalLength = 1 / top - bot;

@@ -11,6 +11,5 @@ in vec2 v_texCoord;
 out vec4 outColor;
  
 void main() {
-   // Look up a color from the texture.
-   outColor = texture(u_image, v_texCoord);
+   outColor = vec4(1.0,0.0,0.0,1.0) * texture(u_image, v_texCoord);
 }

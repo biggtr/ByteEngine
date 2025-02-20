@@ -4,22 +4,24 @@ import { VertexBuffer, BufferLayout, BufferElement, IndexBuffer }  from "./Rende
 import { Texture } from "./Renderer/Texture";
 import { VertexArray } from "./Renderer/VertexArray";
 import { RendererAPI } from "./Renderer/RendererAPI";
-import { Vector4 } from "./Math/Vectors";
+import { Vector3, Vector4 } from "./Math/Vectors";
+import { Matrix3 } from "./Math/Matrices";
 async function main()
 {
 
     console.log("entry point ..")
+    var isRunning = true;
     const webglContext = new WebGLContext("glcanvas")
     const webgl = webglContext.GetWebGL();
     const ourShader = new Shader(webgl);
     await ourShader.Init("/assets/shaders/texture.vert", "/assets/shaders/texture.frag");
-
+    console.log(webgl.canvas.width, webgl.canvas.height);
 
    var squareVertices = new Float32Array([
-        -0.5,  0.5, 0.0,  1.0,  
-        -0.5, -0.5, 0.0,  0.0,  
-         0.5, -0.5, 1.0,  0.0,  
-         0.5,  0.5, 1.0,  1.0,  
+        -40,   40,   0.0, 1.0, 
+        -40,  -40,   0.0, 0.0, 
+         40,  -40,   1.0, 0.0, 
+         40,   40,   1.0, 1.0, 
     ]);
 
     var squareIndices = new Uint32Array([
@@ -51,12 +53,28 @@ async function main()
     RendererAPI.Init(webgl);
     let color = new Vector4(0,0,0,0);
     webgl.viewport(0, 0, webgl.canvas.width, webgl.canvas.height);
-    RendererAPI.ClearColor(color);
-    RendererAPI.Clear();
+    var sx = 1, sy = 1;
+    var tx = 1, ty = 1;
+    var angle = 0;
+    function render() {
+        angle += 0.01;
 
-    webgl.uniform1i(imageLocation, 0);
-    RendererAPI.DrawIndexed(ourShader, VAO);
+        //render
+        var scaleMatrix = Matrix3.Scale(sx, sy);
+        var rotationMatrix = scaleMatrix.Multiply(Matrix3.Rotate(angle));
+        var transformationMatrix = rotationMatrix.Multiply(Matrix3.Translate(tx, ty));
+        ourShader.Bind();
+        webgl.uniformMatrix3fv(ourShader.GetUniformLocation("u_transformation"), false, transformationMatrix.GetAll());
+        webgl.uniform1i(imageLocation, 0);
+        var projectionMatrix = Matrix3.Ortho(0, webgl.canvas.width, 0, webgl.canvas.height);
+        webgl.uniformMatrix3fv(ourShader.GetUniformLocation("u_projection"), false,projectionMatrix.GetAll());
+        RendererAPI.ClearColor(color);
+        RendererAPI.Clear();
+        RendererAPI.DrawIndexed(ourShader, VAO);
 
-
+            // Request next frame.
+            requestAnimationFrame(render);
+        }
+        render();
 }
 main()

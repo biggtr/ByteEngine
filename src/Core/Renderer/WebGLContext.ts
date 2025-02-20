@@ -13,8 +13,14 @@ export class WebGLContext
     this.m_webGL = this.CreateWebGLContext() as WebGL2RenderingContext;
     if(!this.m_webGL)
     {
-      throw new Error(`Couldn't intialize WebGL Context`);
+    throw new Error(`Couldn't intialize WebGL Context`);
     }
+    const dpr = window.devicePixelRatio || 1;
+
+    this.m_htmlCanvas.width = window.innerWidth * dpr;
+    this.m_htmlCanvas.height = window.innerHeight * dpr
+    this.m_htmlCanvas.style.width = window.innerWidth + "px";
+    this.m_htmlCanvas.style.height = window.innerHeight + "px";
   }
 
   private CreateWebGLContext() : WebGL2RenderingContext | null
