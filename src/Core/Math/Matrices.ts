@@ -87,5 +87,17 @@ export class Matrix3
         translationMatrix.m_Data[7] = ty;
         return translationMatrix;
     }
+    public static Ortho(right: number, left: number, top: number, bot: number): Matrix3
+    {
+        var horizontalLength = 1 / right - left;
+        var verticalLength = 1 / top - bot;
+        var orthoMatrix = new Matrix3();
+        orthoMatrix.m_Data[0] = 2 * horizontalLength;
+        orthoMatrix.m_Data[6] = -(right + left) * horizontalLength;
+        orthoMatrix.m_Data[4] = 2 * verticalLength;
+        orthoMatrix.m_Data[6] = -(top + bot) * horizontalLength;
+        return orthoMatrix;
+    }
+
     
 }
