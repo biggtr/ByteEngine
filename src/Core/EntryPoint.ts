@@ -8,7 +8,15 @@ import { Vector3, Vector4 } from "./Math/Vectors";
 import { Matrix3 } from "./Math/Matrices";
 async function main()
 {
+    const keysPressed: { [key: string]: boolean } = {};
 
+    document.addEventListener("keydown", (event: KeyboardEvent) => {
+      keysPressed[event.code] = true;
+    });
+
+    document.addEventListener("keyup", (event: KeyboardEvent) => {
+      keysPressed[event.code] = false;
+    });
     console.log("entry point ..")
     var isRunning = true;
     const webglContext = new WebGLContext("glcanvas")
@@ -56,8 +64,15 @@ async function main()
     var sx = 1, sy = 1;
     var tx = 1, ty = 1;
     var angle = 0;
-    function render() {
-        angle += 0.01;
+    const moveSpeed = 10;
+    function GameLoop() 
+    {
+        //input 
+
+        if (keysPressed["KeyW"]) { ty += moveSpeed; }  // Move up
+        if (keysPressed["KeyS"]) { ty -= moveSpeed; }  // Move down
+        if (keysPressed["KeyA"]) { tx -= moveSpeed; }  // Move left
+        if (keysPressed["KeyD"]) { tx += moveSpeed; }  // Move right
 
         //render
         var scaleMatrix = Matrix3.Scale(sx, sy);
@@ -72,9 +87,9 @@ async function main()
         RendererAPI.Clear();
         RendererAPI.DrawIndexed(ourShader, VAO);
 
-            // Request next frame.
-            requestAnimationFrame(render);
-        }
-        render();
+            // Request next frame
+        requestAnimationFrame(GameLoop);
+    }
+    GameLoop();
 }
 main()
