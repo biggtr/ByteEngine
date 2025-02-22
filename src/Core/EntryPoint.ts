@@ -64,7 +64,7 @@ async function main()
     var sx = 1, sy = 1;
     var tx = 1, ty = 1;
     var angle = 0;
-    const moveSpeed = 10;
+    const moveSpeed = 30;
     function GameLoop() 
     {
         //input 

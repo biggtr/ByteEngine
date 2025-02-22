@@ -6,24 +6,27 @@ import { VertexArray } from "./VertexArray";
 export class RendererAPI
 {
 
-    private static m_Webgl: WebGLRenderingContext;
-    private constructor(){}
-
-    static Init(webgl: WebGLRenderingContext)
+    private m_Webgl: WebGLRenderingContext;
+    private constructor(webgl: WebGL2RenderingContext)
     {
         this.m_Webgl = webgl;
     }
 
-    static ClearColor(color: Vector4): void
+    Init(webgl: WebGLRenderingContext)
     {
-        this.m_Webgl?.clearColor(color.x,color.y,color.z, color.w);
-    }
-    static Clear(): void 
-    {
-        this.m_Webgl?.clear(this.m_Webgl.COLOR_BUFFER_BIT);
+        this.m_Webgl = webgl;
     }
 
-    static DrawIndexed(shader: Shader, vertexArray: VertexArray): void
+    ClearColor(color: Vector4): void
+    {
+        this.m_Webgl.clearColor(color.x,color.y,color.z, color.w);
+    }
+    Clear(): void 
+    {
+        this.m_Webgl.clear(this.m_Webgl.COLOR_BUFFER_BIT);
+    }
+
+    DrawIndexed(shader: Shader, vertexArray: VertexArray): void
     {
         shader.Bind();
         vertexArray.Bind();

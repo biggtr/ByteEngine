@@ -6,24 +6,23 @@ import { VertexArray } from "./VertexArray";
 export class RenderCommand
 {
 
-    private static s_RendererAPI: RendererAPI; 
+    private m_RendererAPI: RendererAPI; 
     
-    private constructor(){}
-    static Init(rendererAPI: RendererAPI)
+    constructor(rendererAPI: RendererAPI)
     {
-        this.s_RendererAPI = rendererAPI;
+        this.m_RendererAPI = rendererAPI;
     }
     
-    static ClearColor(): void
+    ClearColor(): void
     {
 
     }
-    static Clear(): void 
+    Clear(): void 
     {
 
     }
 
-    static DrawIndexed(vertexArray: VertexArray): void
+    DrawIndexed(vertexArray: VertexArray): void
     {
 
     }
