@@ -7,7 +7,7 @@ export class RendererAPI
 {
 
     private m_Webgl: WebGL2RenderingContext;
-    private constructor(webgl: WebGL2RenderingContext)
+    constructor(webgl: WebGL2RenderingContext)
     {
         this.m_Webgl = webgl;
     }

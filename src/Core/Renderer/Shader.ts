@@ -1,11 +1,11 @@
 export class Shader
 {
     private m_shaderProgram: WebGLProgram | null = null;
-    private m_Webgl: WebGLRenderingContext;
+    private m_Webgl: WebGL2RenderingContext;
 
-    constructor(webglContext: WebGLRenderingContext)
+    constructor(webgl: WebGL2RenderingContext)
     {
-      this.m_Webgl = webglContext;
+      this.m_Webgl = webgl;
     }
     public async Init(vertexShaderPath: string,fragmentShaderPath:string)
     {
@@ -30,12 +30,10 @@ export class Shader
     {
         return this.m_Webgl.getUniformLocation(this.m_shaderProgram as WebGLProgram, uniformName);
     }
-    public SetMat4(uniformName: string, data: Float32List): void
+    public SetMat3(uniformName: string, data: Float32Array): void
     {
-        var uniformLocation = this.GetUniformLocation(uniformName);
-        this.m_Webgl.uniformMatrix4fv(uniformLocation,false, data);
-
-
+        const location = this.m_Webgl.getUniformLocation(this.m_shaderProgram as WebGLProgram, uniformName);
+        this.m_Webgl.uniformMatrix3fv(location,false, data);
     }
     
 
