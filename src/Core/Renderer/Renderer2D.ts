@@ -54,11 +54,43 @@ export class Renderer2D
         this.m_RenderCommand.DrawIndexed(quadVAO);
     }
 
+    CreateQuadVAO(): VertexArray
+    {
+        var vertices = new Float32Array([
+            -0.5,   0.5,   0.0, 1.0, 
+            -0.5,  -0.5,   0.0, 0.0, 
+             0.5,  -0.5,   1.0, 0.0, 
+             0.5,   0.5,   1.0, 1.0, 
+        ]);
+
+
+        var indices = new Uint32Array([
+            0, 1, 2,  
+            0, 2, 3  
+        ]); 
+
+        var vertexBuffer = new VertexBuffer(this.m_RenderCommand.GetWebGLContext());
+        var indexBuffer = new IndexBuffer(this.m_RenderCommand.GetWebGLContext());
+        var vertexArray = new VertexArray(this.m_RenderCommand.GetWebGLContext());
+
+        vertexBuffer.CreateBuffer(vertices);
+        indexBuffer.Create(indices, indices.length);
+        var floatType = this.m_RenderCommand.GetWebGLContext().FLOAT;
+        const positionElement = new BufferElement(floatType, "position", 2);
+        const texCoordsElement = new BufferElement(floatType, "texture",2);
+        var bufferLayout = new BufferLayout([positionElement, texCoordsElement]);
+        vertexBuffer.SetLayout(bufferLayout);
+
+        vertexArray.SetIndexBuffer(indexBuffer);
+        vertexArray.AddVertexBuffer(vertexBuffer);
+        
+        return vertexArray;
+    }
     private GetQuadVAO(): VertexArray
     {
         if(!this.m_QuadVAO)
         {
-            this.m_QuadVAO = this.m_RenderCommand.CreateQuadVAO();
+            this.m_QuadVAO = this.CreateQuadVAO();
         }
         return this.m_QuadVAO;
     }
