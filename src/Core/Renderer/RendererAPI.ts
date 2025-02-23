@@ -26,9 +26,8 @@ export class RendererAPI
         this.m_Webgl.clear(this.m_Webgl.COLOR_BUFFER_BIT);
     }
 
-    DrawIndexed(shader: Shader, vertexArray: VertexArray): void
+    DrawIndexed(vertexArray: VertexArray): void
     {
-        shader.Bind();
         vertexArray.Bind();
 
         const indexBuffer = vertexArray.GetIndexBuffer() as IndexBuffer;

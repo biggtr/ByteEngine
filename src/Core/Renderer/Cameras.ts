@@ -27,6 +27,11 @@ export class OrthographicCamera
         return this.m_ProjectionMatrix;
     }
 
+    public GetViewProjectionMatrix()
+    {
+        return this.m_ViewProjection;
+    }
+
     public GetPosition()
     {
         return this.m_Position;

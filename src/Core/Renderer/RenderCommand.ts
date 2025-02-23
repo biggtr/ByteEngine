@@ -1,6 +1,7 @@
+import { Vector4 } from "../Math/Vectors";
 import { RendererAPI } from "./RendererAPI";
 import { VertexArray } from "./VertexArray";
-
+import { Shader } from "./Shader";
 
 
 export class RenderCommand
@@ -13,17 +14,19 @@ export class RenderCommand
         this.m_RendererAPI = rendererAPI;
     }
     
-    ClearColor(): void
+    ClearColor(color: Vector4): void
     {
-
+        this.m_RendererAPI.ClearColor(color)
     }
+
     Clear(): void 
     {
+        this.m_RendererAPI.Clear();
 
     }
 
     DrawIndexed(vertexArray: VertexArray): void
     {
-
+        this.m_RendererAPI.DrawIndexed(vertexArray);
     }
 }
