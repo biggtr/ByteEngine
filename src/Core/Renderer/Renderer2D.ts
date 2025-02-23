@@ -9,7 +9,6 @@ import { Vector3, Vector4 } from "../Math/Vectors";
 
 export class Renderer2D
 {
-    private m_Webgl: WebGL2RenderingContext;
     private m_RenderCommand: RenderCommand; 
     private m_CurrentViewProjection: Matrix3;
 
@@ -17,13 +16,12 @@ export class Renderer2D
     private m_QuadShader: Shader;
     private m_SpriteShader: Shader;
 
-    constructor(renderCommand: RenderCommand, webgl: WebGL2RenderingContext)
+    constructor(renderCommand: RenderCommand)
     {
         this.m_RenderCommand = renderCommand;
-        this.m_Webgl = webgl;
         this.m_CurrentViewProjection = new Matrix3();
-        this.m_QuadShader = new Shader(this.m_Webgl);
-        this.m_SpriteShader = new Shader(this.m_Webgl);
+        this.m_QuadShader = new Shader(this.m_RenderCommand.GetWebGLContext());
+        this.m_SpriteShader = new Shader(this.m_RenderCommand.GetWebGLContext());
         this.m_QuadShader.Init("/assest/shaders/QuadShader.vert", "/assets/shaders/QuadShader.frag");
         this.m_SpriteShader.Init("/assest/shaders/SpriteShader.vert", "/assets/shaders/SpriteShader.frag");
     }
@@ -56,43 +54,11 @@ export class Renderer2D
         this.m_RenderCommand.DrawIndexed(quadVAO);
     }
 
-    private CreateQuadVAO(): VertexArray
-    {
-        var vertices = new Float32Array([
-            -0.5,   0.5,   0.0, 1.0, 
-            -0.5,  -0.5,   0.0, 0.0, 
-             0.5,  -0.5,   1.0, 0.0, 
-             0.5,   0.5,   1.0, 1.0, 
-        ]);
-
-
-        var indices = new Uint32Array([
-            0, 1, 2,  
-            0, 2, 3  
-        ]); 
-
-        var vertexBuffer = new VertexBuffer(this.m_Webgl);
-        var indexBuffer = new IndexBuffer(this.m_Webgl);
-        var vertexArray = new VertexArray(this.m_Webgl);
-
-        vertexBuffer.CreateBuffer(vertices);
-        indexBuffer.Create(indices, indices.length);
-
-        const positionElement = new BufferElement(this.m_Webgl.FLOAT, "position", 2);
-        const texCoordsElement = new BufferElement(this.m_Webgl.FLOAT, "texture",2);
-        var bufferLayout = new BufferLayout([positionElement, texCoordsElement]);
-        vertexBuffer.SetLayout(bufferLayout);
-
-        vertexArray.SetIndexBuffer(indexBuffer);
-        vertexArray.AddVertexBuffer(vertexBuffer);
-        
-        return vertexArray;
-    }
     private GetQuadVAO(): VertexArray
     {
         if(!this.m_QuadVAO)
         {
-            this.m_QuadVAO = this.CreateQuadVAO();
+            this.m_QuadVAO = this.m_RenderCommand.CreateQuadVAO();
         }
         return this.m_QuadVAO;
     }

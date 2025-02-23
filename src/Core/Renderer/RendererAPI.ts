@@ -6,13 +6,13 @@ import { VertexArray } from "./VertexArray";
 export class RendererAPI
 {
 
-    private m_Webgl: WebGLRenderingContext;
+    private m_Webgl: WebGL2RenderingContext;
     private constructor(webgl: WebGL2RenderingContext)
     {
         this.m_Webgl = webgl;
     }
 
-    Init(webgl: WebGLRenderingContext)
+    Init(webgl: WebGL2RenderingContext)
     {
         this.m_Webgl = webgl;
     }
@@ -32,6 +32,11 @@ export class RendererAPI
 
         const indexBuffer = vertexArray.GetIndexBuffer() as IndexBuffer;
         this.m_Webgl.drawElements(this.m_Webgl.TRIANGLES, indexBuffer.GetIndicesCount() ,this.m_Webgl.UNSIGNED_INT, 0);
+    }
+
+    GetWebGLContext(): WebGL2RenderingContext
+    {
+        return this.m_Webgl;
     }
 
 }
