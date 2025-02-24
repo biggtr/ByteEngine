@@ -8,6 +8,7 @@ import { Vector3, Vector4 } from "./Math/Vectors";
 import { Matrix3 } from "./Math/Matrices";
 import { Renderer2D } from "./Renderer/Renderer2D";
 import { RenderCommand } from "./Renderer/RenderCommand";
+import { OrthographicCamera } from "./Renderer/Cameras";
 async function main()
 {
     const keysPressed: { [key: string]: boolean } = {};
@@ -35,27 +36,38 @@ async function main()
     let color = new Vector4(1.0,0,0,0);
     let quadColor = new Vector4(0.4,0.7,0,0);
     webgl.viewport(0, 0, webgl.canvas.width, webgl.canvas.height);
-    var sx = 1, sy = 1;
-    var tx = 1, ty = 1;
+    var sx = 100, sy = 100 ;
     var angle = 0;
-    const moveSpeed = 0.1;
-    renderCommand.ClearColor(color);
-    var position = new Vector3(tx, ty, 1);
+    const moveSpeed = 4;
+    var position = new Vector3(100, 200, 1);
     var size = new Vector3(sx, sy, 1);
-
+    const camera = new OrthographicCamera(
+        0,  // left
+        webgl.canvas.width/2,   // right
+        0, // bottom
+        webgl.canvas.height/2   // top
+    );
+    console.log(camera.GetPosition());
+    camera.SetPosition(position);
+    console.log(camera.GetPosition());
     function GameLoop() 
     {
-        //input 
-
-        if (keysPressed["KeyW"]) { position.y += moveSpeed; }  // Move up
-        if (keysPressed["KeyS"]) { position.y -= moveSpeed; }  // Move down
-        if (keysPressed["KeyA"]) { position.x -= moveSpeed; }  // Move left
-        if (keysPressed["KeyD"]) { position.x += moveSpeed; }  // Move right
-
         //render
+        renderCommand.ClearColor(color);
         renderCommand.Clear();
+        renderer2D.BeginScene(camera);
         renderer2D.DrawQuad(position, size, quadColor);
-                   // Request next frame
+
+        //input 
+        var prevCameraPosition = camera.GetPosition();
+        if (keysPressed["KeyW"]) { camera.SetPosition(new Vector3(prevCameraPosition.x, prevCameraPosition.y + moveSpeed, prevCameraPosition.z));}
+
+        if (keysPressed["KeyS"]) { camera.SetPosition(new Vector3(prevCameraPosition.x, prevCameraPosition.y - moveSpeed, prevCameraPosition.z)); }  // Move down
+        if (keysPressed["KeyA"]) { camera.SetPosition(new Vector3(prevCameraPosition.x - moveSpeed, prevCameraPosition.y, prevCameraPosition.z));  }  // Move left
+        if (keysPressed["KeyD"]) { camera.SetPosition(new Vector3(prevCameraPosition.x + moveSpeed, prevCameraPosition.y, prevCameraPosition.z));  }  // Move right
+        console.log("Camera Position:", camera.GetPosition());
+
+        // Request next frame
         requestAnimationFrame(GameLoop);
     }
     GameLoop();

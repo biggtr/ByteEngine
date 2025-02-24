@@ -10,7 +10,7 @@ import { Vector3, Vector4 } from "../Math/Vectors";
 export class Renderer2D
 {
     private m_RenderCommand: RenderCommand; 
-    private m_CurrentViewProjection: Matrix3;
+    private m_OrthoCamera: OrthographicCamera | null = null;
 
     private m_QuadVAO: VertexArray | null = null;
     private m_QuadShader: Shader;
@@ -18,7 +18,6 @@ export class Renderer2D
     constructor(renderCommand: RenderCommand)
     {
         this.m_RenderCommand = renderCommand;
-        this.m_CurrentViewProjection = new Matrix3();
         this.m_QuadShader = new Shader(this.m_RenderCommand.GetWebGLContext());
     }
     async Init()
@@ -28,7 +27,7 @@ export class Renderer2D
 
     public BeginScene(camera: OrthographicCamera)
     {
-        this.m_CurrentViewProjection = camera.GetViewProjectionMatrix();
+        this.m_OrthoCamera = camera;
     }
 
     public EndScene(){}
@@ -37,9 +36,10 @@ export class Renderer2D
 
     public DrawQuad(position: Vector3, size: Vector3, color: Vector4): void
     {
-        var modelMatrix = Matrix3.Scale(size.x, size.y).Multiply(Matrix3.Translate(position.x, position.y));
+        var modelMatrix = Matrix3.Translate(position.x, position.y).Multiply(Matrix3.Scale(size.x, size.y));
         this.m_QuadShader.Bind();
-        this.m_QuadShader.SetMat3("u_ViewProjection", this.m_CurrentViewProjection.GetAll());
+        const viewProjection = this.m_OrthoCamera?.GetViewProjectionMatrix().GetAll();
+        this.m_QuadShader.SetMat3("u_ViewProjection", viewProjection as Float32Array)
         this.m_QuadShader.SetMat3("u_Model", modelMatrix.GetAll());
         var quadVAO = this.GetQuadVAO();
         quadVAO.Bind();

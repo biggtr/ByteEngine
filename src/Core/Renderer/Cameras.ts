@@ -54,7 +54,7 @@ export class OrthographicCamera
 
     private RecalculateViewProjectionMatrix()
     {
-        this.m_ViewMatrix = Matrix3.Translate(-this.m_Position.x, -this.m_Position.y).Multiply(Matrix3.Rotate(-this.m_Rotation));
+        this.m_ViewMatrix = Matrix3.Rotate(-this.m_Rotation).Multiply(Matrix3.Translate(-this.m_Position.x, -this.m_Position.y));
         this.m_ViewProjection = this.m_ProjectionMatrix.Multiply(this.m_ViewMatrix);
     }
     
