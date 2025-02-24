@@ -6,6 +6,7 @@ import { Matrix3 } from "../Math/Matrices";
 import { IndexBuffer, VertexBuffer } from "./Buffers";
 import { BufferElement, BufferLayout } from "./Buffers";
 import { Vector3, Vector4 } from "../Math/Vectors";
+import { RendererAPI } from "./RendererAPI";
 
 export class Renderer2D
 {
@@ -15,9 +16,9 @@ export class Renderer2D
     private m_QuadVAO: VertexArray | null = null;
     private m_QuadShader: Shader;
 
-    constructor(renderCommand: RenderCommand)
+    constructor(rendererAPI: RendererAPI)
     {
-        this.m_RenderCommand = renderCommand;
+        this.m_RenderCommand = new RenderCommand(rendererAPI);
         this.m_QuadShader = new Shader(this.m_RenderCommand.GetWebGLContext());
     }
     async Init()
@@ -33,7 +34,14 @@ export class Renderer2D
     public EndScene(){}
 
     
-
+    public SetClearColor(color: Vector4): void
+    {
+        this.m_RenderCommand.ClearColor(color);
+    }
+    public Clear(): void
+    {
+        this.m_RenderCommand.Clear();
+    }
     public DrawQuad(position: Vector3, size: Vector3, color: Vector4): void
     {
         var modelMatrix = Matrix3.Translate(position.x, position.y).Multiply(Matrix3.Scale(size.x, size.y));

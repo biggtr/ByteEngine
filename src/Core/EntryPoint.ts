@@ -27,8 +27,7 @@ async function main()
     console.log(webgl.canvas.width, webgl.canvas.height);
 
     const rendererAPI = new RendererAPI(webgl);
-    const renderCommand = new RenderCommand(rendererAPI);
-    var renderer2D = new Renderer2D(renderCommand);
+    var renderer2D = new Renderer2D(rendererAPI);
     await renderer2D.Init();
 
 
@@ -50,8 +49,8 @@ async function main()
     function GameLoop() 
     {
         //render
-        renderCommand.ClearColor(color);
-        renderCommand.Clear();
+        renderer2D.SetClearColor(color);
+        renderer2D.Clear();
         renderer2D.BeginScene(camera);
         renderer2D.DrawQuad(position, size, quadColor);
 
