@@ -39,7 +39,7 @@ async function main()
     var sx = 100, sy = 100 ;
     var angle = 0;
     const moveSpeed = 4;
-    var position = new Vector3(100, 200, 1);
+    var position = new Vector3(0, 200, 1);
     var size = new Vector3(sx, sy, 1);
     const camera = new OrthographicCamera(
         0,  // left
@@ -47,9 +47,6 @@ async function main()
         0, // bottom
         webgl.canvas.height/2   // top
     );
-    console.log(camera.GetPosition());
-    camera.SetPosition(position);
-    console.log(camera.GetPosition());
     function GameLoop() 
     {
         //render
