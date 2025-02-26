@@ -9,10 +9,15 @@ import { Matrix3 } from "./Math/Matrices";
 import { Renderer2D } from "./Renderer/Renderer2D";
 import { RenderCommand } from "./Renderer/RenderCommand";
 import { OrthographicCamera } from "./Renderer/Cameras";
+import { Event, KeyPressedEvent } from "./Events/Events";
+import { InputListener } from "./Events/EventListeners";
 async function main()
 {
     const keysPressed: { [key: string]: boolean } = {};
-
+    
+    const keyPressedEvent = new Event<KeyPressedEvent>;
+    const inputListener = new InputListener();
+    keyPressedEvent.AddListener(inputListener);
     document.addEventListener("keydown", (event: KeyboardEvent) => {
       keysPressed[event.code] = true;
     });
@@ -35,11 +40,10 @@ async function main()
     let color = new Vector4(1.0,0,0,0);
     let quadColor = new Vector4(0.4,0.7,0,0);
     webgl.viewport(0, 0, webgl.canvas.width, webgl.canvas.height);
-    var sx = 100, sy = 100 ;
     var angle = 0;
     const moveSpeed = 4;
     var position = new Vector3(0, 200, 1);
-    var size = new Vector3(sx, sy, 1);
+    var size = new Vector3(200, 200, 1);
     const camera = new OrthographicCamera(
         0,  // left
         webgl.canvas.width/2,   // right
@@ -56,7 +60,10 @@ async function main()
 
         //input 
         var prevCameraPosition = camera.GetPosition();
-        if (keysPressed["KeyW"]) { camera.SetPosition(new Vector3(prevCameraPosition.x, prevCameraPosition.y + moveSpeed, prevCameraPosition.z));}
+        if (keysPressed["KeyW"]) { 
+            camera.SetPosition(new Vector3(prevCameraPosition.x, prevCameraPosition.y + moveSpeed, prevCameraPosition.z));
+            keyPressedEvent.Notify(new KeyPressedEvent("KeyW")) 
+        }
 
         if (keysPressed["KeyS"]) { camera.SetPosition(new Vector3(prevCameraPosition.x, prevCameraPosition.y - moveSpeed, prevCameraPosition.z)); }  // Move down
         if (keysPressed["KeyA"]) { camera.SetPosition(new Vector3(prevCameraPosition.x - moveSpeed, prevCameraPosition.y, prevCameraPosition.z));  }  // Move left

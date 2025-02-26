@@ -1,36 +1,40 @@
-export enum EventType
-{
-    KeyPressed, MouseEvent
+import { EventListener } from "./EventListeners";
 
-}
-
-abstract class Event
+export class Event<T>
 {
-    abstract GetType(): EventType
-    static GetTypeStatic(): EventType
+    private m_Listeners:Array<EventListener> = [];
+    
+    public AddListener(listener: EventListener): void 
     {
-        throw new Error("Not Implemented yet.");
+        this.m_Listeners.push(listener);
+    }
+
+    public RemoveListener(listener: EventListener): void
+    {
+        this.m_Listeners.filter((currentListener) => currentListener !== listener );
+
+    }
+
+    public Notify(eventData: T): void 
+    {
+        for(const listener of this.m_Listeners)
+        {
+            listener.OnEvent(eventData);
+        }
+
     }
 }
 
-class KeyPressed implements Event
+export class KeyPressedEvent
 {
-    private m_KeyCode: string;
+    public m_KeyCode: string;
     private m_Pressed: boolean;
     constructor(keyCode: string)
     {
         this.m_KeyCode = keyCode;
         this.m_Pressed = true;
     }
-    GetType(): EventType
-    {
-        return EventType.KeyPressed;
-    }
 
-    static GetTypeStatic(): EventType
-    {
-        return EventType.KeyPressed;
-    }
 }
 
 
