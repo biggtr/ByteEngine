@@ -2,16 +2,16 @@ import { EventListener } from "./EventListeners";
 
 export class Event<T>
 {
-    private m_Listeners:Array<EventListener> = [];
+    private m_Listeners:Array<EventListener<T>> = [];
     
-    public AddListener(listener: EventListener): void 
+    public AddListener(listener: EventListener<T>): void 
     {
         this.m_Listeners.push(listener);
     }
 
-    public RemoveListener(listener: EventListener): void
+    public RemoveListener(listener: EventListener<T>): void
     {
-        this.m_Listeners.filter((currentListener) => currentListener !== listener );
+        this.m_Listeners = this.m_Listeners.filter((currentListener) => currentListener !== listener );
 
     }
 

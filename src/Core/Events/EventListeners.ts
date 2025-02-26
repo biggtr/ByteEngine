@@ -1,13 +1,14 @@
 import { Event, KeyPressedEvent } from "./Events";
 
-export interface EventListener
+export interface EventListener<T>
 {
     
-    OnEvent(eventData: unknown): void
+    OnEvent(eventData: T): void
 }
 
 
-export class InputListener implements EventListener{
+export class InputListener implements EventListener<KeyPressedEvent>
+{
 
     public OnEvent(eventData: KeyPressedEvent): void 
     {
