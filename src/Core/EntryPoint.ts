@@ -10,25 +10,20 @@ import { Renderer2D } from "./Renderer/Renderer2D";
 import { RenderCommand } from "./Renderer/RenderCommand";
 import { OrthographicCamera } from "./Renderer/Cameras";
 import { Event, KeyPressedEvent } from "./Events/Events";
+import { CreateApplication } from "./Application";
+import { Input } from "./Input/Inputs";
 
 
+const keysPressed: {[key: string]: boolean} = {};
 function handleInput(event: KeyPressedEvent): void
 {
-    console.log(event.m_KeyCode);
+    keysPressed[event.m_KeyCode] = event.m_Pressed;
 }
 async function main()
 {
-    const keysPressed: { [key: string]: boolean } = {};
-    
-    const keyPressedEvent = new Event<KeyPressedEvent>;
+    const input = new Input();
+    const keyPressedEvent = input.GetKeyboadEvent();
     keyPressedEvent.Subscribe(handleInput);
-    document.addEventListener("keydown", (event: KeyboardEvent) => {
-      keysPressed[event.code] = true;
-    });
-
-    document.addEventListener("keyup", (event: KeyboardEvent) => {
-      keysPressed[event.code] = false;
-    });
     console.log("entry point ..")
     var isRunning = true;
     const webglContext = new WebGLContext("glcanvas")
@@ -54,6 +49,7 @@ async function main()
         0, // bottom
         webgl.canvas.height/2   // top
     );
+
     function GameLoop() 
     {
         //render
@@ -62,11 +58,11 @@ async function main()
         renderer2D.BeginScene(camera);
         renderer2D.DrawQuad(position, size, quadColor);
 
-        //input 
+        //input
+        input.IsKeyPressed();
         var prevCameraPosition = camera.GetPosition();
         if (keysPressed["KeyW"]) { 
             camera.SetPosition(new Vector3(prevCameraPosition.x, prevCameraPosition.y + moveSpeed, prevCameraPosition.z));
-            keyPressedEvent.Notify(new KeyPressedEvent("KeyW")) 
         }
 
         if (keysPressed["KeyS"]) { camera.SetPosition(new Vector3(prevCameraPosition.x, prevCameraPosition.y - moveSpeed, prevCameraPosition.z)); }  // Move down

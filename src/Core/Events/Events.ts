@@ -22,11 +22,11 @@ export class Event<T>
 export class KeyPressedEvent
 {
     public m_KeyCode: string;
-    private m_Pressed: boolean;
-    constructor(keyCode: string)
+    public m_Pressed: boolean;
+    constructor(keyCode: string, pressed: boolean)
     {
         this.m_KeyCode = keyCode;
-        this.m_Pressed = true;
+        this.m_Pressed = pressed;
     }
 
 }
