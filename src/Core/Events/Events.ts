@@ -1,27 +1,21 @@
-import { EventListener } from "./EventListeners";
 
 export class Event<T>
 {
-    private m_Listeners:Array<EventListener<T>> = [];
+    private m_Listeners: Set<(data: T) => void> = new Set();
     
-    public AddListener(listener: EventListener<T>): void 
+    public Subscribe(callback: (data: T) => void): void 
     {
-        this.m_Listeners.push(listener);
+        this.m_Listeners.add(callback);
     }
 
-    public RemoveListener(listener: EventListener<T>): void
+    public UnSubscribe(callback: (data: T) => void): void
     {
-        this.m_Listeners = this.m_Listeners.filter((currentListener) => currentListener !== listener );
-
+        this.m_Listeners.delete(callback);
     }
 
-    public Notify(eventData: T): void 
+    public Notify(data: T): void 
     {
-        for(const listener of this.m_Listeners)
-        {
-            listener.OnEvent(eventData);
-        }
-
+        this.m_Listeners.forEach(callback => callback(data))
     }
 }
 

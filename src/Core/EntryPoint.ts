@@ -10,14 +10,18 @@ import { Renderer2D } from "./Renderer/Renderer2D";
 import { RenderCommand } from "./Renderer/RenderCommand";
 import { OrthographicCamera } from "./Renderer/Cameras";
 import { Event, KeyPressedEvent } from "./Events/Events";
-import { InputListener } from "./Events/EventListeners";
+
+
+function handleInput(event: KeyPressedEvent): void
+{
+    console.log(event.m_KeyCode);
+}
 async function main()
 {
     const keysPressed: { [key: string]: boolean } = {};
     
     const keyPressedEvent = new Event<KeyPressedEvent>;
-    const inputListener = new InputListener();
-    keyPressedEvent.AddListener(inputListener);
+    keyPressedEvent.Subscribe(handleInput);
     document.addEventListener("keydown", (event: KeyboardEvent) => {
       keysPressed[event.code] = true;
     });
@@ -68,8 +72,6 @@ async function main()
         if (keysPressed["KeyS"]) { camera.SetPosition(new Vector3(prevCameraPosition.x, prevCameraPosition.y - moveSpeed, prevCameraPosition.z)); }  // Move down
         if (keysPressed["KeyA"]) { camera.SetPosition(new Vector3(prevCameraPosition.x - moveSpeed, prevCameraPosition.y, prevCameraPosition.z));  }  // Move left
         if (keysPressed["KeyD"]) { camera.SetPosition(new Vector3(prevCameraPosition.x + moveSpeed, prevCameraPosition.y, prevCameraPosition.z));  }  // Move right
-        console.log("Camera Position:", camera.GetPosition());
-
         // Request next frame
         requestAnimationFrame(GameLoop);
     }
