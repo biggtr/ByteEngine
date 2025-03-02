@@ -16,7 +16,7 @@ export class Input
     public Initialize(): void
     {
         document.addEventListener("keydown", (event: KeyboardEvent) => {
-            if(!event.repeat)
+            if(!event.repeat) //ensures that each key state is updated once only when pressed 
             {
                 this.m_Keys.set(event.code, true);
                 this.m_KeyPressedEvent.Notify(new KeyPressedEvent(event.code, true))

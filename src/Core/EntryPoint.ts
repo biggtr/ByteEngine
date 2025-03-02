@@ -60,14 +60,28 @@ async function main()
         renderer2D.DrawSprite(new Vector3(200,0,1), size, quadColor, lavaTexture);
 
         //input
-        var prevCameraPosition = camera.GetPosition();
-        if (input.IsKeyPressed("KeyW")) { 
-            camera.SetPosition(new Vector3(prevCameraPosition.x, prevCameraPosition.y + moveSpeed, prevCameraPosition.z));
-        }
+        var movement = new Vector3(0,0,0);
+        const prevCameraPosition = camera.GetPosition();
 
-        if (input.IsKeyPressed("KeyS")) { camera.SetPosition(new Vector3(prevCameraPosition.x, prevCameraPosition.y - moveSpeed, prevCameraPosition.z)); }  // Move down
-        if (input.IsKeyPressed("KeyA")) { camera.SetPosition(new Vector3(prevCameraPosition.x - moveSpeed, prevCameraPosition.y, prevCameraPosition.z));  }  // Move left
-        if (input.IsKeyPressed("KeyD")) { camera.SetPosition(new Vector3(prevCameraPosition.x + moveSpeed, prevCameraPosition.y, prevCameraPosition.z));  }  // Move right
+        if (input.IsKeyPressed("KeyW"))
+        {
+          movement.y += moveSpeed; 
+        }
+        if (input.IsKeyPressed("KeyS"))
+        {
+          movement.y -= moveSpeed; 
+        }
+        if (input.IsKeyPressed("KeyA")) 
+        {
+          movement.x -= moveSpeed; 
+        }
+        if (input.IsKeyPressed("KeyD")) 
+        {
+          movement.x += moveSpeed; 
+        }
+        const newPosition = Vector3.Add(movement, prevCameraPosition);
+        // Update the camera position
+        camera.SetPosition(newPosition);;
         // Request next frame
         requestAnimationFrame(GameLoop);
     }
