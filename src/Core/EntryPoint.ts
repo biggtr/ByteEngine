@@ -14,10 +14,9 @@ import { CreateApplication } from "./Application";
 import { Input } from "./Input/Inputs";
 
 
-const keysPressed: {[key: string]: boolean} = {};
 function handleInput(event: KeyPressedEvent): void
 {
-    keysPressed[event.m_KeyCode] = event.m_Pressed;
+    console.log(event)
 }
 async function main()
 {
@@ -34,8 +33,9 @@ async function main()
     var renderer2D = new Renderer2D(rendererAPI);
     await renderer2D.Init();
 
+    var lavaTexture = new Texture(webgl);
+    await lavaTexture.CreateTexture("/assets/textures/lavaTexture.jpg")
 
-   
     let color = new Vector4(1.0,0,0,0);
     let quadColor = new Vector4(0.4,0.7,0,0);
     webgl.viewport(0, 0, webgl.canvas.width, webgl.canvas.height);
@@ -45,29 +45,29 @@ async function main()
     var size = new Vector3(200, 200, 1);
     const camera = new OrthographicCamera(
         0,  // left
-        webgl.canvas.width/2,   // right
+        webgl.canvas.width,   // right
         0, // bottom
-        webgl.canvas.height/2   // top
+        webgl.canvas.height   // top
     );
-
-    function GameLoop() 
+    input.Initialize();
+    async function GameLoop() 
     {
         //render
         renderer2D.SetClearColor(color);
         renderer2D.Clear();
         renderer2D.BeginScene(camera);
         renderer2D.DrawQuad(position, size, quadColor);
+        renderer2D.DrawSprite(new Vector3(200,0,1), size, quadColor, lavaTexture);
 
         //input
-        input.IsKeyPressed();
         var prevCameraPosition = camera.GetPosition();
-        if (keysPressed["KeyW"]) { 
+        if (input.IsKeyPressed("KeyW")) { 
             camera.SetPosition(new Vector3(prevCameraPosition.x, prevCameraPosition.y + moveSpeed, prevCameraPosition.z));
         }
 
-        if (keysPressed["KeyS"]) { camera.SetPosition(new Vector3(prevCameraPosition.x, prevCameraPosition.y - moveSpeed, prevCameraPosition.z)); }  // Move down
-        if (keysPressed["KeyA"]) { camera.SetPosition(new Vector3(prevCameraPosition.x - moveSpeed, prevCameraPosition.y, prevCameraPosition.z));  }  // Move left
-        if (keysPressed["KeyD"]) { camera.SetPosition(new Vector3(prevCameraPosition.x + moveSpeed, prevCameraPosition.y, prevCameraPosition.z));  }  // Move right
+        if (input.IsKeyPressed("KeyS")) { camera.SetPosition(new Vector3(prevCameraPosition.x, prevCameraPosition.y - moveSpeed, prevCameraPosition.z)); }  // Move down
+        if (input.IsKeyPressed("KeyA")) { camera.SetPosition(new Vector3(prevCameraPosition.x - moveSpeed, prevCameraPosition.y, prevCameraPosition.z));  }  // Move left
+        if (input.IsKeyPressed("KeyD")) { camera.SetPosition(new Vector3(prevCameraPosition.x + moveSpeed, prevCameraPosition.y, prevCameraPosition.z));  }  // Move right
         // Request next frame
         requestAnimationFrame(GameLoop);
     }

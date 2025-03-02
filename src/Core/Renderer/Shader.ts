@@ -1,6 +1,6 @@
 export class Shader
 {
-    private m_shaderProgram: WebGLProgram | null = null;
+    private m_ShaderProgram: WebGLProgram | null = null;
     private m_Webgl: WebGL2RenderingContext;
 
     constructor(webgl: WebGL2RenderingContext)
@@ -10,29 +10,34 @@ export class Shader
     public async Init(vertexShaderPath: string,fragmentShaderPath:string)
     {
       const {vertexShader, fragmentShader} = await this.ParseShader(vertexShaderPath, fragmentShaderPath);
-      this.m_shaderProgram = this.CreateProgram(vertexShader, fragmentShader) as WebGLProgram;
+      this.m_ShaderProgram = this.CreateProgram(vertexShader, fragmentShader) as WebGLProgram;
 
     }
     public Bind()
     {
-      this.m_Webgl.useProgram(this.m_shaderProgram);
+      this.m_Webgl.useProgram(this.m_ShaderProgram);
     }
     public UnBind()
     {
-      this.m_Webgl.deleteProgram(this.m_shaderProgram);
+      this.m_Webgl.deleteProgram(this.m_ShaderProgram);
     }
     public GetAttributeLocation(attributeName: string) : GLint
     {
-      return this.m_Webgl.getAttribLocation(this.m_shaderProgram as WebGLProgram, attributeName);
+      return this.m_Webgl.getAttribLocation(this.m_ShaderProgram as WebGLProgram, attributeName);
     }
 
     public GetUniformLocation(uniformName: string) : WebGLUniformLocation | null
     {
-        return this.m_Webgl.getUniformLocation(this.m_shaderProgram as WebGLProgram, uniformName);
+        return this.m_Webgl.getUniformLocation(this.m_ShaderProgram as WebGLProgram, uniformName);
+    }
+    public SetUniform1i(uniformName: string, data: number)
+    {
+        const location = this.m_Webgl.getUniformLocation(this.m_ShaderProgram as WebGLProgram, uniformName);
+        this.m_Webgl.uniform1i(location, data);
     }
     public SetMat3(uniformName: string, data: Float32Array): void
     {
-        const location = this.m_Webgl.getUniformLocation(this.m_shaderProgram as WebGLProgram, uniformName);
+        const location = this.m_Webgl.getUniformLocation(this.m_ShaderProgram as WebGLProgram, uniformName);
         this.m_Webgl.uniformMatrix3fv(location,false, data);
     }
     
