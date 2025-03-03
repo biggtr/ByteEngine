@@ -9,7 +9,7 @@ export class Texture
         this.m_texture = this.m_Webgl.createTexture();
     }
       
-    public async CreateTexture(filePath: string)
+    public async Create(filePath: string)
     {
         const image = await this.LoadFromImage(filePath);
         this.m_Webgl.bindTexture(this.m_Webgl.TEXTURE_2D, this.m_texture);

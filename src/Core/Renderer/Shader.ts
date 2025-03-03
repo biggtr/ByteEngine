@@ -7,7 +7,7 @@ export class Shader
     {
       this.m_Webgl = webgl;
     }
-    public async Init(vertexShaderPath: string,fragmentShaderPath:string)
+    public async Create(vertexShaderPath: string,fragmentShaderPath:string)
     {
       const {vertexShader, fragmentShader} = await this.ParseShader(vertexShaderPath, fragmentShaderPath);
       this.m_ShaderProgram = this.CreateProgram(vertexShader, fragmentShader) as WebGLProgram;

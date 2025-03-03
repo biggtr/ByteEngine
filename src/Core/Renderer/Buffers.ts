@@ -76,7 +76,7 @@ export class VertexBuffer
     {
         this.m_Webgl.bindBuffer(this.m_Webgl.ARRAY_BUFFER, this.m_Buffer);
     }
-    public CreateBuffer(data: Float32Array)
+    public Create(data: Float32Array)
     {
         this.m_Webgl.bindBuffer(this.m_Webgl.ARRAY_BUFFER, this.m_Buffer);
         this.m_Webgl.bufferData(this.m_Webgl.ARRAY_BUFFER, data, this.m_Webgl.STATIC_DRAW);

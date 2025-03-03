@@ -25,7 +25,7 @@ async function main()
     keyPressedEvent.Subscribe(handleInput);
     console.log("entry point ..")
     var isRunning = true;
-    const webglContext = new WebGLContext("glcanvas")
+    const webglContext = new WebGLContext("glcanvas");
     const webgl = webglContext.GetWebGL();
     console.log(webgl.canvas.width, webgl.canvas.height);
 
@@ -34,7 +34,7 @@ async function main()
     await renderer2D.Init();
 
     var lavaTexture = new Texture(webgl);
-    await lavaTexture.CreateTexture("/assets/textures/lavaTexture.jpg")
+    await lavaTexture.Create("/assets/textures/lavaTexture.jpg")
 
     let color = new Vector4(1.0,0,0,0);
     let quadColor = new Vector4(0.4,0.7,0,0);

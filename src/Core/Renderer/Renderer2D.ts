@@ -26,8 +26,8 @@ export class Renderer2D
     }
     async Init()
     {
-        await this.m_QuadShader.Init("/assets/shaders/QuadShader.vert", "/assets/shaders/QuadShader.frag");
-        await this.m_SpriteShader.Init("/assets/shaders/SpriteShader.vert", "/assets/shaders/SpriteShader.frag");
+        await this.m_QuadShader.Create("/assets/shaders/QuadShader.vert", "/assets/shaders/QuadShader.frag");
+        await this.m_SpriteShader.Create("/assets/shaders/SpriteShader.vert", "/assets/shaders/SpriteShader.frag");
     }
 
     public BeginScene(camera: OrthographicCamera)
@@ -91,7 +91,7 @@ export class Renderer2D
         var indexBuffer = new IndexBuffer(this.m_RenderCommand.GetWebGLContext());
         var vertexArray = new VertexArray(this.m_RenderCommand.GetWebGLContext());
 
-        vertexBuffer.CreateBuffer(vertices);
+        vertexBuffer.Create(vertices);
         indexBuffer.Create(indices, indices.length);
         var floatType = this.m_RenderCommand.GetWebGLContext().FLOAT;
         const positionElement = new BufferElement(floatType, "position", 2);
