@@ -50,6 +50,7 @@ async function main()
         webgl.canvas.height   // top
     );
     input.Initialize();
+
     async function GameLoop() 
     {
         //render
