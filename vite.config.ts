@@ -2,18 +2,18 @@ import { defineConfig } from 'vite';
 import path from 'path';
 
 export default defineConfig({
-  root: '.', // Look for index.html in the root directory
-  publicDir: './public', // Static assets folder
+  root: '.', 
+  publicDir: './public', 
   build: {
-    outDir: './dist', // Output directory
-    emptyOutDir: true, // Clear output directory before building
+    outDir: './dist', 
+    emptyOutDir: true, 
   },
   server: {
-    port: 3000, // Development server port
+    port: 3000, 
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'), // Optional: Create an alias for src/
+      '@': path.resolve(__dirname, './src'), 
     },
   },
 });

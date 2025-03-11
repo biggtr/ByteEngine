@@ -11,6 +11,7 @@ export class Shader
     {
       const {vertexShader, fragmentShader} = await this.ParseShader(vertexShaderPath, fragmentShaderPath);
       this.m_ShaderProgram = this.CreateProgram(vertexShader, fragmentShader) as WebGLProgram;
+      
 
     }
     public Bind()

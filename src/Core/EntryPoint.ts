@@ -10,21 +10,23 @@ import { Renderer2D } from "./Renderer/Renderer2D";
 import { RenderCommand } from "./Renderer/RenderCommand";
 import { OrthographicCamera } from "./Renderer/Cameras";
 import { Event, KeyPressedEvent } from "./Events/Events";
-import { CreateApplication } from "./Application";
 import { Input } from "./Input/Inputs";
+
 
 
 function handleInput(event: KeyPressedEvent): void
 {
     console.log(event)
 }
+
 async function main()
 {
+
+ 
     const input = new Input();
     const keyPressedEvent = input.GetKeyboadEvent();
     keyPressedEvent.Subscribe(handleInput);
     console.log("entry point ..")
-    var isRunning = true;
     const webglContext = new WebGLContext("glcanvas");
     const webgl = webglContext.GetWebGL();
     console.log(webgl.canvas.width, webgl.canvas.height);
@@ -50,8 +52,9 @@ async function main()
         webgl.canvas.height   // top
     );
     input.Initialize();
-
-    async function GameLoop() 
+    
+    
+    function GameLoop(): void 
     {
         //render
         renderer2D.SetClearColor(color);
