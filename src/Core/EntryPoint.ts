@@ -5,6 +5,8 @@ import { Input } from "./Input/Inputs";
 import { TestGame } from "@/TestGame/game";
 import { EngineComponents } from "./Application";
 import { OrthographicCamera } from "./Renderer/Cameras";
+import { ShaderHandler } from "./ResourceManagement/ResourceHandlers/ResourceHandler";
+import { ResourceManager } from "./ResourceManagement/ResourceManager";
 
 
 async function main()
@@ -24,6 +26,10 @@ async function main()
     await renderer2D.Init();
     
     const camera2D = new OrthographicCamera(0, webgl.canvas.width, 0, webgl.canvas.height); // will add it to the scene in future
+    
+    //resouceManager
+    const shaderHandler = new ShaderHandler(webgl)
+    const resourceManager = new ResourceManager();
 
     let app = new TestGame();
     app.Init({ renderer2D: renderer2D, inputSystem: input, camera: camera2D});

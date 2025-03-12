@@ -1,3 +1,8 @@
+export interface SHADER_SOURCE
+{
+    VERTEX: string;
+    FRAGMENT: string;
+}
 export class Shader
 {
     private m_ShaderProgram: WebGLProgram | null = null;
@@ -7,9 +12,10 @@ export class Shader
     {
       this.m_Webgl = webgl;
     }
-    public async Create(vertexShaderPath: string,fragmentShaderPath:string)
+    public Create(shaderSources: SHADER_SOURCE)
     {
-      const {vertexShader, fragmentShader} = await this.ParseShader(vertexShaderPath, fragmentShaderPath);
+      const vertexShader = this.CompileShader(shaderSources.VERTEX, this.m_Webgl.VERTEX_SHADER) as WebGLShader;
+      const fragmentShader = this.CompileShader(shaderSources.FRAGMENT, this.m_Webgl.FRAGMENT_SHADER) as WebGLShader;
       this.m_ShaderProgram = this.CreateProgram(vertexShader, fragmentShader) as WebGLProgram;
       
 
@@ -79,27 +85,5 @@ export class Shader
       console.log(this.m_Webgl.getProgramInfoLog(program));
       this.m_Webgl.deleteProgram(program);
       return null;
-    }
-
-    private async LoadShaderSources(shaderPath: string): Promise<string> 
-    {
-        try {
-            const response = await fetch(shaderPath);
-            if (!response.ok) {
-                throw new Error(`Error reading shader file at ${shaderPath}: ${response.statusText}`);
-            }
-            return await response.text();
-        } catch (err) {
-            throw new Error(`Error reading shader file at ${shaderPath}: ${err}`);
-        }
-    }
-    private async ParseShader(vertexShaderPath: string, fragmentShaderPath: string) : Promise<{vertexShader: WebGLShader, fragmentShader: WebGLShader}>
-    {
-      const VertexShaderSource = await this.LoadShaderSources(vertexShaderPath);
-      const FragmentShaderSource = await this.LoadShaderSources(fragmentShaderPath);
-
-      const vertexShader =  this.CompileShader(VertexShaderSource, this.m_Webgl.VERTEX_SHADER) as WebGLShader;
-      const fragmentShader =  this.CompileShader(FragmentShaderSource, this.m_Webgl.FRAGMENT_SHADER) as WebGLShader;
-      return {vertexShader, fragmentShader};
     }
 }

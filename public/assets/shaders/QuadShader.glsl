@@ -1,3 +1,5 @@
+#Vertex
+
 #version 300 es
 precision mediump float;
 
@@ -6,6 +8,7 @@ layout(location = 1) in vec2 a_texCoord;
 
 uniform mat3 u_Model;
 uniform mat3 u_ViewProjection;
+
 out vec2 v_texCoord;
 
 void main() {
@@ -18,3 +21,16 @@ void main() {
     v_texCoord = a_texCoord;
 }
 
+#Fragment
+
+#version 300 es
+precision highp float;
+ 
+ 
+in vec2 v_texCoord;
+ 
+out vec4 outColor;
+ 
+void main() {
+   outColor = vec4(1.0,0.0,0.0,1.0);
+}
