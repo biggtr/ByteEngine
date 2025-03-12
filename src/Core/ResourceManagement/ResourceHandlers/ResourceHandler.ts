@@ -4,8 +4,8 @@ import readline from "readline"
 export interface ResourceHandler<T>
 {
     Load(name: string, path: string): Promise<void>;
-    Get(path: string): T;
-    UnLoad(path: string): void;
+    Get(name: string): T;
+    UnLoad(name: string): void;
 }
 
 export class ShaderHandler implements ResourceHandler<Shader>
@@ -18,7 +18,7 @@ export class ShaderHandler implements ResourceHandler<Shader>
     }
     async Load(shaderName: string, shaderPath: string): Promise<void>
     {
-        const shaderSources = await this.loadShaderFromFile(shaderPath);
+        const shaderSources = await this.LoadShaderFromFile(shaderPath);
         const newShader = new Shader(this.m_WebGL);
         newShader.Create(shaderSources);
         this.m_Shaders.set(shaderName, newShader);
@@ -26,53 +26,57 @@ export class ShaderHandler implements ResourceHandler<Shader>
     }
     Get(shaderName: string): Shader
     {
-        return this.m_Shaders.get(shaderName) as Shader;
+        const shader = this.m_Shaders.get(shaderName);
+        if (!shader) {
+            throw new Error(`Shader "${shaderName}" not found`);
+        }
+        return shader;
     }
     UnLoad(shaderName: string): void
     {
-
+        const shader = this.m_Shaders.get(shaderName);
+        if (shader) 
+        {
+            shader.UnBind();
+            this.m_Shaders.delete(shaderName);
+        }
     }
 
-    private async loadShaderFromFile(shaderPath: string): Promise<SHADER_SOURCE> {
-        return new Promise((resolve, reject) => {
-            var shaderSources: SHADER_SOURCE = {
-                VERTEX: '',
-                FRAGMENT: ''
-            };
+    private async LoadShaderFromFile(shaderPath: string): Promise<SHADER_SOURCE>
+    {
+        const response = await fetch(shaderPath);
+        const content = await response.text();
+        return this.ParseShaderContent(content);
+    }
 
-            let vertexFlag = false;
-            let fragmentFlag = false;
-            
-            const fileStream = fs.createReadStream(shaderPath);
-            const rl = readline.createInterface({input: fileStream, crlfDelay: Infinity});
-            
-            rl.on("line", (line) => {
-                if(line === "#Vertex") {
-                    vertexFlag = true;
-                    fragmentFlag = false;
-                    return; 
-                }
-                if(line === "#Fragment") {
-                    fragmentFlag = true;
-                    vertexFlag = false;
-                    return;
-                }
-                
-                if(vertexFlag) {
-                    shaderSources.VERTEX += line + '\n';
-                }
-                if(fragmentFlag) {
-                    shaderSources.FRAGMENT += line + '\n';
-                }
-            });
-            
-            rl.on("close", () => {
-                resolve(shaderSources);
-            });
-            
-            rl.on("error", (err) => {
-                reject(err);
-            });
+
+    private ParseShaderContent(content: string): SHADER_SOURCE 
+    {
+
+        let vertex = "";
+
+        let fragment = "";
+        let current: "vertex" | "fragment" | null = null;
+
+        content.split('\n').forEach(line => {
+            if(line.includes('#Vertex'))
+            {
+                current = 'vertex';
+                return;
+            }
+
+        
+          
+            else if(line.includes('#Fragment'))
+            {
+                current = 'fragment';
+                return; 
+            }
+            else if(current === 'vertex') vertex += line + '\n';
+            else if(current === 'fragment') fragment += line + '\n';
         });
-    }
+
+        return { VERTEX: vertex, FRAGMENT: fragment };
+  }
 }
+            

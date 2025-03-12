@@ -5,14 +5,15 @@ import { RendererAPI } from "./Renderer/RendererAPI";
 import { WebGLContext } from "./Renderer/WebGLContext";
 import { timeStamp } from "console";
 import { OrthographicCamera } from "./Renderer/Cameras";
+import { ResourceManager } from "./ResourceManagement/ResourceManager";
 
 const FIXED_TIME_STEP: number = 1/60;
 export interface EngineComponents
 {
     renderer2D?: Renderer2D;
     inputSystem?: Input;
-    camera?: OrthographicCamera
-
+    camera?: OrthographicCamera;
+    resourceManager?: ResourceManager;
 
 }
 export abstract class Application 
@@ -28,9 +29,9 @@ export abstract class Application
         this.m_IsRunning = false;
     }
 
-    public Init(engineComponents: EngineComponents): void 
+    public async Init(engineComponents: EngineComponents): Promise<void> 
     {
-        this.OnInit(engineComponents);
+        await this.OnInit(engineComponents);
     }
 
     // GameLoop

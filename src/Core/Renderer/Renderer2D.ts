@@ -8,6 +8,8 @@ import { BufferElement, BufferLayout } from "./Buffers";
 import { Vector3, Vector4 } from "../Math/Vectors";
 import { RendererAPI } from "./RendererAPI";
 import { Texture } from "./Texture";
+import { ShaderHandler } from "../ResourceManagement/ResourceHandlers/ResourceHandler";
+import { setPriority } from "os";
 
 export class Renderer2D
 {
@@ -15,19 +17,18 @@ export class Renderer2D
     private m_OrthoCamera: OrthographicCamera | null = null;
 
     private m_QuadVAO: VertexArray | null = null;
-    private m_QuadShader: Shader;
-    private m_SpriteShader: Shader;
+    private m_QuadShader!: Shader;
+    private m_SpriteShader!: Shader;
     
     constructor(rendererAPI: RendererAPI)
     {
         this.m_RenderCommand = new RenderCommand(rendererAPI);
-        this.m_QuadShader = new Shader(this.m_RenderCommand.GetWebGLContext());
-        this.m_SpriteShader = new Shader(this.m_RenderCommand.GetWebGLContext());
     }
-    async Init()
+    Init(Shaders: {quadShader: Shader, spriteShader: Shader})
     {
-        await this.m_QuadShader.Create("/assets/shaders/QuadShader.vert", "/assets/shaders/QuadShader.frag");
-        await this.m_SpriteShader.Create("/assets/shaders/SpriteShader.vert", "/assets/shaders/SpriteShader.frag");
+        this.m_QuadShader = Shaders.quadShader;
+        this.m_SpriteShader = Shaders.spriteShader; 
+        this.m_QuadVAO = this.CreateQuadVAO();
     }
 
     public BeginScene(camera: OrthographicCamera)
@@ -48,6 +49,10 @@ export class Renderer2D
     }
     public DrawQuad(position: Vector3, size: Vector3, color: Vector4): void
     {
+        if (!this.m_QuadShader) 
+        {
+            throw new Error("Quad shader not initialized!");
+        }
         var modelMatrix = Matrix3.Translate(position.x, position.y).Multiply(Matrix3.Scale(size.x, size.y));
         this.m_QuadShader.Bind();
         const viewProjection = this.m_OrthoCamera?.GetViewProjectionMatrix().GetAll();

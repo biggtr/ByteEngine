@@ -24,10 +24,12 @@ export class Shader
     {
       this.m_Webgl.useProgram(this.m_ShaderProgram);
     }
+
     public UnBind()
     {
       this.m_Webgl.deleteProgram(this.m_ShaderProgram);
     }
+
     public GetAttributeLocation(attributeName: string) : GLint
     {
       return this.m_Webgl.getAttribLocation(this.m_ShaderProgram as WebGLProgram, attributeName);

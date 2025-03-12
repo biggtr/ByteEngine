@@ -6,6 +6,7 @@ import { WebGLContext } from "@/Core/Renderer/WebGLContext";
 import { Vector3 } from "@/Core/Math/Vectors";
 import { OrthographicCamera } from "@/Core/Renderer/Cameras";
 import { Input } from "@/Core/Input/Inputs";
+import { HANDLER_TYPE, ResourceManager } from "@/Core/ResourceManagement/ResourceManager";
 
 
 
@@ -15,18 +16,30 @@ export class TestGame extends Application
     private m_Renderer2D!: Renderer2D;
     private m_Input!: Input;
     private m_Camera2D!: OrthographicCamera;
+    private m_ResourceManager!: ResourceManager;
     private position: Vector3 = new Vector3(0,200,1);
     private size = new Vector3(200, 200, 1);
 
-    protected OnInit(engineComponents: EngineComponents): void  
+    protected async OnInit(engineComponents: EngineComponents): Promise<void>
     {
-        if(!engineComponents.renderer2D || !engineComponents.inputSystem || !engineComponents.camera)
+        if(!engineComponents.renderer2D || !engineComponents.inputSystem || !engineComponents.camera || !engineComponents.resourceManager)
         {
             throw new Error("EngineComponents not initialized properly..");
         }
         this.m_Renderer2D = engineComponents.renderer2D;
         this.m_Input = engineComponents.inputSystem;
         this.m_Camera2D = engineComponents.camera;
+
+        this.m_ResourceManager = engineComponents.resourceManager;
+        const shaderManager = this.m_ResourceManager.GetHandler(HANDLER_TYPE.SHADER);
+        await shaderManager.Load("Quad", "/assets/shaders/QuadShader.glsl");
+        await shaderManager.Load("Sprite", "/assets/shaders/SpriteShader.glsl");
+        await this.m_Renderer2D.Init(
+            {
+                quadShader: shaderManager.Get("Quad"),
+                spriteShader: shaderManager.Get("Sprite")
+            }
+        )
     }
 
     protected OnRender(): void

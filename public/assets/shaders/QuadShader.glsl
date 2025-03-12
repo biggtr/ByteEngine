@@ -1,5 +1,4 @@
 #Vertex
-
 #version 300 es
 precision mediump float;
 
@@ -22,7 +21,6 @@ void main() {
 }
 
 #Fragment
-
 #version 300 es
 precision highp float;
  
