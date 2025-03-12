@@ -12,60 +12,58 @@ import { Input } from "@/Core/Input/Inputs";
 //Ugly Class Will remove it in future just for testing 
 export class TestGame extends Application
 {
-    private m_Renderer2D: Renderer2D | null = null;
-    private m_WebGL: WebGLContext | null = null; 
-    private input: Input| null = null;
+    private m_Renderer2D!: Renderer2D;
+    private m_Input!: Input;
+    private m_Camera2D!: OrthographicCamera;
     private position: Vector3 = new Vector3(0,200,1);
     private size = new Vector3(200, 200, 1);
-    private camera: OrthographicCamera | null = null;
+
     protected OnInit(engineComponents: EngineComponents): void  
     {
-        this.m_Renderer2D = engineComponents.renderer2D as Renderer2D;
-        this.m_WebGL = engineComponents.webGL as WebGLContext;
-        this.input = engineComponents.inputSystem as Input;
-        var webgl = this.m_WebGL.GetWebGL();
-        this.camera = new OrthographicCamera(
-            0,  // left
-            webgl.canvas.width,   // right
-            0, // bottom
-            webgl.canvas.height   // top
-        );
+        if(!engineComponents.renderer2D || !engineComponents.inputSystem || !engineComponents.camera)
+        {
+            throw new Error("EngineComponents not initialized properly..");
+        }
+        this.m_Renderer2D = engineComponents.renderer2D;
+        this.m_Input = engineComponents.inputSystem;
+        this.m_Camera2D = engineComponents.camera;
     }
+
     protected OnRender(): void
     {
 
         let color = new Vector4(1.0,0,0,0);
         let quadColor = new Vector4(0.4,0.7,0,0);
-        this.m_Renderer2D?.SetClearColor(color);
-        this.m_Renderer2D?.Clear();
-        this.m_Renderer2D?.BeginScene(this.camera as OrthographicCamera);
-        this.m_Renderer2D?.DrawQuad(this.position, this.size, quadColor);
+        this.m_Renderer2D.SetClearColor(color);
+        this.m_Renderer2D.Clear();
+        this.m_Renderer2D.BeginScene(this.m_Camera2D as OrthographicCamera);
+        this.m_Renderer2D.DrawQuad(this.position, this.size, quadColor);
     }
+
     protected OnUpdate(deltaTime: number): void
     {
 
         var movement = new Vector3(0,0,0);
-        const prevCameraPosition = this.camera?.GetPosition();
-        const moveSpeed = 4;
-        if (this.input?.IsKeyPressed("KeyW"))
+        const prevCameraPosition = this.m_Camera2D?.GetPosition();
+        const moveSpeed = 100;
+        if (this.m_Input.IsKeyPressed("KeyW"))
         {
-          movement.y += moveSpeed; 
-          console.log("pressed w");
+          movement.y += moveSpeed * deltaTime;
         }
-        if (this.input?.IsKeyPressed("KeyS"))
+        if (this.m_Input.IsKeyPressed("KeyS"))
         {
-          movement.y -= moveSpeed; 
+          movement.y -= moveSpeed * deltaTime; 
         }
-        if (this.input?.IsKeyPressed("KeyA")) 
+        if (this.m_Input.IsKeyPressed("KeyA")) 
         {
-          movement.x -= moveSpeed; 
+          movement.x -= moveSpeed * deltaTime; 
         }
-        if (this.input?.IsKeyPressed("KeyD")) 
+        if (this.m_Input.IsKeyPressed("KeyD")) 
         {
-          movement.x += moveSpeed; 
+          movement.x += moveSpeed * deltaTime; 
         }
         const newPosition = Vector3.Add(movement, prevCameraPosition as Vector3);
         // Update the camera position
-        this.camera?.SetPosition(newPosition);
+        this.m_Camera2D.SetPosition(newPosition);
     }
 }

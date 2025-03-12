@@ -4,14 +4,16 @@ import { Renderer2D } from "./Renderer/Renderer2D";
 import { RendererAPI } from "./Renderer/RendererAPI";
 import { WebGLContext } from "./Renderer/WebGLContext";
 import { timeStamp } from "console";
+import { OrthographicCamera } from "./Renderer/Cameras";
 
 const FIXED_TIME_STEP: number = 1/60;
 export interface EngineComponents
 {
-    webGL?: WebGLContext;
-    rendererAPI?: RendererAPI;
     renderer2D?: Renderer2D;
     inputSystem?: Input;
+    camera?: OrthographicCamera
+
+
 }
 export abstract class Application 
 {
