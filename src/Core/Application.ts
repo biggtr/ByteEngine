@@ -34,9 +34,9 @@ export abstract class Application
         await this.OnInit(engineComponents);
     }
 
-    // GameLoop
     public Run()
     {
+         
         this.m_LastTime = performance.now();  //get the time after the first frame is drawn 
         this.m_IsRunning = true;
 

@@ -9,9 +9,9 @@ export class Texture
         this.m_texture = this.m_Webgl.createTexture();
     }
       
-    public async Create(filePath: string)
+    public async Create(textureImage: HTMLImageElement)
     {
-        const image = await this.LoadFromImage(filePath);
+        const image = textureImage;
         this.m_Webgl.bindTexture(this.m_Webgl.TEXTURE_2D, this.m_texture);
         this.m_Webgl.texParameteri(this.m_Webgl.TEXTURE_2D, this.m_Webgl.TEXTURE_MIN_FILTER, this.m_Webgl.LINEAR); 
         this.m_Webgl.texParameteri(this.m_Webgl.TEXTURE_2D, this.m_Webgl.TEXTURE_MAG_FILTER, this.m_Webgl.LINEAR); 

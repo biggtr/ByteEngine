@@ -31,6 +31,10 @@ export class TestGame extends Application
         this.m_Camera2D = engineComponents.camera;
 
         this.m_ResourceManager = engineComponents.resourceManager;
+
+        const textureManager = this.m_ResourceManager.GetHandler(HANDLER_TYPE.TEXTURE);
+        await textureManager.Load("Lava", "/assets/textures/lavaTexture.jpg");
+
         const shaderManager = this.m_ResourceManager.GetHandler(HANDLER_TYPE.SHADER);
         await shaderManager.Load("Quad", "/assets/shaders/QuadShader.glsl");
         await shaderManager.Load("Sprite", "/assets/shaders/SpriteShader.glsl");
@@ -44,21 +48,21 @@ export class TestGame extends Application
 
     protected OnRender(): void
     {
-
         let color = new Vector4(1.0,0,0,0);
         let quadColor = new Vector4(0.4,0.7,0,0);
         this.m_Renderer2D.SetClearColor(color);
         this.m_Renderer2D.Clear();
         this.m_Renderer2D.BeginScene(this.m_Camera2D as OrthographicCamera);
         this.m_Renderer2D.DrawQuad(this.position, this.size, quadColor);
+        this.m_Renderer2D.DrawSprite(new Vector3(300,0,1), this.size, color, this.m_ResourceManager.GetHandler(HANDLER_TYPE.TEXTURE).Get("Lava"));
     }
 
     protected OnUpdate(deltaTime: number): void
     {
 
         var movement = new Vector3(0,0,0);
-        const prevCameraPosition = this.m_Camera2D?.GetPosition();
-        const moveSpeed = 100;
+        const prevCameraPosition: Vector3 = this.m_Camera2D.GetPosition();
+        const moveSpeed = 600;
         if (this.m_Input.IsKeyPressed("KeyW"))
         {
           movement.y += moveSpeed * deltaTime;
@@ -75,8 +79,8 @@ export class TestGame extends Application
         {
           movement.x += moveSpeed * deltaTime; 
         }
-        const newPosition = Vector3.Add(movement, prevCameraPosition as Vector3);
-        // Update the camera position
+        const newPosition = Vector3.Add(movement, prevCameraPosition);
+
         this.m_Camera2D.SetPosition(newPosition);
     }
 }

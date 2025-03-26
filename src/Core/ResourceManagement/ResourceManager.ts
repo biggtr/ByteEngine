@@ -1,7 +1,6 @@
 import { Shader } from "../Renderer/Shader"
 import { Texture } from "../Renderer/Texture";
-import { ResourceHandler } from "./ResourceHandlers/ResourceHandler";
-
+import { ResourceHandler } from "./ResourceHandlers/ResourceHandlers";
 export enum HANDLER_TYPE
 {
     SHADER, TEXTURE

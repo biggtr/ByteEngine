@@ -8,7 +8,6 @@ import { BufferElement, BufferLayout } from "./Buffers";
 import { Vector3, Vector4 } from "../Math/Vectors";
 import { RendererAPI } from "./RendererAPI";
 import { Texture } from "./Texture";
-import { ShaderHandler } from "../ResourceManagement/ResourceHandlers/ResourceHandler";
 import { setPriority } from "os";
 
 export class Renderer2D
