@@ -23,7 +23,7 @@ async function main()
     const rendererAPI = new RendererAPI(webgl);
     var renderer2D = new Renderer2D(rendererAPI);
     
-    const camera2D = new OrthographicCamera(0, webgl.canvas.width, 0, webgl.canvas.height); // will add it to the scene in future
+    const camera2D = new OrthographicCamera(0, webgl.canvas.width, 0, webgl.canvas.height); 
     
     //resouceManager
     const shaderHandler = new ShaderHandler(webgl)
