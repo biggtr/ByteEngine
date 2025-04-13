@@ -1,19 +1,21 @@
-import { WebGLContext } from "./Renderer/WebGLContext"; 
-import { RendererAPI } from "./Renderer/RendererAPI";
-import { Renderer2D } from "./Renderer/Renderer2D";
-import { Input } from "./Input/Inputs";
+import { Input } from "@/Input/Inputs";
+import { OrthographicCamera } from "@/Renderer/Cameras";
+import { Renderer2D } from "@/Renderer/Renderer2D";
+import { RendererAPI } from "@/Renderer/RendererAPI";
+import { WebGLContext } from "@/Renderer/WebGLContext";
+import { ShaderHandler, TextureHandler } from "@/ResourceManagement/ResourceHandlers/ResourceHandlers";
+import { HANDLER_TYPE, ResourceManager } from "@/ResourceManagement/ResourceManager";
 import { TestGame } from "@/TestGame/game";
-import { EngineComponents } from "./Application";
-import { OrthographicCamera } from "./Renderer/Cameras";
-import { HANDLER_TYPE, ResourceManager } from "./ResourceManagement/ResourceManager";
-import { ShaderHandler, TextureHandler } from "./ResourceManagement/ResourceHandlers/ResourceHandlers";
 
-async function main()
+async function main() 
 {
 
- 
+
     const input = new Input();
     input.Initialize();
+
+
+
 
     console.log("entry point ..")
     const webglContext = new WebGLContext("glcanvas");
@@ -22,9 +24,9 @@ async function main()
 
     const rendererAPI = new RendererAPI(webgl);
     var renderer2D = new Renderer2D(rendererAPI);
-    
-    const camera2D = new OrthographicCamera(0, webgl.canvas.width, 0, webgl.canvas.height); 
-    
+
+    const camera2D = new OrthographicCamera(0, webgl.canvas.width, 0, webgl.canvas.height);
+
     //resouceManager
     const shaderHandler = new ShaderHandler(webgl)
     const textureHandler = new TextureHandler(webgl);
@@ -33,9 +35,9 @@ async function main()
     resourceManager.RegisterHandler(HANDLER_TYPE.TEXTURE, textureHandler);
 
     let app = new TestGame();
-    await app.Init({ renderer2D: renderer2D, inputSystem: input, camera: camera2D, resourceManager: resourceManager});
+    await app.Init({ renderer2D: renderer2D, inputSystem: input, camera: camera2D, resourceManager: resourceManager });
     app.Run();
-    
-    
+
+
 }
 main()
