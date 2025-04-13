@@ -1,18 +1,22 @@
+import { Component } from "./Components";
+
 export enum ENTITY_TYPE
 {
 
 }
 
 
-export abstract class Entity 
+export class Entity 
 {
+    private m_Components: Set<Component> = new Set<Component>();
     private m_Type: ENTITY_TYPE;
     private m_IsAlive: boolean;
     private m_ID!: number;
     
-    constructor(entityType: ENTITY_TYPE)
+    constructor(entityType: ENTITY_TYPE, id: number)
     {
         this.m_Type = entityType;
+        this.m_ID = id;
         this.m_IsAlive = true;
     }
     
@@ -30,6 +34,10 @@ export abstract class Entity
         return this.m_Type;
     }
 
+    public AddComponents(newComponent: Component)
+    {
+        this.m_Components.add(newComponent);
+    }
 
     public IsAlive(): boolean
     {
