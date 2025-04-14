@@ -53,7 +53,7 @@ export class Vector3
     x: number;
     y: number;
     z: number;
-    constructor(x: number, y: number, z: number)
+    constructor(x: number = 1, y: number = 1, z: number = 1)
     {
         this.x = x;
         this.y = y;

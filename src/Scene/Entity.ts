@@ -2,7 +2,7 @@ import { Component } from "./Components";
 
 export enum ENTITY_TYPE
 {
-
+    ENEMY, PLAYER, BULLET
 }
 
 
@@ -50,3 +50,4 @@ export class Entity
 
     
 }
+

@@ -1,12 +1,9 @@
 import { Application, EngineComponents } from "@/Core/Application";
-import { Renderer2D } from "@/Core/Renderer/Renderer2D";
-import { Texture } from "@/Core/Renderer/Texture";
-import { Vector4 } from "@/Core/Math/Vectors";
-import { WebGLContext } from "@/Core/Renderer/WebGLContext";
-import { Vector3 } from "@/Core/Math/Vectors";
-import { OrthographicCamera } from "@/Core/Renderer/Cameras";
-import { Input } from "@/Core/Input/Inputs";
-import { HANDLER_TYPE, ResourceManager } from "@/Core/ResourceManagement/ResourceManager";
+import { Input } from "@/Input/Inputs";
+import { Vector3, Vector4 } from "@/Math/Vectors";
+import { OrthographicCamera } from "@/Renderer/Cameras";
+import { Renderer2D } from "@/Renderer/Renderer2D";
+import { HANDLER_TYPE, ResourceManager } from "@/ResourceManagement/ResourceManager";
 
 
 

@@ -1,5 +1,5 @@
-import { Shader, SHADER_SOURCE} from "@/Core/Renderer/Shader";
-import { Texture } from "@/Core/Renderer/Texture";
+import { Shader, SHADER_SOURCE } from "@/Renderer/Shader";
+import { Texture } from "@/Renderer/Texture";
 import fs from "fs"
 import readline from "readline"
 export interface ResourceHandler<T>

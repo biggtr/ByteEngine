@@ -19,6 +19,11 @@ class EntityManager
         return newEntity;
     }
 
+    public GetEntities(): Entity[]
+    {
+        return this.m_Entities;
+    }
+    
     public Update()
     {
         //Update the m_Entities each frame when calling this method that adds entities in queue to m_Entities
