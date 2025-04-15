@@ -1,6 +1,6 @@
 import { Entity, ENTITY_TYPE } from "./Entity";
 
-class EntityManager
+export class EntityManager
 {
     private m_EntitiesQueue: Entity[] = [];
     private m_Entities: Entity[] = [];

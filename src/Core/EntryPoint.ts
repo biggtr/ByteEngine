@@ -3,8 +3,9 @@ import { OrthographicCamera } from "@/Renderer/Cameras";
 import { Renderer2D } from "@/Renderer/Renderer2D";
 import { RendererAPI } from "@/Renderer/RendererAPI";
 import { WebGLContext } from "@/Renderer/WebGLContext";
-import { ShaderHandler, TextureHandler } from "@/ResourceManagement/ResourceHandlers/ResourceHandlers";
+import { ShaderHandler, TextureHandler } from "@/ResourceManagement/ResourceHandlers";
 import { HANDLER_TYPE, ResourceManager } from "@/ResourceManagement/ResourceManager";
+import { EntityManager } from "@/Scene/EntityManager";
 import { TestGame } from "@/TestGame/game";
 
 async function main() 
@@ -34,8 +35,15 @@ async function main()
     resourceManager.RegisterHandler(HANDLER_TYPE.SHADER, shaderHandler);
     resourceManager.RegisterHandler(HANDLER_TYPE.TEXTURE, textureHandler);
 
+    //EntityManager
+    const entityManager = new EntityManager();
+
     let app = new TestGame();
-    await app.Init({ renderer2D: renderer2D, inputSystem: input, camera: camera2D, resourceManager: resourceManager });
+    await app.Init({ Renderer2D: renderer2D,
+                   InputSystem: input,
+                   OrthoCamera: camera2D,
+                   ResourceManager: resourceManager,
+                   EntityManager: entityManager});
     app.Run();
 
 

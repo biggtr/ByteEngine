@@ -10,6 +10,22 @@ import { RendererAPI } from "./RendererAPI";
 import { Texture } from "./Texture";
 import { setPriority } from "os";
 
+export class Sprite
+{
+    public Position: Vector3;
+    public Size: Vector3;
+    public Color: Vector4;
+    private m_Texture: Texture
+    private m_UVs: number[];
+    constructor(texture: Texture, position: Vector3, size: Vector3, color: Vector4) 
+    {
+        this.m_Texture = texture;
+        this.Position = position;
+        this.Size = size;
+        this.Color = color;
+        this.m_UVs = [0, 0, 1, 1]; 
+    }
+}
 export class Renderer2D
 {
     private m_RenderCommand: RenderCommand; 

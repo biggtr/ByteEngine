@@ -1,19 +1,18 @@
+import { Input } from "@/Input/Inputs";
+import { OrthographicCamera } from "@/Renderer/Cameras";
+import { Renderer2D } from "@/Renderer/Renderer2D";
+import { ResourceManager } from "@/ResourceManagement/ResourceManager";
+import { EntityManager } from "@/Scene/EntityManager";
 import { markAsUntransferable } from "worker_threads";
-import { Input } from "./Input/Inputs";
-import { Renderer2D } from "./Renderer/Renderer2D";
-import { RendererAPI } from "./Renderer/RendererAPI";
-import { WebGLContext } from "./Renderer/WebGLContext";
-import { timeStamp } from "console";
-import { OrthographicCamera } from "./Renderer/Cameras";
-import { ResourceManager } from "./ResourceManagement/ResourceManager";
 
 const FIXED_TIME_STEP: number = 1/60;
 export interface EngineComponents
 {
-    renderer2D?: Renderer2D;
-    inputSystem?: Input;
-    camera?: OrthographicCamera;
-    resourceManager?: ResourceManager;
+    Renderer2D?: Renderer2D;
+    InputSystem?: Input;
+    OrthoCamera?: OrthographicCamera;
+    ResourceManager?: ResourceManager;
+    EntityManager?: EntityManager;
 
 }
 export abstract class Application 
