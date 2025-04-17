@@ -15,15 +15,15 @@ export class Sprite
     public Position: Vector3;
     public Size: Vector3;
     public Color: Vector4;
-    private m_Texture: Texture
-    private m_UVs: number[];
-    constructor(texture: Texture, position: Vector3, size: Vector3, color: Vector4) 
+    public Texture: Texture
+    public UVs: Float32Array;
+    constructor(texture: Texture, position: Vector3 = new Vector3(1,1,1), size: Vector3 = new Vector3(1,1,1), color: Vector4= new Vector4(0,0,0,0)) 
     {
-        this.m_Texture = texture;
+        this.Texture = texture;
         this.Position = position;
         this.Size = size;
         this.Color = color;
-        this.m_UVs = [0, 0, 1, 1]; 
+        this.UVs = new Float32Array([0,1, 0, 0, 1, 0, 1, 1]); 
     }
 }
 export class Renderer2D
@@ -78,17 +78,29 @@ export class Renderer2D
         this.m_RenderCommand.DrawIndexed(quadVAO);
     }
 
-    public async DrawSprite(position: Vector3, size: Vector3, color: Vector4, texture: Texture)
+    public async DrawSprite(position: Vector3, size: Vector3, color: Vector4, sprite: Sprite)
     {
         
         var modelMatrix = Matrix3.Translate(position.x, position.y).Multiply(Matrix3.Scale(size.x, size.y));
         this.m_SpriteShader.Bind();
+        const texture = sprite.Texture;
         texture.Bind();
         const viewProjection = this.m_OrthoCamera?.GetViewProjectionMatrix().GetAll();
         this.m_SpriteShader.SetMat3("u_ViewProjection", viewProjection as Float32Array)
         this.m_SpriteShader.SetMat3("u_Model", modelMatrix.GetAll());
         this.m_SpriteShader.SetUniform1i("u_Image", 0);
         var quadVAO = this.GetQuadVAO();
+        const uvBuffer = quadVAO.GetVertexBuffers()[0]
+
+        const vertexStride = 4 * Float32Array.BYTES_PER_ELEMENT;
+        const uvOffset = 2 * Float32Array.BYTES_PER_ELEMENT;
+        for(let i = 0; i < 4; i++)
+        {
+            const vertexOffset = i * vertexStride;
+            const vertexUVOffset = vertexOffset + uvOffset; 
+
+            uvBuffer.UpdateSubData(new Float32Array([sprite.UVs[i*2], sprite.UVs[i*2+1]]), vertexUVOffset) 
+        }
         quadVAO.Bind();
         this.m_RenderCommand.DrawIndexed(quadVAO);
     }

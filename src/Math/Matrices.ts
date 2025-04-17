@@ -54,8 +54,7 @@ export class Matrix4
                                this.m_Data[4]  * param.m_Data[1] +
                                this.m_Data[8]  * param.m_Data[2] +
                                this.m_Data[12] * param.m_Data[3];
-
-            result.m_Data[0] = this.m_Data[1]  * param.m_Data[0] +
+result.m_Data[0] = this.m_Data[1]  * param.m_Data[0] +
                                this.m_Data[5]  * param.m_Data[1] +
                                this.m_Data[9]  * param.m_Data[2] +
                                this.m_Data[13] * param.m_Data[3];

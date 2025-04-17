@@ -37,6 +37,11 @@ export class VertexArray
         this.m_VertexBuffers.push(vertexBuffer); 
 
     }
+    
+    public GetVertexBuffers(): VertexBuffer[]
+    {
+        return this.m_VertexBuffers;
+    }
 
     public SetIndexBuffer(indexBuffer: IndexBuffer)
     {

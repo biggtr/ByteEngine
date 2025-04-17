@@ -82,6 +82,11 @@ export class VertexBuffer
         this.m_Webgl.bufferData(this.m_Webgl.ARRAY_BUFFER, data, this.m_Webgl.STATIC_DRAW);
     }
 
+    public UpdateSubData(data: Float32Array, offset: number)
+    {
+        this.m_Webgl.bindBuffer(this.m_Webgl.ARRAY_BUFFER, this.m_Buffer);
+        this.m_Webgl.bufferSubData(this.m_Webgl.ARRAY_BUFFER, offset, data);
+    }
     public SetLayout(bufferLayout: BufferLayout)
     {
         this.m_BufferLayout = bufferLayout;

@@ -2,7 +2,7 @@ import { Application, EngineComponents } from "@/Core/Application";
 import { Input } from "@/Input/Inputs";
 import { Vector3, Vector4 } from "@/Math/Vectors";
 import { OrthographicCamera } from "@/Renderer/Cameras";
-import { Renderer2D } from "@/Renderer/Renderer2D";
+import { Renderer2D, Sprite } from "@/Renderer/Renderer2D";
 import { HANDLER_TYPE, ResourceManager } from "@/ResourceManagement/ResourceManager";
 
 
@@ -14,8 +14,9 @@ export class TestGame extends Application
     private m_Input!: Input;
     private m_Camera2D!: OrthographicCamera;
     private m_ResourceManager!: ResourceManager;
-    private position: Vector3 = new Vector3(0,200,1);
-    private size = new Vector3(200, 200, 1);
+    private position: Vector3 = new Vector3(100,100,1);
+    private size = new Vector3(100, 100, 1);
+    private sprite!: Sprite;
 
     protected async OnInit(engineComponents: EngineComponents): Promise<void>
     {
@@ -41,14 +42,39 @@ export class TestGame extends Application
                 spriteShader: shaderManager.Get("Sprite")
             }
         )
+        const lavaTexture = this.m_ResourceManager.GetHandler(HANDLER_TYPE.TEXTURE).Get("Lava");
+        this.sprite = new Sprite(lavaTexture);
     }
 
     protected OnRender(): void
     {
+        this.m_Renderer2D.BeginScene(this.m_Camera2D);
+        this.m_Renderer2D.DrawSprite(this.position, this.size, new Vector4(1,0,0,1), this.sprite);
     }
 
     protected OnUpdate(deltaTime: number): void
     {
+        var movement = new Vector3(0,0,0);
+        const prevCameraPosition: Vector3 = this.m_Camera2D.GetPosition();
+        const moveSpeed = 600;
+        if (this.m_Input.IsKeyPressed("KeyW"))
+        {
+          movement.y += moveSpeed * deltaTime;
+        }
+        if (this.m_Input.IsKeyPressed("KeyS"))
+        {
+          movement.y -= moveSpeed * deltaTime; 
+        }
+        if (this.m_Input.IsKeyPressed("KeyA")) 
+        {
+          movement.x -= moveSpeed * deltaTime; 
+        }
+        if (this.m_Input.IsKeyPressed("KeyD")) 
+        {
+          movement.x += moveSpeed * deltaTime; 
+        }
+        const newPosition = Vector3.Add(movement, prevCameraPosition);
 
+        this.m_Camera2D.SetPosition(newPosition);
     }
 }

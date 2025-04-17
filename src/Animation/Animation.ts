@@ -66,19 +66,24 @@ class Animation
             
 
     }
-    public GetCurrentUVs(): number[] 
+    public GetCurrentUVs(): Float32Array 
     {
-        const column = this.m_Sprite.Size.x / this.m_FrameWidth;
-        const row = this.m_Sprite.Size.y / this.m_FrameHeight;
+        const column = Math.floor(this.m_Sprite.Size.x / this.m_FrameWidth);
+        const row = Math.floor(this.m_Sprite.Size.y / this.m_FrameHeight);
 
         const x = this.m_CurrentFrame % column;
-        const y = this.m_CurrentFrame / column;
+        const y = Math.floor(this.m_CurrentFrame / column);
 
+        //count for the flipped texture behaviour of opengl
+        const adjustedY = row - 1 - y;
+
+
+        //normalize uv coords to use them directly by my rendering system
         const u1 = x / column;
-        const v1 = y / column;
+        const v1 = adjustedY / row;
         const u2 = u1 + (1/column);
         const v2 = v1 + (1/row);
-        const UVs = [ u1, v2, u2, v2, u2, v1, u1, v1]
+        const UVs = new Float32Array([ u1, v2, u2, v2, u2, v1, u1, v1]);
         
         return UVs;
 
