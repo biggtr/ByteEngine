@@ -98,3 +98,44 @@ export class Vector3
         return new Vector3(this.x / this.m_Magnitude,this.y / this.m_Magnitude, this.z / this.m_Magnitude);
     }
 }
+export class Vector2
+{
+    m_Magnitude: number = 0;
+    x: number;
+    y: number;
+    constructor(x: number = 1, y: number = 1 )
+    {
+        this.x = x;
+        this.y = y;
+    }
+    
+    static Add(v1: Vector2, v2: Vector2): Vector2 {
+        return new Vector2(v1.x + v2.x, v1.y + v2.y);
+    }
+    static Subtract(v1: Vector2, v2: Vector2) 
+    {
+        return new Vector2(v1.x - v2.x, v1.y - v2.y );
+    }
+
+    static Dot(v1: Vector2, v2: Vector2): number
+    {
+        return (v1.x * v2.x + v1.y * v2.y);
+    }
+
+
+    Magnitude(): number 
+    {
+        this.m_Magnitude = Math.sqrt(this.x * this.x + this.y * this.y);
+        return this.m_Magnitude;
+    } 
+
+    Normalize(): Vector2
+    {
+
+        if(this.m_Magnitude === 0)
+        {
+            return new Vector2(0,0);
+        }
+        return new Vector2(this.x / this.m_Magnitude,this.y / this.m_Magnitude);
+    }
+}

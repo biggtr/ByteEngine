@@ -17,7 +17,7 @@ export class Sprite
     public Color: Vector4;
     public Texture: Texture
     public UVs: Float32Array;
-    constructor(texture: Texture, position: Vector3 = new Vector3(1,1,1), size: Vector3 = new Vector3(1,1,1), color: Vector4= new Vector4(0,0,0,0)) 
+    constructor(texture: Texture,size: Vector3 = new Vector3(1,1,1), position: Vector3 = new Vector3(1,1,1),  color: Vector4= new Vector4(0,0,0,0)) 
     {
         this.Texture = texture;
         this.Position = position;

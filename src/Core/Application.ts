@@ -12,8 +12,6 @@ export interface EngineComponents
     InputSystem?: Input;
     OrthoCamera?: OrthographicCamera;
     ResourceManager?: ResourceManager;
-    EntityManager?: EntityManager;
-
 }
 export abstract class Application 
 {

@@ -1,3 +1,4 @@
+import { Vector2, Vector3 } from "@/Math/Vectors";
 
 export class Event<T>
 {
@@ -19,7 +20,7 @@ export class Event<T>
     }
 }
 
-export class KeyPressedEvent
+export class BKeyboardEvent
 {
     public m_KeyCode: string;
     public m_Pressed: boolean;
@@ -31,4 +32,19 @@ export class KeyPressedEvent
 
 }
 
+
+export class BMouseEvent 
+{
+    public m_ButtonKey: number;
+    public m_Pressed: boolean;
+    public m_MousePosition: Vector2;
+
+    constructor(keyCode: number, pressed: boolean, mousePosition: Vector2)
+    {
+        this.m_ButtonKey = keyCode;
+        this.m_Pressed = pressed;
+        this.m_MousePosition = mousePosition;
+    }
+
+}
 

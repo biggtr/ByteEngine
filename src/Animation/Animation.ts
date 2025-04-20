@@ -87,7 +87,7 @@ export class Animation
         const v1 = adjustedY / row;
         const u2 = u1 + (1/column);
         const v2 = v1 + (1/row);
-        const UVs = new Float32Array([ u1, v2, u2, v2, u2, v1, u1, v1]);
+        const UVs = new Float32Array([ u1, v2, u1, v1, u2, v1, u2, v2]);
         
         // console.log(UVs)
         this.m_Sprite.UVs = UVs;

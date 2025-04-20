@@ -35,15 +35,13 @@ async function main()
     resourceManager.RegisterHandler(HANDLER_TYPE.SHADER, shaderHandler);
     resourceManager.RegisterHandler(HANDLER_TYPE.TEXTURE, textureHandler);
 
-    //EntityManager
-    const entityManager = new EntityManager();
 
     let app = new TestGame();
     await app.Init({ Renderer2D: renderer2D,
                    InputSystem: input,
                    OrthoCamera: camera2D,
                    ResourceManager: resourceManager,
-                   EntityManager: entityManager});
+                   });
     app.Run();
 
 
