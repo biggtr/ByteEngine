@@ -1,15 +1,18 @@
-export class Texture
+import { Texture } from "@/Renderer/Texture";
+
+export class WebGlTexture extends Texture
 {
 
     m_Webgl: WebGLRenderingContext;
     m_texture: WebGLTexture;
     constructor(webgl: WebGLRenderingContext)
     {
+        super();
         this.m_Webgl = webgl;
         this.m_texture = this.m_Webgl.createTexture();
     }
       
-    public async Create(textureImage: HTMLImageElement)
+    public async Init(textureImage: ImageBitmap): Promise<void>
     {
         const image = textureImage;
         this.m_Webgl.bindTexture(this.m_Webgl.TEXTURE_2D, this.m_texture);
@@ -21,36 +24,6 @@ export class Texture
         this.m_Webgl.texImage2D(this.m_Webgl.TEXTURE_2D, 0, this.m_Webgl.RGBA,this.m_Webgl.RGBA, this.m_Webgl.UNSIGNED_BYTE, image);
         this.m_Webgl.bindTexture(this.m_Webgl.TEXTURE_2D, null);
     }
-    // private async LoadFromImage(filePath: string): Promise<HTMLImageElement>
-    // {
-    //
-    //     try
-    //     {
-    //         const response = await fetch(filePath);
-    //         if(!response.ok)
-    //         {
-    //             throw new Error("Failed To Load Texture..!");
-    //         }
-    //         const blob = await response.blob(); 
-    //         const objectURL = URL.createObjectURL(blob);
-    //
-    //         const image = new Image()
-    //         await new Promise((resolve, reject) =>{
-    //
-    //             image.onload = resolve;
-    //             image.onerror = reject;
-    //             image.src = objectURL;
-    //         });
-    //
-    //         return image;
-    //
-    //     }
-    //     catch(error)
-    //     {
-    //         throw new Error("Failed To Load Texture..!");
-    //     }
-    //
-    // }
 
     public Bind(slot: GLenum = 0)
     {

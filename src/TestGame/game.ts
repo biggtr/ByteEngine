@@ -5,6 +5,7 @@ import { OrthographicCamera } from "@/Renderer/Cameras";
 import { Renderer2D, Sprite } from "@/Renderer/Renderer2D";
 import { HANDLER_TYPE, ResourceManager } from "@/ResourceManagement/ResourceManager";
 import { Animation } from "@/Animation/Animation";
+import { WebGlShader } from "@/Platform/WebGL/WebGLShader";
 
 var BasicSprite: Sprite; 
 var idleAnimation: Animation;
@@ -45,7 +46,7 @@ export class TestGame extends Application
         this.m_Renderer2D.Init(
             {
                 quadShader: shaderManager.Get("Quad"),
-                spriteShader: shaderManager.Get("Sprite")
+                spriteShader: shaderManager.Get("Sprite") 
             }
         )
         

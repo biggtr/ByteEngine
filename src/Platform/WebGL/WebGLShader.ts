@@ -1,18 +1,21 @@
+import { Shader } from "@/Renderer/Shader";
+
 export interface SHADER_SOURCE
 {
     VERTEX: string;
     FRAGMENT: string;
 }
-export class Shader
+export class WebGlShader extends Shader
 {
     private m_ShaderProgram: WebGLProgram | null = null;
     private m_Webgl: WebGL2RenderingContext;
 
     constructor(webgl: WebGL2RenderingContext)
     {
+      super()
       this.m_Webgl = webgl;
     }
-    public Create(shaderSources: SHADER_SOURCE)
+    public Init(shaderSources: SHADER_SOURCE)
     {
       const vertexShader = this.CompileShader(shaderSources.VERTEX, this.m_Webgl.VERTEX_SHADER) as WebGLShader;
       const fragmentShader = this.CompileShader(shaderSources.FRAGMENT, this.m_Webgl.FRAGMENT_SHADER) as WebGLShader;

@@ -3,7 +3,6 @@ import { Shader } from "./Shader";
 import { VertexArray } from "./VertexArray";
 import { OrthographicCamera } from "./Cameras";
 import { Matrix3 } from "../Math/Matrices";
-import { IndexBuffer, VertexBuffer } from "./Buffers";
 import { BufferElement, BufferLayout } from "./Buffers";
 import { Vector3, Vector4 } from "../Math/Vectors";
 import { RendererAPI } from "./RendererAPI";

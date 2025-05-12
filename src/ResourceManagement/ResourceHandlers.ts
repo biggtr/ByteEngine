@@ -1,5 +1,10 @@
+import { WebGlShader } from "@/Platform/WebGL/WebGLShader";
+import { WebGlTexture } from "@/Platform/WebGL/WebGLTexture";
+import { GraphicsContext } from "@/Renderer/GraphicsContext";
 import { Shader, SHADER_SOURCE } from "@/Renderer/Shader";
+import { ShaderFactory } from "@/Renderer/ShaderFactory";
 import { Texture } from "@/Renderer/Texture";
+import { TextureFactory } from "@/Renderer/TextureFactory";
 export interface ResourceHandler<T>
 {
     Load(name: string, path: string): Promise<void>;
@@ -10,21 +15,21 @@ export interface ResourceHandler<T>
 export class TextureHandler implements ResourceHandler<Texture>
 {
     private m_Textures: Map<string, Texture> = new Map();
-    private m_WebGL!: WebGL2RenderingContext; 
-    constructor(webGL: WebGL2RenderingContext)
+    private m_GraphicsContext!: GraphicsContext; 
+    constructor(graphicsContext: GraphicsContext)
     {
-        this.m_WebGL = webGL;
-    }
+        this.m_GraphicsContext = graphicsContext;
+    } 
     async Load(name: string, path: string): Promise<void>
     {
         const textureImage = await this.LoadFromImage(path);
-        const texture = new Texture(this.m_WebGL);
-        texture.Create(textureImage);
+        const texture = TextureFactory.Create(this.m_GraphicsContext);
+        texture?.Init(textureImage);
         if(this.m_Textures.get(name))
         {
             console.log("Texture is already loaded!..");
         }
-        this.m_Textures.set(name, texture);
+        this.m_Textures.set(name, texture as WebGlTexture);
     }
     Get(name: string): Texture 
     {
@@ -67,21 +72,21 @@ export class TextureHandler implements ResourceHandler<Texture>
 export class ShaderHandler implements ResourceHandler<Shader>
 {
     private m_Shaders: Map<string, Shader> = new Map();
-    private m_WebGL!: WebGL2RenderingContext; 
-    constructor(webGL: WebGL2RenderingContext)
+    private m_GraphicsContext!: GraphicsContext; 
+    constructor(graphicsContext: GraphicsContext)
     {
-        this.m_WebGL = webGL;
+        this.m_GraphicsContext = graphicsContext;
     }
     async Load(name: string, path: string): Promise<void>
     {
         const shaderSources = await this.LoadShaderFromFile(path);
-        const newShader = new Shader(this.m_WebGL);
-        newShader.Create(shaderSources);
+        const newShader = ShaderFactory.Create(this.m_GraphicsContext);
+        newShader?.Init(shaderSources);
         if(this.m_Shaders.get(name))
         {
             console.log("Shader is already loaded!..");
         }
-        this.m_Shaders.set(name, newShader);
+        this.m_Shaders.set(name, newShader as WebGlShader);
          
     }
     Get(name: string): Shader

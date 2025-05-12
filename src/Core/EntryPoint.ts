@@ -3,7 +3,6 @@ import { WebGLRendererAPI } from "@/Platform/WebGL/WebGLRendererAPI";
 import { OrthographicCamera } from "@/Renderer/Cameras";
 import { GraphicsContextFactory } from "@/Renderer/GraphicsContextFactory";
 import { Renderer2D } from "@/Renderer/Renderer2D";
-import { RendererAPI } from "@/Renderer/RendererAPI";
 import { RendererAPIFactory } from "@/Renderer/RendererAPIFactory";
 import { ShaderHandler, TextureHandler } from "@/ResourceManagement/ResourceHandlers";
 import { HANDLER_TYPE, ResourceManager } from "@/ResourceManagement/ResourceManager";
@@ -31,8 +30,8 @@ async function main()
     const camera2D = new OrthographicCamera(0, webgl.canvas.width, 0, webgl.canvas.height);
 
     //resouceManager
-    const shaderHandler = new ShaderHandler(webgl)
-    const textureHandler = new TextureHandler(webgl);
+    const shaderHandler = new ShaderHandler(webglContext)
+    const textureHandler = new TextureHandler(webglContext);
     const resourceManager = new ResourceManager();
     resourceManager.RegisterHandler(HANDLER_TYPE.SHADER, shaderHandler);
     resourceManager.RegisterHandler(HANDLER_TYPE.TEXTURE, textureHandler);

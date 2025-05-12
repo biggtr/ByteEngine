@@ -1,5 +1,4 @@
 import { Vector4 } from "../Math/Vectors";
-import { IndexBuffer } from "./Buffers";
 import { GraphicsContext } from "./GraphicsContext";
 import { VertexArray } from "./VertexArray";
 
@@ -12,9 +11,6 @@ export abstract class RendererAPI
 {
 
     public static s_API: RENDERER_API = RENDERER_API.WEBGL;
-    
-
-   
 
     public abstract ClearColor(color: Vector4): void
     public abstract Clear(): void 
