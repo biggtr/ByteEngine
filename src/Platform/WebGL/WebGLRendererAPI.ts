@@ -1,18 +1,12 @@
 import { Vector4 } from "../Math/Vectors";
 import { IndexBuffer } from "./Buffers";
+import { Shader } from "./Shader";
 import { VertexArray } from "./VertexArray";
 
-
-export enum RENDERER_API
-{
-    WEBGL, WEBGPU
-}
 export class RendererAPI
 {
 
-    public static s_API: RENDERER_API = RENDERER_API.WEBGL;
     private m_Webgl: WebGL2RenderingContext;
-
     constructor(webgl: WebGL2RenderingContext)
     {
         this.m_Webgl = webgl;

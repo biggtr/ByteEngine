@@ -8,7 +8,6 @@ import { BufferElement, BufferLayout } from "./Buffers";
 import { Vector3, Vector4 } from "../Math/Vectors";
 import { RendererAPI } from "./RendererAPI";
 import { Texture } from "./Texture";
-import { setPriority } from "os";
 
 export class Sprite
 {
@@ -23,7 +22,13 @@ export class Sprite
         this.Position = position;
         this.Size = size;
         this.Color = color;
-        this.UVs = new Float32Array([0,1, 0, 0, 1, 0, 1, 1]); 
+        this.UVs = new Float32Array([
+            0.0, 0.0, // bot left
+            1.0, 0.0, // bot right
+            1.0, 1.0, // top right
+            0.0, 1.0, // top left
+
+        ])
     }
 }
 export class Renderer2D
@@ -107,10 +112,10 @@ export class Renderer2D
     private CreateQuadVAO(): VertexArray
     {
         var vertices = new Float32Array([
-            -0.5,   0.5,   0.0, 1.0, 
-            -0.5,  -0.5,   0.0, 0.0, 
-             0.5,  -0.5,   1.0, 0.0, 
-             0.5,   0.5,   1.0, 1.0, 
+            -0.5,  -0.5,   0.0, 0.0, // bot left
+             0.5,  -0.5,   1.0, 0.0, // bot right
+             0.5,   0.5,   1.0, 1.0, // top right 
+            -0.5,   0.5,   0.0, 1.0, //top left
         ]);
 
 

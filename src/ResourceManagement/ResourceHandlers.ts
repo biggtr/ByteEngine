@@ -1,7 +1,5 @@
 import { Shader, SHADER_SOURCE } from "@/Renderer/Shader";
 import { Texture } from "@/Renderer/Texture";
-import fs from "fs"
-import readline from "readline"
 export interface ResourceHandler<T>
 {
     Load(name: string, path: string): Promise<void>;
@@ -45,7 +43,7 @@ export class TextureHandler implements ResourceHandler<Texture>
             this.m_Textures.delete(name);
         }
     }
-    private async LoadFromImage(path: string): Promise<HTMLImageElement>
+    private async LoadFromImage(path: string): Promise<ImageBitmap>
     {
 
         try
@@ -56,17 +54,8 @@ export class TextureHandler implements ResourceHandler<Texture>
                 throw new Error("Failed To Load Texture..!");
             }
             const blob = await response.blob(); 
-            const objectURL = URL.createObjectURL(blob);
+            return await createImageBitmap(blob, {colorSpaceConversion: "none", imageOrientation: "flipY"})
 
-            const image = new Image()
-            await new Promise((resolve, reject) =>{
-
-                image.onload = resolve;
-                image.onerror = reject;
-                image.src = objectURL;
-            });
-
-            return image;
 
         }
         catch(error)

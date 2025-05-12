@@ -79,15 +79,20 @@ export class Animation
         const y = Math.floor(this.m_CurrentFrame / column);
 
         //count for the flipped texture behaviour of opengl
-        const adjustedY = row - 1 - y;
+        // const adjustedY = row - 1 - y;
 
         // console.log(this.m_CurrentFrame);
         //normalize uv coords to use them directly by my rendering system
-        const u1 = x / column;
-        const v1 = adjustedY / row;
-        const u2 = u1 + (1/column);
-        const v2 = v1 + (1/row);
-        const UVs = new Float32Array([ u1, v2, u1, v1, u2, v1, u2, v2]);
+        const u1 = x / column; // u 
+        const v1 = y / row; // v 
+        const u2 = u1 + (1/column); // u + width of one frame
+        const v2 = v1 + (1/row); // v + height of one frame
+        const UVs = new Float32Array([ 
+            u1, v1, // bot left
+            u2, v1, // bot right 
+            u2, v2, // top right
+            u1, v2 // top left
+        ]);
         
         // console.log(UVs)
         this.m_Sprite.UVs = UVs;

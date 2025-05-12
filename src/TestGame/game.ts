@@ -18,9 +18,7 @@ export class TestGame extends Application
     private m_Input!: Input;
     private m_Camera2D!: OrthographicCamera;
     private m_ResourceManager!: ResourceManager;
-    private position: Vector3 = new Vector3(100,100,1);
     private size = new Vector3(200, 200, 1);
-    private sprite!: Sprite;
 
     protected async OnInit(engineComponents: EngineComponents): Promise<void>
     {
@@ -44,7 +42,7 @@ export class TestGame extends Application
         const shaderManager = this.m_ResourceManager.GetHandler(HANDLER_TYPE.SHADER);
         await shaderManager.Load("Quad", "/assets/shaders/QuadShader.glsl");
         await shaderManager.Load("Sprite", "/assets/shaders/SpriteShader.glsl");
-        await this.m_Renderer2D.Init(
+        this.m_Renderer2D.Init(
             {
                 quadShader: shaderManager.Get("Quad"),
                 spriteShader: shaderManager.Get("Sprite")
@@ -60,6 +58,9 @@ export class TestGame extends Application
         attackAnimation = new Animation("Attack", 1, 0.06,32,32, new Sprite(attackTexture, new Vector3(224,32,1)));
         const BasicTexture = this.m_ResourceManager.GetHandler(HANDLER_TYPE.TEXTURE).Get("basic");
         BasicSprite = new Sprite(BasicTexture);
+        console.log(`before we fuck up uvs: ${idleAnimation.GetSprite().UVs}`)
+        idleAnimation.GetCurrentUVs();
+        console.log(`after we fuck up uvs ${idleAnimation.GetSprite().UVs}`)
     }
 
     protected OnRender(): void
@@ -72,6 +73,8 @@ export class TestGame extends Application
         this.m_Renderer2D.DrawSprite(new Vector3(200,100,1), this.size, new Vector4(0,0,0,1), idleAnimation.GetSprite());
         this.m_Renderer2D.DrawSprite(new Vector3(400,100,1), this.size, new Vector4(0,0,0,1), runAnimation.GetSprite());
         this.m_Renderer2D.DrawSprite(new Vector3(600,100,1), this.size, new Vector4(0,0,0,1), attackAnimation.GetSprite());
+        this.m_Renderer2D.DrawSprite(new Vector3(700,100,1), this.size, new Vector4(0,0,0,1), BasicSprite) 
+       
     }
 
     protected OnUpdate(deltaTime: number): void

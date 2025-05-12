@@ -1,11 +1,10 @@
 import { Input } from "@/Input/Inputs";
 import { OrthographicCamera } from "@/Renderer/Cameras";
+import { GraphicsContextFactory } from "@/Renderer/GraphicsContextFactory";
 import { Renderer2D } from "@/Renderer/Renderer2D";
 import { RendererAPI } from "@/Renderer/RendererAPI";
-import { WebGLContext } from "@/Renderer/WebGLContext";
 import { ShaderHandler, TextureHandler } from "@/ResourceManagement/ResourceHandlers";
 import { HANDLER_TYPE, ResourceManager } from "@/ResourceManagement/ResourceManager";
-import { EntityManager } from "@/Scene/EntityManager";
 import { TestGame } from "@/TestGame/game";
 
 async function main() 
@@ -19,10 +18,11 @@ async function main()
 
 
     console.log("entry point ..")
-    const webglContext = new WebGLContext("glcanvas");
-    const webgl = webglContext.GetWebGL();
-    console.log(webgl.canvas.width, webgl.canvas.height);
+    const webglContext = GraphicsContextFactory.Create("glcanvas");
+    webglContext.Init();
+    const webgl: WebGL2RenderingContext = webglContext.GetContext() as WebGL2RenderingContext;
 
+    console.log(`Webglwidth : ${webgl.canvas}`)
     const rendererAPI = new RendererAPI(webgl);
     var renderer2D = new Renderer2D(rendererAPI);
 
