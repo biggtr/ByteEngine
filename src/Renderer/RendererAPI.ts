@@ -1,5 +1,6 @@
 import { Vector4 } from "../Math/Vectors";
 import { IndexBuffer } from "./Buffers";
+import { GraphicsContext } from "./GraphicsContext";
 import { VertexArray } from "./VertexArray";
 
 
@@ -7,42 +8,18 @@ export enum RENDERER_API
 {
     WEBGL, WEBGPU
 }
-export class RendererAPI
+export abstract class RendererAPI
 {
 
     public static s_API: RENDERER_API = RENDERER_API.WEBGL;
-    private m_Webgl: WebGL2RenderingContext;
+    
 
-    constructor(webgl: WebGL2RenderingContext)
-    {
-        this.m_Webgl = webgl;
-    }
+   
 
-    Init(webgl: WebGL2RenderingContext)
-    {
-        this.m_Webgl = webgl;
-    }
-
-    ClearColor(color: Vector4): void
-    {
-        this.m_Webgl.clearColor(color.x,color.y,color.z, color.w);
-    }
-    Clear(): void 
-    {
-        this.m_Webgl.clear(this.m_Webgl.COLOR_BUFFER_BIT);
-    }
-
-    DrawIndexed(vertexArray: VertexArray): void
-    {
-        vertexArray.Bind();
-
-        const indexBuffer = vertexArray.GetIndexBuffer() as IndexBuffer;
-        this.m_Webgl.drawElements(this.m_Webgl.TRIANGLES, indexBuffer.GetIndicesCount() ,this.m_Webgl.UNSIGNED_INT, 0);
-    }
-
-    GetWebGLContext(): WebGL2RenderingContext
-    {
-        return this.m_Webgl;
-    }
+    public abstract ClearColor(color: Vector4): void
+    public abstract Clear(): void 
+    public abstract DrawIndexed(vertexArray: VertexArray): void
+    public abstract GetWebGLContext(): GraphicsContext
+    
 
 }

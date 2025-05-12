@@ -20,36 +20,6 @@ export class Texture
         this.m_Webgl.texParameteri(this.m_Webgl.TEXTURE_2D, this.m_Webgl.TEXTURE_WRAP_T, this.m_Webgl.CLAMP_TO_EDGE);
         this.m_Webgl.bindTexture(this.m_Webgl.TEXTURE_2D, null);
     }
-    // private async LoadFromImage(filePath: string): Promise<HTMLImageElement>
-    // {
-    //
-    //     try
-    //     {
-    //         const response = await fetch(filePath);
-    //         if(!response.ok)
-    //         {
-    //             throw new Error("Failed To Load Texture..!");
-    //         }
-    //         const blob = await response.blob(); 
-    //         const objectURL = URL.createObjectURL(blob);
-    //
-    //         const image = new Image()
-    //         await new Promise((resolve, reject) =>{
-    //
-    //             image.onload = resolve;
-    //             image.onerror = reject;
-    //             image.src = objectURL;
-    //         });
-    //
-    //         return image;
-    //
-    //     }
-    //     catch(error)
-    //     {
-    //         throw new Error("Failed To Load Texture..!");
-    //     }
-    //
-    // }
 
     public Bind(slot: GLenum = 0)
     {

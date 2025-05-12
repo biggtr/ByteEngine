@@ -8,6 +8,8 @@ import { BufferElement, BufferLayout } from "./Buffers";
 import { Vector3, Vector4 } from "../Math/Vectors";
 import { RendererAPI } from "./RendererAPI";
 import { Texture } from "./Texture";
+import { IndexBufferFactory, VertexBufferFactory } from "./BuffersFactory";
+import { WebGLIndexBuffer, WebGLVertexBuffer } from "@/Platform/WebGL/WebGLBuffers";
 
 export class Sprite
 {
@@ -124,17 +126,18 @@ export class Renderer2D
             0, 2, 3  
         ]); 
 
-        var vertexBuffer = new VertexBuffer(this.m_RenderCommand.GetWebGLContext());
-        var indexBuffer = new IndexBuffer(this.m_RenderCommand.GetWebGLContext());
-        var vertexArray = new VertexArray(this.m_RenderCommand.GetWebGLContext());
+        const gl = this.m_RenderCommand.GetWebGLContext().GetContext() as WebGL2RenderingContext
+        var vertexBuffer = VertexBufferFactory.Create(this.m_RenderCommand.GetWebGLContext()) as WebGLVertexBuffer;
+        var indexBuffer =  IndexBufferFactory.Create(this.m_RenderCommand.GetWebGLContext()) as WebGLIndexBuffer;
+        var vertexArray =  new VertexArray(gl);
 
-        vertexBuffer.Create(vertices);
-        indexBuffer.Create(indices, indices.length);
-        var floatType = this.m_RenderCommand.GetWebGLContext().FLOAT;
+        vertexBuffer?.Init(vertices);
+        indexBuffer?.Init(indices, indices.length);
+        var floatType = gl.FLOAT;
         const positionElement = new BufferElement(floatType, "position", 2);
         const texCoordsElement = new BufferElement(floatType, "texture",2);
         var bufferLayout = new BufferLayout([positionElement, texCoordsElement]);
-        vertexBuffer.SetLayout(bufferLayout);
+        vertexBuffer?.SetLayout(bufferLayout);
 
         vertexArray.SetIndexBuffer(indexBuffer);
         vertexArray.AddVertexBuffer(vertexBuffer);

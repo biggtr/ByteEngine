@@ -58,9 +58,6 @@ export class TestGame extends Application
         attackAnimation = new Animation("Attack", 1, 0.06,32,32, new Sprite(attackTexture, new Vector3(224,32,1)));
         const BasicTexture = this.m_ResourceManager.GetHandler(HANDLER_TYPE.TEXTURE).Get("basic");
         BasicSprite = new Sprite(BasicTexture);
-        console.log(`before we fuck up uvs: ${idleAnimation.GetSprite().UVs}`)
-        idleAnimation.GetCurrentUVs();
-        console.log(`after we fuck up uvs ${idleAnimation.GetSprite().UVs}`)
     }
 
     protected OnRender(): void

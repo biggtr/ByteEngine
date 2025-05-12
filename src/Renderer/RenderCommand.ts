@@ -1,7 +1,7 @@
 import { Vector4 } from "../Math/Vectors";
+import { GraphicsContext } from "./GraphicsContext";
 import { RendererAPI } from "./RendererAPI";
 import { VertexArray } from "./VertexArray";
-import { Shader } from "./Shader";
 
 
 export class RenderCommand
@@ -30,7 +30,7 @@ export class RenderCommand
         this.m_RendererAPI.DrawIndexed(vertexArray);
     }
 
-    GetWebGLContext(): WebGL2RenderingContext
+    GetWebGLContext(): GraphicsContext 
     {
         return this.m_RendererAPI.GetWebGLContext();
     }

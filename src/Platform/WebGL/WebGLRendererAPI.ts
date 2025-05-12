@@ -1,21 +1,21 @@
-import { Vector4 } from "../Math/Vectors";
-import { IndexBuffer } from "./Buffers";
-import { Shader } from "./Shader";
-import { VertexArray } from "./VertexArray";
+import { Vector4 } from "@/Math/Vectors";
+import { GraphicsContext } from "@/Renderer/GraphicsContext";
+import { VertexArray } from "@/Renderer/VertexArray";
+import { WebGLIndexBuffer } from "./WebGLBuffers";
+import { RendererAPI } from "@/Renderer/RendererAPI";
 
-export class RendererAPI
+export class WebGLRendererAPI extends RendererAPI
 {
 
     private m_Webgl: WebGL2RenderingContext;
-    constructor(webgl: WebGL2RenderingContext)
+    private m_GraphicsContext: GraphicsContext
+    constructor(graphicsContext: GraphicsContext)
     {
-        this.m_Webgl = webgl;
+        super()
+        this.m_GraphicsContext = graphicsContext;
+        this.m_Webgl = graphicsContext.GetContext() as WebGL2RenderingContext;
     }
 
-    Init(webgl: WebGL2RenderingContext)
-    {
-        this.m_Webgl = webgl;
-    }
 
     ClearColor(color: Vector4): void
     {
@@ -30,13 +30,13 @@ export class RendererAPI
     {
         vertexArray.Bind();
 
-        const indexBuffer = vertexArray.GetIndexBuffer() as IndexBuffer;
+        const indexBuffer = vertexArray.GetIndexBuffer() as WebGLIndexBuffer;
         this.m_Webgl.drawElements(this.m_Webgl.TRIANGLES, indexBuffer.GetIndicesCount() ,this.m_Webgl.UNSIGNED_INT, 0);
     }
 
-    GetWebGLContext(): WebGL2RenderingContext
+    GetWebGLContext(): GraphicsContext
     {
-        return this.m_Webgl;
+        return this.m_GraphicsContext;
     }
 
 }

@@ -60,68 +60,21 @@ export class BufferLayout
  
 }
 
-export class VertexBuffer
+export abstract class VertexBuffer
 {
-    private m_Buffer: WebGLBuffer;
-    private m_Webgl: WebGLRenderingContext;
-    private m_BufferLayout: BufferLayout | null = null;
-    constructor(webgl: WebGLRenderingContext)
-    {
-        this.m_Webgl = webgl;
-        this.m_Buffer = this.m_Webgl.createBuffer();
-    } 
-
-    
-    public Bind()
-    {
-        this.m_Webgl.bindBuffer(this.m_Webgl.ARRAY_BUFFER, this.m_Buffer);
-    }
-    public Create(data: Float32Array)
-    {
-        this.m_Webgl.bindBuffer(this.m_Webgl.ARRAY_BUFFER, this.m_Buffer);
-        this.m_Webgl.bufferData(this.m_Webgl.ARRAY_BUFFER, data, this.m_Webgl.STATIC_DRAW);
-    }
-
-    public UpdateSubData(data: Float32Array, offset: number)
-    {
-        this.m_Webgl.bindBuffer(this.m_Webgl.ARRAY_BUFFER, this.m_Buffer);
-        this.m_Webgl.bufferSubData(this.m_Webgl.ARRAY_BUFFER, offset, data);
-    }
-    public SetLayout(bufferLayout: BufferLayout)
-    {
-        this.m_BufferLayout = bufferLayout;
-    }
-    public GetLayout(): BufferLayout | null
-    {
-        return this.m_BufferLayout;
-    }
+    public abstract Bind(): void
+    public abstract Init(data: Float32Array): void 
+    public abstract UpdateSubData(data: Float32Array, offset: number): void
+    public abstract SetLayout(bufferLayout: BufferLayout): void
+    public abstract GetLayout(): BufferLayout | null
 }
 
-export class IndexBuffer
+export abstract class IndexBuffer
 {
 
-    private m_Webgl: WebGLRenderingContext;
-    private m_IndexBuffer: WebGLBuffer 
-    private m_Count: number = 0;
-    constructor(webgl: WebGLRenderingContext)
-    {
-        this.m_Webgl = webgl;
-        this.m_IndexBuffer = this.m_Webgl.createBuffer();
-    }
 
-    public Bind()
-    {
-        this.m_Webgl.bindBuffer(this.m_Webgl.ELEMENT_ARRAY_BUFFER, this.m_IndexBuffer);
-    }
-    public Create(indices: Uint32Array, count: number): void
-    {
-        this.m_Count = count;
-        this.m_Webgl.bindBuffer(this.m_Webgl.ELEMENT_ARRAY_BUFFER, this.m_IndexBuffer);
-        this.m_Webgl.bufferData(this.m_Webgl.ELEMENT_ARRAY_BUFFER, indices, this.m_Webgl.STATIC_DRAW);
-    }
-    public GetIndicesCount()
-    {
-        return this.m_Count; 
-    }
+    public abstract Bind(): void 
+    public abstract Init(indices: Uint32Array, count: number): void
+    public abstract GetIndicesCount(): number
 
 }

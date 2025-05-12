@@ -1,8 +1,10 @@
 import { Input } from "@/Input/Inputs";
+import { WebGLRendererAPI } from "@/Platform/WebGL/WebGLRendererAPI";
 import { OrthographicCamera } from "@/Renderer/Cameras";
 import { GraphicsContextFactory } from "@/Renderer/GraphicsContextFactory";
 import { Renderer2D } from "@/Renderer/Renderer2D";
 import { RendererAPI } from "@/Renderer/RendererAPI";
+import { RendererAPIFactory } from "@/Renderer/RendererAPIFactory";
 import { ShaderHandler, TextureHandler } from "@/ResourceManagement/ResourceHandlers";
 import { HANDLER_TYPE, ResourceManager } from "@/ResourceManagement/ResourceManager";
 import { TestGame } from "@/TestGame/game";
@@ -23,8 +25,8 @@ async function main()
     const webgl: WebGL2RenderingContext = webglContext.GetContext() as WebGL2RenderingContext;
 
     console.log(`Webglwidth : ${webgl.canvas}`)
-    const rendererAPI = new RendererAPI(webgl);
-    var renderer2D = new Renderer2D(rendererAPI);
+    const rendererAPI = RendererAPIFactory.Create(webglContext);
+    var renderer2D = new Renderer2D(rendererAPI as WebGLRendererAPI);
 
     const camera2D = new OrthographicCamera(0, webgl.canvas.width, 0, webgl.canvas.height);
 
