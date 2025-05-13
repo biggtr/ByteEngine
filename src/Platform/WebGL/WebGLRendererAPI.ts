@@ -1,19 +1,17 @@
 import { Vector4 } from "@/Math/Vectors";
-import { GraphicsContext } from "@/Renderer/GraphicsContext";
 import { VertexArray } from "@/Renderer/VertexArray";
 import { WebGLIndexBuffer } from "./WebGLBuffers";
 import { RendererAPI } from "@/Renderer/RendererAPI";
+import { context } from "@/Core/Byte";
 
 export class WebGLRendererAPI extends RendererAPI
 {
 
     private m_Webgl: WebGL2RenderingContext;
-    private m_GraphicsContext: GraphicsContext
-    constructor(graphicsContext: GraphicsContext)
+    constructor()
     {
         super()
-        this.m_GraphicsContext = graphicsContext;
-        this.m_Webgl = graphicsContext.GetContext() as WebGL2RenderingContext;
+        this.m_Webgl = context.GetContext() as WebGL2RenderingContext;
     }
 
 
@@ -28,15 +26,11 @@ export class WebGLRendererAPI extends RendererAPI
 
     DrawIndexed(vertexArray: VertexArray): void
     {
-        vertexArray.Bind();
-
+        vertexArray.Upload();
         const indexBuffer = vertexArray.GetIndexBuffer() as WebGLIndexBuffer;
+        indexBuffer.Upload()
         this.m_Webgl.drawElements(this.m_Webgl.TRIANGLES, indexBuffer.GetIndicesCount() ,this.m_Webgl.UNSIGNED_INT, 0);
     }
 
-    GetWebGLContext(): GraphicsContext
-    {
-        return this.m_GraphicsContext;
-    }
 
 }

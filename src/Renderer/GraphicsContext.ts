@@ -1,3 +1,4 @@
+
 export interface WebGPUContextData
 {
     Adapter: GPUAdapter;
@@ -10,3 +11,5 @@ export abstract class GraphicsContext
     public abstract GetContext(): WebGL2RenderingContext | WebGPUContextData
     
 }
+
+

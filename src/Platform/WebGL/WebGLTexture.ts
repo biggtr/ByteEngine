@@ -1,3 +1,4 @@
+import { context } from "@/Core/Byte";
 import { Texture } from "@/Renderer/Texture";
 
 export class WebGlTexture extends Texture
@@ -5,10 +6,10 @@ export class WebGlTexture extends Texture
 
     m_Webgl: WebGLRenderingContext;
     m_texture: WebGLTexture;
-    constructor(webgl: WebGLRenderingContext)
+    constructor()
     {
         super();
-        this.m_Webgl = webgl;
+        this.m_Webgl = context.GetContext() as WebGL2RenderingContext;
         this.m_texture = this.m_Webgl.createTexture();
     }
       
@@ -25,13 +26,13 @@ export class WebGlTexture extends Texture
         this.m_Webgl.bindTexture(this.m_Webgl.TEXTURE_2D, null);
     }
 
-    public Bind(slot: GLenum = 0)
+    public Upload(slot: GLenum = 0)
     {
         this.m_Webgl.activeTexture(this.m_Webgl.TEXTURE0 + slot);
         this.m_Webgl.bindTexture(this.m_Webgl.TEXTURE_2D, this.m_texture);
     } 
 
-    public UnBind()
+    public Destroy()
     {
         this.m_Webgl.bindTexture(this.m_Webgl.TEXTURE_2D, 0);
     }

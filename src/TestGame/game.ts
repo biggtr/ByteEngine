@@ -5,7 +5,6 @@ import { OrthographicCamera } from "@/Renderer/Cameras";
 import { Renderer2D, Sprite } from "@/Renderer/Renderer2D";
 import { HANDLER_TYPE, ResourceManager } from "@/ResourceManagement/ResourceManager";
 import { Animation } from "@/Animation/Animation";
-import { WebGlShader } from "@/Platform/WebGL/WebGLShader";
 
 var BasicSprite: Sprite; 
 var idleAnimation: Animation;

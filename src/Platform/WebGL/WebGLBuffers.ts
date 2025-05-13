@@ -1,3 +1,4 @@
+import { context } from "@/Core/Byte";
 import { BufferLayout, IndexBuffer, VertexBuffer } from "@/Renderer/Buffers";
 
 export class WebGLVertexBuffer extends VertexBuffer
@@ -6,22 +7,18 @@ export class WebGLVertexBuffer extends VertexBuffer
     private m_Webgl: WebGLRenderingContext;
     private m_BufferLayout: BufferLayout | null = null;
 
-    constructor(webgl: WebGLRenderingContext)
+    constructor(data: Float32Array)
     {
         super()
-        this.m_Webgl = webgl;
+        this.m_Webgl = context.GetContext() as WebGL2RenderingContext;
         this.m_Buffer = this.m_Webgl.createBuffer();
-    } 
-
-    
-    public Bind()
-    {
-        this.m_Webgl.bindBuffer(this.m_Webgl.ARRAY_BUFFER, this.m_Buffer);
-    }
-    public Init(data: Float32Array)
-    {
         this.m_Webgl.bindBuffer(this.m_Webgl.ARRAY_BUFFER, this.m_Buffer);
         this.m_Webgl.bufferData(this.m_Webgl.ARRAY_BUFFER, data, this.m_Webgl.STATIC_DRAW);
+    }
+    public Upload(): void
+    {
+
+        this.m_Webgl.bindBuffer(this.m_Webgl.ARRAY_BUFFER, this.m_Buffer);
     }
 
     public UpdateSubData(data: Float32Array, offset: number)
@@ -45,22 +42,19 @@ export class WebGLIndexBuffer extends IndexBuffer
     private m_Webgl: WebGLRenderingContext;
     private m_IndexBuffer: WebGLBuffer 
     private m_Count: number = 0;
-    constructor(webgl: WebGLRenderingContext)
+    constructor(indices: Uint32Array, count: number)
     {
         super();
-        this.m_Webgl = webgl;
+        this.m_Webgl = context.GetContext() as WebGL2RenderingContext;
         this.m_IndexBuffer = this.m_Webgl.createBuffer();
-    }
-
-    public Bind()
-    {
-        this.m_Webgl.bindBuffer(this.m_Webgl.ELEMENT_ARRAY_BUFFER, this.m_IndexBuffer);
-    }
-    public Init(indices: Uint32Array, count: number): void
-    {
         this.m_Count = count;
         this.m_Webgl.bindBuffer(this.m_Webgl.ELEMENT_ARRAY_BUFFER, this.m_IndexBuffer);
         this.m_Webgl.bufferData(this.m_Webgl.ELEMENT_ARRAY_BUFFER, indices, this.m_Webgl.STATIC_DRAW);
+    }
+
+    public Upload(): void 
+    {
+        this.m_Webgl.bindBuffer(this.m_Webgl.ELEMENT_ARRAY_BUFFER, this.m_IndexBuffer);
     }
     public GetIndicesCount()
     {

@@ -3,12 +3,13 @@ import { Shader } from "./Shader";
 import { VertexArray } from "./VertexArray";
 import { OrthographicCamera } from "./Cameras";
 import { Matrix3 } from "../Math/Matrices";
-import { BufferElement, BufferLayout } from "./Buffers";
+import { BufferElement, BufferLayout, SHADER_TYPE } from "./Buffers";
 import { Vector3, Vector4 } from "../Math/Vectors";
 import { RendererAPI } from "./RendererAPI";
 import { Texture } from "./Texture";
 import { IndexBufferFactory, VertexBufferFactory } from "./BuffersFactory";
 import { WebGLIndexBuffer, WebGLVertexBuffer } from "@/Platform/WebGL/WebGLBuffers";
+import { context } from "@/Core/Byte";
 
 export class Sprite
 {
@@ -75,12 +76,12 @@ export class Renderer2D
             throw new Error("Quad shader not initialized!");
         }
         var modelMatrix = Matrix3.Translate(position.x, position.y).Multiply(Matrix3.Scale(size.x, size.y));
-        this.m_QuadShader.Bind();
+        this.m_QuadShader.Upload();
         const viewProjection = this.m_OrthoCamera?.GetViewProjectionMatrix().GetAll();
         this.m_QuadShader.SetMat3("u_ViewProjection", viewProjection as Float32Array)
         this.m_QuadShader.SetMat3("u_Model", modelMatrix.GetAll());
         var quadVAO = this.GetQuadVAO();
-        quadVAO.Bind();
+        quadVAO.Upload();
         this.m_RenderCommand.DrawIndexed(quadVAO);
     }
 
@@ -88,9 +89,9 @@ export class Renderer2D
     {
         
         var modelMatrix = Matrix3.Translate(position.x, position.y).Multiply(Matrix3.Scale(size.x, size.y));
-        this.m_SpriteShader.Bind();
+        this.m_SpriteShader.Upload();
         const texture = sprite.Texture;
-        texture.Bind();
+        texture.Upload();
         const viewProjection = this.m_OrthoCamera?.GetViewProjectionMatrix().GetAll();
         this.m_SpriteShader.SetMat3("u_ViewProjection", viewProjection as Float32Array)
         this.m_SpriteShader.SetMat3("u_Model", modelMatrix.GetAll());
@@ -107,7 +108,7 @@ export class Renderer2D
 
             uvBuffer.UpdateSubData(new Float32Array([sprite.UVs[i*2], sprite.UVs[i*2+1]]), vertexUVOffset) 
         }
-        quadVAO.Bind();
+        quadVAO.Upload();
         this.m_RenderCommand.DrawIndexed(quadVAO);
     }
     private CreateQuadVAO(): VertexArray
@@ -125,16 +126,14 @@ export class Renderer2D
             0, 2, 3  
         ]); 
 
-        const gl = this.m_RenderCommand.GetWebGLContext().GetContext() as WebGL2RenderingContext
-        var vertexBuffer = VertexBufferFactory.Create(this.m_RenderCommand.GetWebGLContext()) as WebGLVertexBuffer;
-        var indexBuffer =  IndexBufferFactory.Create(this.m_RenderCommand.GetWebGLContext()) as WebGLIndexBuffer;
+        const gl = context.GetContext() as WebGL2RenderingContext
+        
+        var vertexBuffer = VertexBufferFactory.Create(vertices) as WebGLVertexBuffer;
+        var indexBuffer =  IndexBufferFactory.Create(indices, indices.length) as WebGLIndexBuffer;
         var vertexArray =  new VertexArray(gl);
 
-        vertexBuffer?.Init(vertices);
-        indexBuffer?.Init(indices, indices.length);
-        var floatType = gl.FLOAT;
-        const positionElement = new BufferElement(floatType, "position", 2);
-        const texCoordsElement = new BufferElement(floatType, "texture",2);
+        const positionElement = new BufferElement(SHADER_TYPE.FLOAT, "position", 2);
+        const texCoordsElement = new BufferElement(SHADER_TYPE.FLOAT, "texture",2);
         var bufferLayout = new BufferLayout([positionElement, texCoordsElement]);
         vertexBuffer?.SetLayout(bufferLayout);
 

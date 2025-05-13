@@ -1,6 +1,6 @@
 import { WebGlShader } from "@/Platform/WebGL/WebGLShader";
 import { WebGlTexture } from "@/Platform/WebGL/WebGLTexture";
-import { GraphicsContext } from "@/Renderer/GraphicsContext";
+import { graphicsContext, GraphicsContext } from "@/Renderer/GraphicsContext";
 import { Shader, SHADER_SOURCE } from "@/Renderer/Shader";
 import { ShaderFactory } from "@/Renderer/ShaderFactory";
 import { Texture } from "@/Renderer/Texture";
@@ -15,15 +15,13 @@ export interface ResourceHandler<T>
 export class TextureHandler implements ResourceHandler<Texture>
 {
     private m_Textures: Map<string, Texture> = new Map();
-    private m_GraphicsContext!: GraphicsContext; 
-    constructor(graphicsContext: GraphicsContext)
+    constructor()
     {
-        this.m_GraphicsContext = graphicsContext;
     } 
     async Load(name: string, path: string): Promise<void>
     {
         const textureImage = await this.LoadFromImage(path);
-        const texture = TextureFactory.Create(this.m_GraphicsContext);
+        const texture = TextureFactory.Create();
         texture?.Init(textureImage);
         if(this.m_Textures.get(name))
         {
@@ -72,16 +70,13 @@ export class TextureHandler implements ResourceHandler<Texture>
 export class ShaderHandler implements ResourceHandler<Shader>
 {
     private m_Shaders: Map<string, Shader> = new Map();
-    private m_GraphicsContext!: GraphicsContext; 
-    constructor(graphicsContext: GraphicsContext)
+    constructor()
     {
-        this.m_GraphicsContext = graphicsContext;
     }
     async Load(name: string, path: string): Promise<void>
     {
         const shaderSources = await this.LoadShaderFromFile(path);
-        const newShader = ShaderFactory.Create(this.m_GraphicsContext);
-        newShader?.Init(shaderSources);
+        const newShader = ShaderFactory.Create(shaderSources);
         if(this.m_Shaders.get(name))
         {
             console.log("Shader is already loaded!..");
@@ -102,7 +97,6 @@ export class ShaderHandler implements ResourceHandler<Shader>
         const shader = this.m_Shaders.get(name);
         if (shader) 
         {
-            shader.UnBind();
             this.m_Shaders.delete(name);
         }
     }

@@ -1,12 +1,15 @@
-
+export enum SHADER_TYPE
+{
+    FLOAT, FLOAT2, FLOAT3, FLOAT4, INT, INT2, INT3, INT4
+}
 export class BufferElement {
     name: string
-    type: number;
+    type: SHADER_TYPE;
     count: number;
     normalized: boolean;
     offset: number;
 
-    constructor(type: number, name: string,  count: number, normalized: boolean = false) {
+    constructor(type: SHADER_TYPE, name: string,  count: number, normalized: boolean = false) {
         this.name = name;
         this.type = type;
         this.count = count;
@@ -17,9 +20,10 @@ export class BufferElement {
 
     static GetSizeOfType(type: number): number {
         switch (type) {
-            case WebGL2RenderingContext.FLOAT: return 4;
-            case WebGL2RenderingContext.UNSIGNED_INT: return 4;
-            case WebGL2RenderingContext.UNSIGNED_BYTE: return 1;
+            case SHADER_TYPE.FLOAT:  return 4;
+            case SHADER_TYPE.FLOAT2: return 4 * 2;
+            case SHADER_TYPE.FLOAT3: return 4 * 3;
+            case SHADER_TYPE.FLOAT4: return 4 * 4;
             default: throw new Error("Unknown type!");
         }
     }
@@ -62,19 +66,15 @@ export class BufferLayout
 
 export abstract class VertexBuffer
 {
-    public abstract Bind(): void
-    public abstract Init(data: Float32Array): void 
-    public abstract UpdateSubData(data: Float32Array, offset: number): void
+    public abstract Upload(): void;
+    public UpdateSubData(data: Float32Array, offset: number): void{}
+    public abstract Upload(): void;
     public abstract SetLayout(bufferLayout: BufferLayout): void
     public abstract GetLayout(): BufferLayout | null
 }
 
 export abstract class IndexBuffer
 {
-
-
-    public abstract Bind(): void 
-    public abstract Init(indices: Uint32Array, count: number): void
+    public abstract Upload(): void;
     public abstract GetIndicesCount(): number
-
 }
