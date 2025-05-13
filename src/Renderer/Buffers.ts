@@ -66,11 +66,10 @@ export class BufferLayout
 
 export abstract class VertexBuffer
 {
-    public abstract Upload(): void;
     public UpdateSubData(data: Float32Array, offset: number): void{}
     public abstract Upload(): void;
-    public abstract SetLayout(bufferLayout: BufferLayout): void
-    public abstract GetLayout(): BufferLayout | null
+    public SetLayout(bufferLayout: BufferLayout): void{}
+    public GetLayout(): BufferLayout | null{ return null;}
 }
 
 export abstract class IndexBuffer
