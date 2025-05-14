@@ -38,71 +38,60 @@ export class WebGPUBindGroups extends BindGroups
         this.m_BindGrouplayoutEntries = bindGroupLayout;
         
         // extracting bindGrouptLayout to create GPUBindGroupLayoutEntry
-        const entries: GPUBindGroupLayoutEntry[] = []
+        const bindGroupLayoutEntries: GPUBindGroupLayoutEntry[] = []
+        const bindGroupEntries: GPUBindGroupEntry[] = []
         for(let entry of this.m_BindGrouplayoutEntries)
         {
            switch(entry.ResourceType)
            {
                case RESOURCE_TYPE.BUFFER:
-                entries.push({
-                    binding: entry.Binding,
-                    visibility: GetShaderTypeWebGPU(entry.Visibility),
-                    buffer: {}
-               });
-               break;
+
+                   bindGroupLayoutEntries.push({
+                        binding: entry.Binding,
+                        visibility: GetShaderTypeWebGPU(entry.Visibility),
+                        buffer: {}
+                   });
+
+                   bindGroupEntries.push({
+                       binding: entry.Binding,
+                       resource : entry.Data as GPUBufferBinding
+                  });
+                  break;
                case RESOURCE_TYPE.TEXTURE:
-                entries.push({
-                    binding: entry.Binding,
-                    visibility: GetShaderTypeWebGPU(entry.Visibility),
-                    texture: {}
-               });
-               break;
+
+                   bindGroupLayoutEntries.push({
+                        binding: entry.Binding,
+                        visibility: GetShaderTypeWebGPU(entry.Visibility),
+                        texture: {}
+                    });
+
+                   bindGroupEntries.push({
+                        binding: entry.Binding,
+                        resource: entry.Data as GPUTextureView
+                   });     
+                   break;
                case RESOURCE_TYPE.SAMPLER:
-                entries.push({
-                    binding: entry.Binding,
-                    visibility: GetShaderTypeWebGPU(entry.Visibility),
-                    sampler: {}
-               });
-               break;
+                   bindGroupLayoutEntries.push({
+                        binding: entry.Binding,
+                        visibility: GetShaderTypeWebGPU(entry.Visibility),
+                        sampler: {}
+                   });
+
+                   bindGroupEntries.push({
+                       binding: entry.Binding,
+                       resource: entry.Data as GPUSampler
+                   });
+                   break;
            }
         }
         const newBindGroupLayout = this.m_Device.createBindGroupLayout({
             label:"BindGroupLayout",
-            entries: entries
+            entries: bindGroupLayoutEntries
         })
         this.m_BindGroupLayouts.push(newBindGroupLayout);
-    }
-    // Creates One BindGroup with the Layout inside the m_BindGrouplayoutEntries
-    public Create(): void 
-    {
-        const entries: GPUBindGroupEntry[] = []
-        for(let entry of this.m_BindGrouplayoutEntries)
-        {
-           switch(entry.ResourceType)
-           {
-               case RESOURCE_TYPE.BUFFER:
-                entries.push({
-                    binding: entry.Binding,
-                    resource : entry.Data as GPUBufferBinding
-               });
-               break;
-               case RESOURCE_TYPE.TEXTURE:
-                entries.push({
-                    binding: entry.Binding,
-                    resource: entry.Data as GPUTextureView
-               });
-               break;
-               case RESOURCE_TYPE.SAMPLER:
-                entries.push({
-                    binding: entry.Binding,
-                    resource: entry.Data as GPUSampler
-               });
-               break;
-           }
-        }
         const newBindGroup= this.m_Device.createBindGroup({
-            entries: entries,
-            layout: this.m_BindGroupLayouts[this.m_NumberOfGroups++],
+            entries: bindGroupEntries,
+            layout: newBindGroupLayout,
         })
         this.m_BindGroups.push(newBindGroup);
         
