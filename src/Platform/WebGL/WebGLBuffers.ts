@@ -15,6 +15,10 @@ export class WebGLVertexBuffer extends VertexBuffer
         this.m_Webgl.bindBuffer(this.m_Webgl.ARRAY_BUFFER, this.m_Buffer);
         this.m_Webgl.bufferData(this.m_Webgl.ARRAY_BUFFER, data, this.m_Webgl.STATIC_DRAW);
     }
+    public GetBuffer(): WebGLBuffer
+    {
+        return this.m_Buffer
+    }
     public Upload(): void
     {
 
