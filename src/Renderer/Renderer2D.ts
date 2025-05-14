@@ -1,15 +1,14 @@
 import { RenderCommand } from "./RenderCommand";
 import { Shader } from "./Shader";
-import { VertexArray } from "./VertexArray";
+import { Geometry } from "./Geometry";
 import { OrthographicCamera } from "./Cameras";
 import { Matrix3 } from "../Math/Matrices";
-import { BufferElement, BufferLayout, SHADER_TYPE } from "./Buffers";
+import { BufferElement, BufferLayout, SHADER_DATA_TYPE } from "./Buffers";
 import { Vector3, Vector4 } from "../Math/Vectors";
 import { RendererAPI } from "./RendererAPI";
 import { Texture } from "./Texture";
 import { IndexBufferFactory, VertexBufferFactory } from "./BuffersFactory";
-import { WebGLIndexBuffer, WebGLVertexBuffer } from "@/Platform/WebGL/WebGLBuffers";
-import { context } from "@/Core/Byte";
+import { GeometryFactory } from "./GeometryFactory";
 
 export class Sprite
 {
@@ -38,7 +37,7 @@ export class Renderer2D
     private m_RenderCommand: RenderCommand; 
     private m_OrthoCamera: OrthographicCamera | null = null;
 
-    private m_QuadVAO: VertexArray | null = null;
+    private m_QuadGeometry: Geometry | null = null;
     private m_QuadShader!: Shader;
     private m_SpriteShader!: Shader;
     
@@ -50,7 +49,7 @@ export class Renderer2D
     {
         this.m_QuadShader = Shaders.quadShader;
         this.m_SpriteShader = Shaders.spriteShader; 
-        this.m_QuadVAO = this.CreateQuadVAO();
+        this.m_QuadGeometry = this.CreateQuadGeometry();
     }
 
     public BeginScene(camera: OrthographicCamera)
@@ -80,7 +79,7 @@ export class Renderer2D
         const viewProjection = this.m_OrthoCamera?.GetViewProjectionMatrix().GetAll();
         this.m_QuadShader.SetMat3("u_ViewProjection", viewProjection as Float32Array)
         this.m_QuadShader.SetMat3("u_Model", modelMatrix.GetAll());
-        var quadVAO = this.GetQuadVAO();
+        var quadVAO = this.GetQuadGeometry();
         quadVAO.Upload();
         this.m_RenderCommand.DrawIndexed(quadVAO);
     }
@@ -96,7 +95,7 @@ export class Renderer2D
         this.m_SpriteShader.SetMat3("u_ViewProjection", viewProjection as Float32Array)
         this.m_SpriteShader.SetMat3("u_Model", modelMatrix.GetAll());
         this.m_SpriteShader.SetUniform1i("u_Image", 0);
-        var quadVAO = this.GetQuadVAO();
+        var quadVAO = this.GetQuadGeometry();
         const uvBuffer = quadVAO.GetVertexBuffers()[0]
 
         const vertexStride = 4 * Float32Array.BYTES_PER_ELEMENT;
@@ -111,7 +110,7 @@ export class Renderer2D
         quadVAO.Upload();
         this.m_RenderCommand.DrawIndexed(quadVAO);
     }
-    private CreateQuadVAO(): VertexArray
+    private CreateQuadGeometry(): Geometry
     {
         var vertices = new Float32Array([
             -0.5,  -0.5,   0.0, 0.0, // bot left
@@ -126,28 +125,27 @@ export class Renderer2D
             0, 2, 3  
         ]); 
 
-        const gl = context.GetContext() as WebGL2RenderingContext
         
-        var vertexBuffer = VertexBufferFactory.Create(vertices) as WebGLVertexBuffer;
-        var indexBuffer =  IndexBufferFactory.Create(indices, indices.length) as WebGLIndexBuffer;
-        var vertexArray =  new VertexArray(gl);
+        var vertexBuffer = VertexBufferFactory.Create(vertices); 
+        var indexBuffer =  IndexBufferFactory.Create(indices, indices.length); 
+        var geometry =  GeometryFactory.Create();
 
-        const positionElement = new BufferElement(SHADER_TYPE.FLOAT, "position", 2);
-        const texCoordsElement = new BufferElement(SHADER_TYPE.FLOAT, "texture",2);
+        const positionElement = new BufferElement(SHADER_DATA_TYPE.FLOAT2, "position");
+        const texCoordsElement = new BufferElement(SHADER_DATA_TYPE.FLOAT2, "texture");
         var bufferLayout = new BufferLayout([positionElement, texCoordsElement]);
-        vertexBuffer?.SetLayout(bufferLayout);
+        vertexBuffer.SetLayout(bufferLayout);
 
-        vertexArray.SetIndexBuffer(indexBuffer);
-        vertexArray.AddVertexBuffer(vertexBuffer);
+        geometry.SetIndexBuffer(indexBuffer);
+        geometry.AddVertexBuffer(vertexBuffer);
         
-        return vertexArray;
+        return geometry;
     }
-    private GetQuadVAO(): VertexArray
+    private GetQuadGeometry(): Geometry
     {
-        if(!this.m_QuadVAO)
+        if(!this.m_QuadGeometry)
         {
-            this.m_QuadVAO = this.CreateQuadVAO();
+            this.m_QuadGeometry = this.CreateQuadGeometry();
         }
-        return this.m_QuadVAO;
+        return this.m_QuadGeometry;
     }
 }

@@ -21,8 +21,8 @@ export class TextureHandler implements ResourceHandler<Texture>
     async Load(name: string, path: string): Promise<void>
     {
         const textureImage = await this.LoadFromImage(path);
-        const texture = TextureFactory.Create();
-        texture?.Init(textureImage);
+        const texture = TextureFactory.Create(textureImage);
+        texture.Init();
         if(this.m_Textures.get(name))
         {
             console.log("Texture is already loaded!..");
@@ -42,7 +42,7 @@ export class TextureHandler implements ResourceHandler<Texture>
         const texture= this.m_Textures.get(name);
         if (texture) 
         {
-            texture.UnBind();
+            texture.Destroy();
             this.m_Textures.delete(name);
         }
     }

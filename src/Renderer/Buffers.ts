@@ -1,33 +1,62 @@
-export enum SHADER_TYPE
+export enum SHADER_DATA_TYPE
 {
-    FLOAT, FLOAT2, FLOAT3, FLOAT4, INT, INT2, INT3, INT4
+    NONE, FLOAT, FLOAT2, FLOAT3, FLOAT4, MAT2, MAT3, MAT4, INT2, INT3, INT4, BOOL,
 }
-export class BufferElement {
-    name: string
-    type: SHADER_TYPE;
-    count: number;
-    normalized: boolean;
-    offset: number;
-
-    constructor(type: SHADER_TYPE, name: string,  count: number, normalized: boolean = false) {
-        this.name = name;
-        this.type = type;
-        this.count = count;
-        this.normalized = normalized;
-        this.offset = 0;
-
+export function GetShaderDataTypeSize(type: SHADER_DATA_TYPE): number 
+{
+    switch (type)
+    {
+        case SHADER_DATA_TYPE.FLOAT:   return 4 * 1;
+        case SHADER_DATA_TYPE.FLOAT2:  return 4 * 2;
+        case SHADER_DATA_TYPE.FLOAT3:  return 4 * 3;
+        case SHADER_DATA_TYPE.FLOAT4:  return 4 * 4;
+        case SHADER_DATA_TYPE.MAT2:    return 4 * 4;
+        case SHADER_DATA_TYPE.MAT3:    return 4 * 3 * 3;
+        case SHADER_DATA_TYPE.MAT4:    return 4 * 4 * 4;
+        case SHADER_DATA_TYPE.INT2:    return 4 * 2;
+        case SHADER_DATA_TYPE.INT3:    return 4 * 3;
+        case SHADER_DATA_TYPE.INT4:    return 4 * 4;
+        case SHADER_DATA_TYPE.BOOL:    return 1;
+        case SHADER_DATA_TYPE.NONE:    return 0;
+        default: throw new Error("Unknown type!");
     }
+}
+export class BufferElement 
+{
+    AttributeName: string
+    Type: SHADER_DATA_TYPE;
+    Size: number;
+    Offset: number;
+    Normalized: boolean;
 
-    static GetSizeOfType(type: number): number {
-        switch (type) {
-            case SHADER_TYPE.FLOAT:  return 4;
-            case SHADER_TYPE.FLOAT2: return 4 * 2;
-            case SHADER_TYPE.FLOAT3: return 4 * 3;
-            case SHADER_TYPE.FLOAT4: return 4 * 4;
+    constructor(type: SHADER_DATA_TYPE, name: string, normalized: boolean = false) 
+    {
+        this.AttributeName = name;
+        this.Type = type;
+        this.Size= GetShaderDataTypeSize(type);
+        this.Normalized = normalized;
+        this.Offset = 0;
+    }
+    public GetComponentCount(): number 
+    {
+        switch (this.Type)
+        {
+            case SHADER_DATA_TYPE.FLOAT:   return 1;
+            case SHADER_DATA_TYPE.FLOAT2:  return 2;
+            case SHADER_DATA_TYPE.FLOAT3:  return 3;
+            case SHADER_DATA_TYPE.FLOAT4:  return 4;
+            case SHADER_DATA_TYPE.MAT2:    return 4;
+            case SHADER_DATA_TYPE.MAT3:    return 3;
+            case SHADER_DATA_TYPE.MAT4:    return 4;
+            case SHADER_DATA_TYPE.INT2:    return 2;
+            case SHADER_DATA_TYPE.INT3:    return 3;
+            case SHADER_DATA_TYPE.INT4:    return 4;
+            case SHADER_DATA_TYPE.BOOL:    return 1;
+            case SHADER_DATA_TYPE.NONE:    return 0;
             default: throw new Error("Unknown type!");
         }
-    }
 
+    }
 }
 export class BufferLayout
 {
@@ -46,9 +75,9 @@ export class BufferLayout
         
         this.m_BufferLayoutElements.forEach((element)=>{
             
-            element.offset = offset;
-            this.m_Stride += element.count * BufferElement.GetSizeOfType(element.type);
-            offset += element.count * BufferElement.GetSizeOfType(element.type);
+            element.Offset = offset;
+            this.m_Stride += element.Size;
+            offset += element.Size; 
 
         })
     }
@@ -66,14 +95,15 @@ export class BufferLayout
 
 export abstract class VertexBuffer
 {
+    public abstract GetBuffer(): any
     public UpdateSubData(data: Float32Array, offset: number): void{}
     public abstract Upload(): void;
-    public SetLayout(bufferLayout: BufferLayout): void{}
-    public GetLayout(): BufferLayout | null{ return null;}
+    public abstract SetLayout(bufferLayout: BufferLayout): void
+    public abstract GetLayout(): any;
 }
-
 export abstract class IndexBuffer
 {
+    public abstract GetBuffer(): any
     public abstract Upload(): void;
     public abstract GetIndicesCount(): number
 }

@@ -1,22 +1,25 @@
 import { context } from "@/Core/Byte";
-import { BufferLayout, BufferElement, VertexBuffer, IndexBuffer, SHADER_TYPE} from "./Buffers";
+import { BufferLayout, BufferElement, VertexBuffer, IndexBuffer, SHADER_DATA_TYPE} from "@/Renderer/Buffers";
+import { Geometry } from "@/Renderer/Geometry";
 
-
-function GetShaderTypeWebGL(shaderType: SHADER_TYPE): number
+function GetShaderTypeWebGL(shaderType: SHADER_DATA_TYPE): number
 {
 
     const gl = context.GetContext() as WebGL2RenderingContext;
     switch (shaderType) 
     {
-        case SHADER_TYPE.FLOAT:  return gl.FLOAT;
-        case SHADER_TYPE.FLOAT2: return  gl.FLOAT * 4;
-        case SHADER_TYPE.FLOAT3: return 4 * 3;
-        case SHADER_TYPE.FLOAT4: return 4 * 4;
+        case SHADER_DATA_TYPE.FLOAT: 
+        case SHADER_DATA_TYPE.FLOAT2: 
+        case SHADER_DATA_TYPE.FLOAT3: 
+        case SHADER_DATA_TYPE.FLOAT4: 
+        {
+            return gl.FLOAT;
+        }
         default: throw new Error("Unknown type!");
     }
 
 }
-export class VertexArray
+export class WebGLGeometry extends Geometry
 {
     private m_Webgl: WebGL2RenderingContext;
     private m_VertexArray: WebGLVertexArrayObject;
@@ -24,6 +27,7 @@ export class VertexArray
     private m_IndexBuffer: IndexBuffer | null = null;
     constructor()
     {
+        super();
         this.m_Webgl = context.GetContext() as WebGL2RenderingContext;
         this.m_VertexArray = this.m_Webgl.createVertexArray();
     }
@@ -42,11 +46,11 @@ export class VertexArray
         {
             this.m_Webgl.bindVertexArray(this.m_VertexArray);
             this.m_Webgl.enableVertexAttribArray(location);
-            var count = bufferElements[location].count;          
-            var type = bufferElements[location].type;
-            var normalize =  bufferElements[location].normalized;
+            var count = bufferElements[location].GetComponentCount();          
+            var type = bufferElements[location].Type;
+            var normalize =  bufferElements[location].Normalized;
             var stride = bufferLayout.GetStride();       
-            var offset = bufferElements[location].offset;
+            var offset = bufferElements[location].Offset;
             this.m_Webgl.vertexAttribPointer(
               location, count, GetShaderTypeWebGL(type), normalize, stride, offset)
         }

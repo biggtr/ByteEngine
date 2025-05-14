@@ -1,9 +1,10 @@
 import { WebGLIndexBuffer, WebGLVertexBuffer } from "@/Platform/WebGL/WebGLBuffers";
 import { RENDERER_API, RendererAPI } from "./RendererAPI";
 import { WebGPUIndexBuffer, WebGPUVertexBuffer } from "@/Platform/WebGPU/WebGPUBuffers";
+import { IndexBuffer, VertexBuffer } from "./Buffers";
 export class VertexBufferFactory
 {
-    public static Create(data: Float32Array)
+    public static Create(data: Float32Array): VertexBuffer
     {
         switch(RendererAPI.s_API)
         {
@@ -19,7 +20,7 @@ export class VertexBufferFactory
 export class IndexBufferFactory 
 {
     
-    public static Create(indices: Uint32Array, count: number)
+    public static Create(indices: Uint32Array, count: number): IndexBuffer 
     {
         switch(RendererAPI.s_API)
         {
