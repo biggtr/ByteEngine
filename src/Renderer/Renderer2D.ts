@@ -3,7 +3,7 @@ import { Shader } from "./Shader";
 import { Geometry } from "./Geometry";
 import { OrthographicCamera } from "./Cameras";
 import { Matrix3 } from "../Math/Matrices";
-import { BufferElement, BufferLayout, SHADER_DATA_TYPE } from "./Buffers";
+import { BUFFER_TYPE, BufferElement, BufferLayout, SHADER_DATA_TYPE } from "./Buffers";
 import { Vector3, Vector4 } from "../Math/Vectors";
 import { RendererAPI } from "./RendererAPI";
 import { Texture } from "./Texture";
@@ -126,7 +126,7 @@ export class Renderer2D
         ]); 
 
         
-        var vertexBuffer = VertexBufferFactory.Create(vertices); 
+        var vertexBuffer = VertexBufferFactory.Create(vertices, BUFFER_TYPE.VERTEX); 
         var indexBuffer =  IndexBufferFactory.Create(indices, indices.length); 
         var geometry =  GeometryFactory.Create();
 

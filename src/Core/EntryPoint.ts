@@ -7,6 +7,7 @@ import { ShaderHandler, TextureHandler } from "@/ResourceManagement/ResourceHand
 import { HANDLER_TYPE, ResourceManager } from "@/ResourceManagement/ResourceManager";
 import { TestGame } from "@/TestGame/game";
 import { context } from "./Byte";
+import { BufferElement, BufferLayout, SHADER_DATA_TYPE } from "@/Renderer/Buffers";
 
 async function main() 
 {
@@ -14,9 +15,6 @@ async function main()
 
     const input = new Input();
     input.Initialize();
-
-
-
 
     console.log("entry point ..")
     

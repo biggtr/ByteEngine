@@ -2,6 +2,14 @@ export enum SHADER_DATA_TYPE
 {
     NONE, FLOAT, FLOAT2, FLOAT3, FLOAT4, MAT2, MAT3, MAT4, INT2, INT3, INT4, BOOL,
 }
+export enum BUFFER_TYPE
+{
+    VERTEX, UNIFORM
+}
+export enum BUFFER_USAGE
+{
+    STATIC, DYNAMIC
+}
 export function GetShaderDataTypeSize(type: SHADER_DATA_TYPE): number 
 {
     switch (type)
@@ -26,7 +34,9 @@ export class BufferElement
     AttributeName: string
     Type: SHADER_DATA_TYPE;
     Size: number;
-    Offset: number;
+    OffsetInBytes: number;
+    Padding: number;
+    Offset: number; // offset inside the array of data to upload to gpu
     Normalized: boolean;
 
     constructor(type: SHADER_DATA_TYPE, name: string, normalized: boolean = false) 
@@ -35,7 +45,9 @@ export class BufferElement
         this.Type = type;
         this.Size= GetShaderDataTypeSize(type);
         this.Normalized = normalized;
+        this.OffsetInBytes = 0;
         this.Offset = 0;
+        this.Padding = 0;
     }
     public GetComponentCount(): number 
     {
@@ -46,8 +58,8 @@ export class BufferElement
             case SHADER_DATA_TYPE.FLOAT3:  return 3;
             case SHADER_DATA_TYPE.FLOAT4:  return 4;
             case SHADER_DATA_TYPE.MAT2:    return 4;
-            case SHADER_DATA_TYPE.MAT3:    return 3;
-            case SHADER_DATA_TYPE.MAT4:    return 4;
+            case SHADER_DATA_TYPE.MAT3:    return 9;
+            case SHADER_DATA_TYPE.MAT4:    return 16;
             case SHADER_DATA_TYPE.INT2:    return 2;
             case SHADER_DATA_TYPE.INT3:    return 3;
             case SHADER_DATA_TYPE.INT4:    return 4;
@@ -71,14 +83,23 @@ export class BufferLayout
     public CalculateOffsetAndStride(): void
     {
         this.m_Stride = 0;
-        var offset = 0;
-        
+        var prevOffsetInBytes = 0;
+        var offset = 0; 
+        var prevCount = this.m_BufferLayoutElements[0].GetComponentCount();
         this.m_BufferLayoutElements.forEach((element)=>{
-            
-            element.Offset = offset;
-            this.m_Stride += element.Size;
-            offset += element.Size; 
+            element.OffsetInBytes = prevOffsetInBytes;
+            element.Padding = element.GetComponentCount() - prevCount;
+            element.Offset = offset // index with padding if needed inside the array of data that will be passed to gpu
 
+            const sizeOfOneComponent = (element.Size / element.GetComponentCount());
+            const prevOffset = (prevOffsetInBytes / sizeOfOneComponent);
+            
+            prevCount = element.GetComponentCount();
+            offset = prevOffset + element.GetComponentCount() ; // get the offset in array of uniform buffer data 
+
+            this.m_Stride += element.Size;
+            prevOffsetInBytes += element.Size; 
+            console.log(`Padding ${element.Padding} element offset ${element.Offset} next offset ${offset}`)
         })
     }
     public GetBufferElements(): Array<BufferElement>

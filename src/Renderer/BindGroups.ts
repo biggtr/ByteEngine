@@ -19,7 +19,6 @@ export abstract class BindGroups
 {
 
     public abstract AddGroupLayout(bindGroupLayout: BindGroupLayout[]): void;
-    public abstract Create(): void;
     public GetBindGroupLayouts(): any{}
     public GetBindGroup(index: number): any{}
 }

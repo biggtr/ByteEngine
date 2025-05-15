@@ -1,5 +1,5 @@
 import { context } from "@/Core/Byte";
-import { BufferLayout, IndexBuffer, SHADER_DATA_TYPE, VertexBuffer } from "@/Renderer/Buffers";
+import { BUFFER_TYPE, BufferLayout, IndexBuffer, SHADER_DATA_TYPE, VertexBuffer } from "@/Renderer/Buffers";
 import { WebGPUContextData } from "@/Renderer/GraphicsContext";
 
 function GetShaderTypeWebGPU(shaderType: SHADER_DATA_TYPE): GPUVertexFormat
@@ -21,17 +21,30 @@ export class WebGPUVertexBuffer extends VertexBuffer
     private m_Data: Float32Array;
     private m_Layout!: GPUVertexBufferLayout;
     public m_Buffer: GPUBuffer;
-    constructor(data: Float32Array)
+    constructor(data: Float32Array, bufferType: BUFFER_TYPE)
     {
         super();
         const webgpuContext = context.GetContext() as WebGPUContextData;
         this.m_Device = webgpuContext.Device;
         this.m_Data = data;
-        this.m_Buffer = this.m_Device.createBuffer({
-                label: "VertexBuffer Created",
-                size: data.byteLength,
-                usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST
-            });
+        switch(bufferType)
+        {
+            case BUFFER_TYPE.VERTEX:
+            this.m_Buffer = this.m_Device.createBuffer({
+                    label: "VertexBuffer Created",
+                    size: data.byteLength,
+                    usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST
+                });
+                break;
+            case BUFFER_TYPE.UNIFORM:
+            this.m_Buffer = this.m_Device.createBuffer({
+                    label: "UniformBuffer Created",
+                    size: data.byteLength,
+                    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+                });
+                break;
+
+        }
     }
     public GetBuffer(): GPUBuffer 
     {
@@ -51,7 +64,7 @@ export class WebGPUVertexBuffer extends VertexBuffer
             const element = bufferElements[location];
             attributes.push({
                 format: GetShaderTypeWebGPU(element.Type),
-                offset: element.Offset,
+                offset: element.OffsetInBytes,
                 shaderLocation: location,
             })
         }

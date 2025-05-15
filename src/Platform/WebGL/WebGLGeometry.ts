@@ -50,7 +50,7 @@ export class WebGLGeometry extends Geometry
             var type = bufferElements[location].Type;
             var normalize =  bufferElements[location].Normalized;
             var stride = bufferLayout.GetStride();       
-            var offset = bufferElements[location].Offset;
+            var offset = bufferElements[location].OffsetInBytes;
             this.m_Webgl.vertexAttribPointer(
               location, count, GetShaderTypeWebGL(type), normalize, stride, offset)
         }
