@@ -1,5 +1,5 @@
 import { context } from "@/Core/Byte";
-import { BUFFER_TYPE, BufferLayout, IndexBuffer, SHADER_DATA_TYPE, VertexBuffer } from "@/Renderer/Buffers";
+import { AlignTo16, BUFFER_TYPE, BufferLayout, IndexBuffer, SHADER_DATA_TYPE, VertexBuffer } from "@/Renderer/Buffers";
 import { WebGPUContextData } from "@/Renderer/GraphicsContext";
 
 function GetShaderTypeWebGPU(shaderType: SHADER_DATA_TYPE): GPUVertexFormat
@@ -20,31 +20,17 @@ export class WebGPUVertexBuffer extends VertexBuffer
     private m_Device: GPUDevice;
     private m_Data: Float32Array;
     private m_Layout!: GPUVertexBufferLayout;
-    public m_Buffer: GPUBuffer;
+    private m_BufferLayout!: BufferLayout;
+    private m_BufferType: BUFFER_TYPE;
+    public m_Buffer!: GPUBuffer;
+    
     constructor(data: Float32Array, bufferType: BUFFER_TYPE)
     {
         super();
         const webgpuContext = context.GetContext() as WebGPUContextData;
         this.m_Device = webgpuContext.Device;
         this.m_Data = data;
-        switch(bufferType)
-        {
-            case BUFFER_TYPE.VERTEX:
-            this.m_Buffer = this.m_Device.createBuffer({
-                    label: "VertexBuffer Created",
-                    size: data.byteLength,
-                    usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST
-                });
-                break;
-            case BUFFER_TYPE.UNIFORM:
-            this.m_Buffer = this.m_Device.createBuffer({
-                    label: "UniformBuffer Created",
-                    size: data.byteLength,
-                    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
-                });
-                break;
-
-        }
+        this.m_BufferType = bufferType;
     }
     public GetBuffer(): GPUBuffer 
     {
@@ -52,11 +38,31 @@ export class WebGPUVertexBuffer extends VertexBuffer
     }
     public Upload(): void 
     {
+        switch(this.m_BufferType)
+        {
+            case BUFFER_TYPE.VERTEX:
+            this.m_Buffer = this.m_Device.createBuffer({
+                    label: "VertexBuffer Created",
+                    size: this.m_Data.byteLength,
+                    usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST
+                });
+                break;
+            case BUFFER_TYPE.UNIFORM:
+            this.m_Buffer = this.m_Device.createBuffer({
+                    label: "UniformBuffer Created",
+                    size: AlignTo16(this.m_BufferLayout.GetStride()),
+                    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+                });
+                break;
+
+        }
         this.m_Device.queue.writeBuffer(this.m_Buffer, 0, this.m_Data);
     }
     
     public SetLayout(bufferLayout: BufferLayout): void 
     {
+        this.m_BufferLayout = bufferLayout;
+        console.log(this.m_BufferLayout)
         const bufferElements = bufferLayout.GetBufferElements();
         const attributes: GPUVertexAttribute[] = [];
         for(let location = 0; location < bufferElements.length; location++)

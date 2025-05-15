@@ -7,7 +7,7 @@ import { BUFFER_TYPE, BufferElement, BufferLayout, SHADER_DATA_TYPE } from "./Bu
 import { Vector3, Vector4 } from "../Math/Vectors";
 import { RendererAPI } from "./RendererAPI";
 import { Texture } from "./Texture";
-import { IndexBufferFactory, VertexBufferFactory } from "./BuffersFactory";
+import { IndexBufferFactory, BufferFactory } from "./BuffersFactory";
 import { GeometryFactory } from "./GeometryFactory";
 
 export class Sprite
@@ -126,7 +126,7 @@ export class Renderer2D
         ]); 
 
         
-        var vertexBuffer = VertexBufferFactory.Create(vertices, BUFFER_TYPE.VERTEX); 
+        var vertexBuffer = BufferFactory.Create(vertices, BUFFER_TYPE.VERTEX); 
         var indexBuffer =  IndexBufferFactory.Create(indices, indices.length); 
         var geometry =  GeometryFactory.Create();
 

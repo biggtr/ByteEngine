@@ -1,6 +1,8 @@
 export enum SHADER_TYPE
 {
-    VERTEX, FRAGMENT, COMPUTE
+    VERTEX = 1 << 0,
+    FRAGMENT = 1 << 1,
+    COMPUTE = 1 << 2,
 }
 export enum RESOURCE_TYPE
 {

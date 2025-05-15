@@ -10,6 +10,10 @@ export enum BUFFER_USAGE
 {
     STATIC, DYNAMIC
 }
+export function AlignTo16(stride: number): number
+{
+    return stride + ( (16 - (stride % 16) ) % 16 );
+}
 export function GetShaderDataTypeSize(type: SHADER_DATA_TYPE): number 
 {
     switch (type)
@@ -99,7 +103,6 @@ export class BufferLayout
 
             this.m_Stride += element.Size;
             prevOffsetInBytes += element.Size; 
-            console.log(`Padding ${element.Padding} element offset ${element.Offset} next offset ${offset}`)
         })
     }
     public GetBufferElements(): Array<BufferElement>

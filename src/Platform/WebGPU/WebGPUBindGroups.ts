@@ -4,15 +4,18 @@ import { WebGPUContextData } from "@/Renderer/GraphicsContext";
 
 function GetShaderTypeWebGPU(shaderType: SHADER_TYPE): number
 {
-    switch (shaderType) 
-    {
-        case SHADER_TYPE.VERTEX:
-            return GPUShaderStage.VERTEX
-        case SHADER_TYPE.FRAGMENT:
-            return GPUShaderStage.FRAGMENT
-        case SHADER_TYPE.COMPUTE:
-            return GPUShaderStage.COMPUTE
-    }
+    let type = 0;
+
+    if (shaderType & SHADER_TYPE.VERTEX)
+        type |= GPUShaderStage.VERTEX;
+
+    if (shaderType & SHADER_TYPE.FRAGMENT)
+        type |= GPUShaderStage.FRAGMENT;
+
+    if (shaderType & SHADER_TYPE.COMPUTE)
+        type |= GPUShaderStage.COMPUTE;
+
+    return type;
 }
 export class WebGPUBindGroups extends BindGroups
 {
@@ -54,7 +57,7 @@ export class WebGPUBindGroups extends BindGroups
 
                    bindGroupEntries.push({
                        binding: entry.Binding,
-                       resource : entry.Data as GPUBufferBinding
+                       resource : { buffer: entry.Data as GPUBuffer}
                   });
                   break;
                case RESOURCE_TYPE.TEXTURE:
