@@ -1,19 +1,15 @@
 import { context } from "@/Core/Byte";
-import { Shader } from "@/Renderer/Shader";
+import { Shader, SHADER_SOURCE } from "@/Renderer/Shader";
 
-export interface SHADER_SOURCE
-{
-    VERTEX: string;
-    FRAGMENT: string;
-}
 export class WebGlShader extends Shader
 {
     private m_ShaderProgram: WebGLProgram | null = null;
     private m_Webgl: WebGL2RenderingContext;
-
+    private m_ShaderSources: SHADER_SOURCE;
     constructor(shaderSources: SHADER_SOURCE)
     {
         super()
+        this.m_ShaderSources = shaderSources;
         this.m_Webgl = context.GetContext() as WebGL2RenderingContext;
         const vertexShader = this.CompileShader(shaderSources.VERTEX, this.m_Webgl.VERTEX_SHADER) as WebGLShader;
         const fragmentShader = this.CompileShader(shaderSources.FRAGMENT, this.m_Webgl.FRAGMENT_SHADER) as WebGLShader;
@@ -25,6 +21,10 @@ export class WebGlShader extends Shader
         this.m_Webgl.useProgram(this.m_ShaderProgram);
     }
 
+    public GetShaderSources(): SHADER_SOURCE 
+    {
+        return this.m_ShaderSources;
+    }
     public GetAttributeLocation(attributeName: string) : GLint
     {
         return this.m_Webgl.getAttribLocation(this.m_ShaderProgram as WebGLProgram, attributeName);

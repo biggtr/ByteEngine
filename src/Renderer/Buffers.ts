@@ -43,12 +43,12 @@ export class BufferElement
     Offset: number; // offset inside the array of data to upload to gpu
     Normalized: boolean;
 
-    constructor(type: SHADER_DATA_TYPE, name: string, normalized: boolean = false) 
+    constructor(info: {type: SHADER_DATA_TYPE, name: string} ) 
     {
-        this.AttributeName = name;
-        this.Type = type;
-        this.Size= GetShaderDataTypeSize(type);
-        this.Normalized = normalized;
+        this.AttributeName = info.name;
+        this.Type = info.type;
+        this.Size= GetShaderDataTypeSize(info.type);
+        this.Normalized = false;
         this.OffsetInBytes = 0;
         this.Offset = 0;
         this.Padding = 0;
@@ -76,11 +76,11 @@ export class BufferElement
 }
 export class BufferLayout
 {
-    private m_BufferLayoutElements: Array<BufferElement>;
+    private m_BufferLayoutElements: BufferElement[];
     private m_Stride: number;
-    constructor(bufferLayoutElements: Array<BufferElement>)
+    constructor(elements: {type: SHADER_DATA_TYPE, name: string}[])
     {
-        this.m_BufferLayoutElements = bufferLayoutElements;
+        this.m_BufferLayoutElements = elements.map( element => new BufferElement(element))
         this.m_Stride = 0;
         this.CalculateOffsetAndStride();
     }
@@ -103,6 +103,7 @@ export class BufferLayout
 
             this.m_Stride += element.Size;
             prevOffsetInBytes += element.Size; 
+            console.log(`Padding ${element.Padding} element offset ${element.Offset} next offset ${offset}`)
         })
     }
     public GetBufferElements(): Array<BufferElement>

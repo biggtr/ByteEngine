@@ -1,6 +1,6 @@
-import { SHADER_SOURCE, WebGlShader } from "@/Platform/WebGL/WebGLShader";
+import { WebGlShader } from "@/Platform/WebGL/WebGLShader";
 import { RENDERER_API, RendererAPI } from "./RendererAPI";
-import { Shader } from "./Shader";
+import { Shader, SHADER_SOURCE } from "./Shader";
 import { WebGPUShader } from "@/Platform/WebGPU/WebGPUShader";
 
 export class ShaderFactory 
@@ -13,7 +13,7 @@ export class ShaderFactory
             case RENDERER_API.WEBGL:
                 return new WebGlShader(shaderSources);
             case RENDERER_API.WEBGPU:
-                return new WebGPUShader();
+                return new WebGPUShader(shaderSources);
         }
     }
     

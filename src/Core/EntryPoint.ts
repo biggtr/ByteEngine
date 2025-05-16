@@ -25,11 +25,8 @@ async function main()
     const camera2D = new OrthographicCamera(0, webgl.canvas.width, 0, webgl.canvas.height);
 
     //resouceManager
-    const shaderHandler = new ShaderHandler()
-    const textureHandler = new TextureHandler();
     const resourceManager = new ResourceManager();
-    resourceManager.RegisterHandler(HANDLER_TYPE.SHADER, shaderHandler);
-    resourceManager.RegisterHandler(HANDLER_TYPE.TEXTURE, textureHandler);
+    resourceManager.Init();
 
 
     let app = new TestGame();

@@ -130,9 +130,10 @@ export class Renderer2D
         var indexBuffer =  IndexBufferFactory.Create(indices, indices.length); 
         var geometry =  GeometryFactory.Create();
 
-        const positionElement = new BufferElement(SHADER_DATA_TYPE.FLOAT2, "position");
-        const texCoordsElement = new BufferElement(SHADER_DATA_TYPE.FLOAT2, "texture");
-        var bufferLayout = new BufferLayout([positionElement, texCoordsElement]);
+        var bufferLayout = new BufferLayout([
+            {type: SHADER_DATA_TYPE.FLOAT2, name: "position"},
+            {type: SHADER_DATA_TYPE.FLOAT2, name: "texture"}
+        ]);
         vertexBuffer.SetLayout(bufferLayout);
 
         geometry.SetIndexBuffer(indexBuffer);
