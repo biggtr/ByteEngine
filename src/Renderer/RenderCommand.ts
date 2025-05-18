@@ -1,6 +1,6 @@
 import { Vector4 } from "../Math/Vectors";
+import { Geometry } from "./Geometry";
 import { RendererAPI } from "./RendererAPI";
-import { VertexArray } from "./VertexArray";
 
 
 export class RenderCommand
@@ -24,9 +24,9 @@ export class RenderCommand
 
     }
 
-    DrawIndexed(vertexArray: VertexArray): void
+    DrawIndexed(geometry: Geometry): void
     {
-        this.m_RendererAPI.DrawIndexed(vertexArray);
+        this.m_RendererAPI.DrawIndexed(geometry);
     }
 
    

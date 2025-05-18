@@ -1,5 +1,5 @@
 import { context } from "@/Core/Byte";
-import { AlignTo16, BUFFER_TYPE, BufferLayout, IndexBuffer, SHADER_DATA_TYPE, VertexBuffer } from "@/Renderer/Buffers";
+import { AlignTo16, BUFFER_TYPE, BufferLayout, IndexBuffer, SHADER_DATA_TYPE, Buffer } from "@/Renderer/Buffers";
 import { WebGPUContextData } from "@/Renderer/GraphicsContext";
 
 function GetShaderTypeWebGPU(shaderType: SHADER_DATA_TYPE): GPUVertexFormat
@@ -15,7 +15,7 @@ function GetShaderTypeWebGPU(shaderType: SHADER_DATA_TYPE): GPUVertexFormat
     }
 
 }
-export class WebGPUVertexBuffer extends VertexBuffer
+export class WebGPUBuffer extends Buffer
 {
     private m_Device: GPUDevice;
     private m_Data: Float32Array;
@@ -63,7 +63,7 @@ export class WebGPUVertexBuffer extends VertexBuffer
     {
         this.m_BufferLayout = bufferLayout;
         console.log(this.m_BufferLayout)
-        const bufferElements = bufferLayout.GetBufferElements();
+        const bufferElements = bufferLayout.m_BufferLayoutElements;
         const attributes: GPUVertexAttribute[] = [];
         for(let location = 0; location < bufferElements.length; location++)
         {
@@ -80,7 +80,7 @@ export class WebGPUVertexBuffer extends VertexBuffer
         }
 
     }
-    public GetLayout(): GPUVertexBufferLayout | null 
+    public GetLayout(): GPUVertexBufferLayout 
     {
         return this.m_Layout;
     }

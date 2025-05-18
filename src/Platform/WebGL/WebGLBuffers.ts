@@ -1,7 +1,7 @@
 import { context } from "@/Core/Byte";
-import { AlignTo16, BUFFER_TYPE, BufferLayout, IndexBuffer, VertexBuffer } from "@/Renderer/Buffers";
+import { AlignTo16, BUFFER_TYPE, BufferLayout, IndexBuffer, Buffer } from "@/Renderer/Buffers";
 
-export class WebGLVertexBuffer extends VertexBuffer
+export class WebGlBuffer extends Buffer
 {
     private m_Buffer: WebGLBuffer;
     private m_Webgl: WebGL2RenderingContext;

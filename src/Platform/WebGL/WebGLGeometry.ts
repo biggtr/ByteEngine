@@ -1,5 +1,5 @@
 import { context } from "@/Core/Byte";
-import { BufferLayout, BufferElement, VertexBuffer, IndexBuffer, SHADER_DATA_TYPE} from "@/Renderer/Buffers";
+import { BufferLayout, BufferElement, Buffer, IndexBuffer, SHADER_DATA_TYPE} from "@/Renderer/Buffers";
 import { Geometry } from "@/Renderer/Geometry";
 
 function GetShaderTypeWebGL(shaderType: SHADER_DATA_TYPE): number
@@ -23,8 +23,8 @@ export class WebGLGeometry extends Geometry
 {
     private m_Webgl: WebGL2RenderingContext;
     private m_VertexArray: WebGLVertexArrayObject;
-    private m_VertexBuffers: Array<VertexBuffer> = [];
-    private m_IndexBuffer: IndexBuffer | null = null;
+    private m_VertexBuffers: Buffer[] = [];
+    private m_IndexBuffer!: IndexBuffer;
     constructor()
     {
         super();
@@ -37,7 +37,7 @@ export class WebGLGeometry extends Geometry
         this.m_Webgl.bindVertexArray(this.m_VertexArray);
     }
 
-    public AddVertexBuffer(vertexBuffer: VertexBuffer)
+    public AddVertexBuffer(vertexBuffer: Buffer)
     {
         vertexBuffer.Upload();
         const bufferLayout = vertexBuffer.GetLayout() as BufferLayout;
@@ -58,7 +58,7 @@ export class WebGLGeometry extends Geometry
 
     }
     
-    public GetVertexBuffers(): VertexBuffer[]
+    public GetVertexBuffers(): Buffer[]
     {
         return this.m_VertexBuffers;
     }
@@ -69,7 +69,7 @@ export class WebGLGeometry extends Geometry
         indexBuffer.Upload();
         this.m_IndexBuffer = indexBuffer;
     }
-    public GetIndexBuffer(): IndexBuffer | null
+    public GetIndexBuffer(): IndexBuffer 
     {
         return this.m_IndexBuffer;
     }

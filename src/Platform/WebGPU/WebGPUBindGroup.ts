@@ -1,5 +1,5 @@
 import { context } from "@/Core/Byte";
-import { BindGroups, BindGroupLayout, SHADER_TYPE, RESOURCE_TYPE } from "@/Renderer/BindGroups";
+import { BindGroup, BindGroupLayout, RESOURCE_TYPE, SHADER_TYPE } from "@/Renderer/BindGroup";
 import { WebGPUContextData } from "@/Renderer/GraphicsContext";
 
 function GetShaderTypeWebGPU(shaderType: SHADER_TYPE): number
@@ -17,23 +17,19 @@ function GetShaderTypeWebGPU(shaderType: SHADER_TYPE): number
 
     return type;
 }
-export class WebGPUBindGroups extends BindGroups
+export class WebGPUBindGroup extends BindGroup
 {
 
     private m_Device: GPUDevice;
     private m_BindGrouplayoutEntries!: BindGroupLayout[];
-    private m_BindGroupLayouts!: GPUBindGroupLayout[];
-    private m_BindGroups!: GPUBindGroup[];
-    private m_NumberOfGroups: number;
+    private m_BindGroupLayout!: GPUBindGroupLayout;
+    private m_BindGroup!: GPUBindGroup;
 
     constructor()
     {
         super();
         const webgpuContext = context.GetContext() as WebGPUContextData;
         this.m_Device = webgpuContext.Device;
-        this.m_NumberOfGroups = 0;
-        this.m_BindGroups = [];
-        this.m_BindGroupLayouts = [];
         this.m_BindGrouplayoutEntries = [];
     }
     public AddGroupLayout(bindGroupLayout: BindGroupLayout[]): void 
@@ -91,28 +87,23 @@ export class WebGPUBindGroups extends BindGroups
             label:"BindGroupLayout",
             entries: bindGroupLayoutEntries
         })
-        this.m_BindGroupLayouts.push(newBindGroupLayout);
+        this.m_BindGroupLayout = newBindGroupLayout;
         const newBindGroup= this.m_Device.createBindGroup({
             entries: bindGroupEntries,
             layout: newBindGroupLayout,
         })
-        this.m_BindGroups.push(newBindGroup);
+        this.m_BindGroup = newBindGroup;
         
         //Clear m_BindGrouplayoutEntries for future use 
         this.m_BindGrouplayoutEntries = []
     }
-    public GetBindGroupLayouts(): GPUBindGroupLayout[]
+    public GetBindGroupLayout(): GPUBindGroupLayout
     {
-        return this.m_BindGroupLayouts;
+        return this.m_BindGroupLayout;
     }
-    public GetBindGroup(index: number): GPUBindGroup
+    public GetBindGroup(): GPUBindGroup
     {
-        if(index > this.m_NumberOfGroups)
-        {
-            throw Error("Index Out Of Bounds..");
-        }
-        return this.m_BindGroups[index];;
-        
+        return this.m_BindGroup;
     }
 
 }

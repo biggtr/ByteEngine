@@ -114,7 +114,7 @@ export class BufferLayout
  
 }
 
-export abstract class VertexBuffer
+export abstract class Buffer
 {
     public abstract GetBuffer(): any
     public UpdateSubData(data: Float32Array, offset: number): void{}

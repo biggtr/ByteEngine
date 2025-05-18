@@ -10,18 +10,18 @@ export enum RESOURCE_TYPE
 }
 export interface BindGroupLayout
 {
-    Name?: string, //u_ModelMatrix
+    Name: string, //u_ModelMatrix
     Binding: number,
     Visibility: SHADER_TYPE,
     ResourceType: RESOURCE_TYPE
     ResourceOptions?: {}
     Data: any //Matrix4x4
 }
-export abstract class BindGroups
+export abstract class BindGroup
 {
 
     public abstract AddGroupLayout(bindGroupLayout: BindGroupLayout[]): void;
-    public GetBindGroupLayouts(): any{}
-    public GetBindGroup(index: number): any{}
+    public GetBindGroupLayout(): any{}
+    public GetBindGroup(): any{}
 }
 

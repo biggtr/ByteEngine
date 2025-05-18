@@ -33,6 +33,10 @@ export class WebGlTexture extends Texture
         this.m_Webgl.bindTexture(this.m_Webgl.TEXTURE_2D, this.m_Texture);
         this.m_Webgl.bindSampler(slot, this.m_Sampler);
     } 
+    public GetSampler(): WebGLSampler
+    {
+        return this.m_Sampler;
+    }
 
     public Destroy()
     {

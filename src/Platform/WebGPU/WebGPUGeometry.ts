@@ -1,21 +1,21 @@
-import { VertexBuffer, IndexBuffer } from "@/Renderer/Buffers";
+import { Buffer, IndexBuffer } from "@/Renderer/Buffers";
 import { Geometry } from "@/Renderer/Geometry";
 
 
 export class WebGPUGeometry extends Geometry
 {
 
-    private m_VertexBuffers: Array<VertexBuffer> = [];
-    private m_IndexBuffer: IndexBuffer | null = null;
+    private m_VertexBuffers: Array<Buffer> = [];
+    private m_IndexBuffer!: IndexBuffer;
     constructor()
     {
         super();
     }
-    public AddVertexBuffer(vertexBuffer: VertexBuffer): void 
+    public AddVertexBuffer(vertexBuffer: Buffer): void 
     {
         this.m_VertexBuffers.push(vertexBuffer);
     }
-    public GetVertexBuffers(): VertexBuffer[] 
+    public GetVertexBuffers(): Buffer[] 
     {
         return this.m_VertexBuffers;
     }
@@ -23,7 +23,7 @@ export class WebGPUGeometry extends Geometry
     {
         this.m_IndexBuffer = indexBuffer;
     }
-    public GetIndexBuffer(): IndexBuffer | null 
+    public GetIndexBuffer(): IndexBuffer  
     {
         return this.m_IndexBuffer;
     }

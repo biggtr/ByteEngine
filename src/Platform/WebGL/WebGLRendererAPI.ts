@@ -1,8 +1,8 @@
 import { Vector4 } from "@/Math/Vectors";
-import { VertexArray } from "@/Renderer/VertexArray";
 import { WebGLIndexBuffer } from "./WebGLBuffers";
 import { RendererAPI } from "@/Renderer/RendererAPI";
 import { context } from "@/Core/Byte";
+import { Geometry } from "@/Renderer/Geometry";
 
 export class WebGLRendererAPI extends RendererAPI
 {
@@ -24,10 +24,10 @@ export class WebGLRendererAPI extends RendererAPI
         this.m_Webgl.clear(this.m_Webgl.COLOR_BUFFER_BIT);
     }
 
-    DrawIndexed(vertexArray: VertexArray): void
+    DrawIndexed(geometry: Geometry ): void
     {
-        vertexArray.Upload();
-        const indexBuffer = vertexArray.GetIndexBuffer() as WebGLIndexBuffer;
+        geometry.Upload();
+        const indexBuffer = geometry.GetIndexBuffer() as WebGLIndexBuffer;
         indexBuffer.Upload()
         this.m_Webgl.drawElements(this.m_Webgl.TRIANGLES, indexBuffer.GetIndicesCount() ,this.m_Webgl.UNSIGNED_INT, 0);
     }

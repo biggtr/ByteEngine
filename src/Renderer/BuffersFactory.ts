@@ -1,10 +1,10 @@
-import { WebGLIndexBuffer, WebGLVertexBuffer as WebGLBuffer } from "@/Platform/WebGL/WebGLBuffers";
+import { WebGLIndexBuffer, WebGlBuffer as WebGLBuffer } from "@/Platform/WebGL/WebGLBuffers";
 import { RENDERER_API, RendererAPI } from "./RendererAPI";
-import { WebGPUIndexBuffer, WebGPUVertexBuffer as WebGPUBuffer } from "@/Platform/WebGPU/WebGPUBuffers";
-import { BUFFER_TYPE, IndexBuffer, VertexBuffer } from "./Buffers";
+import { WebGPUIndexBuffer, WebGPUBuffer} from "@/Platform/WebGPU/WebGPUBuffers";
+import { BUFFER_TYPE, IndexBuffer, Buffer } from "./Buffers";
 export class BufferFactory
 {
-    public static Create(data: Float32Array, bufferType: BUFFER_TYPE): VertexBuffer
+    public static Create(data: Float32Array, bufferType: BUFFER_TYPE): Buffer
     {
         switch(RendererAPI.s_API)
         {
