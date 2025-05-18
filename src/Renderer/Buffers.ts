@@ -23,7 +23,7 @@ export function GetShaderDataTypeSize(type: SHADER_DATA_TYPE): number
         case SHADER_DATA_TYPE.FLOAT3:  return 4 * 3;
         case SHADER_DATA_TYPE.FLOAT4:  return 4 * 4;
         case SHADER_DATA_TYPE.MAT2:    return 4 * 4;
-        case SHADER_DATA_TYPE.MAT3:    return 4 * 3 * 3;
+        case SHADER_DATA_TYPE.MAT3:    return 3 * 4 * 4;
         case SHADER_DATA_TYPE.MAT4:    return 4 * 4 * 4;
         case SHADER_DATA_TYPE.INT2:    return 4 * 2;
         case SHADER_DATA_TYPE.INT3:    return 4 * 3;
@@ -62,7 +62,7 @@ export class BufferElement
             case SHADER_DATA_TYPE.FLOAT3:  return 3;
             case SHADER_DATA_TYPE.FLOAT4:  return 4;
             case SHADER_DATA_TYPE.MAT2:    return 4;
-            case SHADER_DATA_TYPE.MAT3:    return 9;
+            case SHADER_DATA_TYPE.MAT3:    return 12;
             case SHADER_DATA_TYPE.MAT4:    return 16;
             case SHADER_DATA_TYPE.INT2:    return 2;
             case SHADER_DATA_TYPE.INT3:    return 3;
@@ -103,7 +103,7 @@ export class BufferLayout
 
             this.m_Stride += element.Size;
             prevOffsetInBytes += element.Size; 
-            console.log(`Padding ${element.Padding} element offset ${element.Offset} next offset ${offset}`)
+            // console.log(`Padding ${element.Padding} element offset ${element.Offset} next offset ${offset}`)
         })
     }
     public GetBufferElements(): Array<BufferElement>

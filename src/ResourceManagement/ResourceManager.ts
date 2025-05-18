@@ -21,6 +21,7 @@ export class ResourceManager
                     this.m_ResourceHandlers.set(HANDLER_TYPE.SHADER, shaderHandler);
                     this.m_ResourceHandlers.set(HANDLER_TYPE.TEXTURE, textureHandler);
                 }
+                break;
             case RENDERER_API.WEBGPU:
                 {
                     const textureHandler = new WebGPUTextureHandler();
@@ -28,6 +29,7 @@ export class ResourceManager
                     this.m_ResourceHandlers.set(HANDLER_TYPE.SHADER, shaderHandler);
                     this.m_ResourceHandlers.set(HANDLER_TYPE.TEXTURE, textureHandler);
                 }
+                break;
         }
     }
     

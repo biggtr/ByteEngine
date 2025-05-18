@@ -1,4 +1,4 @@
-import { Shader, SHADER_SOURCE } from "@/Renderer/Shader";
+import { Shader } from "@/Renderer/Shader";
 import { ShaderFactory } from "@/Renderer/ShaderFactory";
 import { Texture } from "@/Renderer/Texture";
 import { TextureFactory } from "@/Renderer/TextureFactory";
@@ -14,7 +14,6 @@ export class WebGPUTextureHandler implements ResourceHandler<Texture>
     {
         const textureImage = await this.LoadFromImage(path);
         const texture = TextureFactory.Create(textureImage);
-        texture.Init();
         if(this.m_Textures.get(name))
         {
             console.log("Texture is already loaded!..");
@@ -74,7 +73,7 @@ export class WebGPUShaderHandler implements ResourceHandler<Shader>
             console.log("Shader is already loaded!..");
         }
         this.m_Shaders.set(name, newShader);
-         
+
     }
     Get(name: string): Shader
     {
@@ -93,40 +92,12 @@ export class WebGPUShaderHandler implements ResourceHandler<Shader>
         }
     }
 
-    private async LoadShaderFromFile(path: string): Promise<SHADER_SOURCE>
+    private async LoadShaderFromFile(path: string): Promise<string>
     {
         const response = await fetch(path);
         const content = await response.text();
-        return this.ParseShaderContent(content);
+        return content;
     }
 
 
-    private ParseShaderContent(content: string): SHADER_SOURCE 
-    {
-
-        let vertex = "";
-
-        let fragment = "";
-        let current: "vertex" | "fragment" | null = null;
-
-        content.split('\n').forEach(line => {
-            if(line.includes('#Vertex'))
-            {
-                current = 'vertex';
-                return;
-            }
-
-        
-          
-            else if(line.includes('#Fragment'))
-            {
-                current = 'fragment';
-                return; 
-            }
-            else if(current === 'vertex') vertex += line + '\n';
-            else if(current === 'fragment') fragment += line + '\n';
-        });
-
-        return { VERTEX: vertex, FRAGMENT: fragment };
-  }
 }

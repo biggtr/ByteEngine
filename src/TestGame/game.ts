@@ -5,6 +5,8 @@ import { OrthographicCamera } from "@/Renderer/Cameras";
 import { Renderer2D, Sprite } from "@/Renderer/Renderer2D";
 import { HANDLER_TYPE, ResourceManager } from "@/ResourceManagement/ResourceManager";
 import { Animation } from "@/Animation/Animation";
+import { ResourceHandler } from "@/ResourceManagement/ResourceHandlers";
+import { Shader } from "@/Renderer/Shader";
 
 var BasicSprite: Sprite; 
 var idleAnimation: Animation;
@@ -29,6 +31,7 @@ export class TestGame extends Application
         this.m_Renderer2D = engineComponents.Renderer2D;
         this.m_Input = engineComponents.InputSystem;
         this.m_Camera2D = engineComponents.OrthoCamera;
+        this.m_Camera2D.SetPosition(new Vector3(-200,-200,1))
 
         this.m_ResourceManager = engineComponents.ResourceManager;
 
@@ -39,7 +42,7 @@ export class TestGame extends Application
 
         await textureManager.Load("basic", "/assets/textures/basic.png");
 
-        const shaderManager = this.m_ResourceManager.GetHandler(HANDLER_TYPE.SHADER);
+        const shaderManager = this.m_ResourceManager.GetHandler(HANDLER_TYPE.SHADER) as ResourceHandler<Shader>;
         await shaderManager.Load("Quad", "/assets/shaders/QuadShader.glsl");
         await shaderManager.Load("Sprite", "/assets/shaders/SpriteShader.glsl");
         this.m_Renderer2D.Init(
@@ -67,7 +70,7 @@ export class TestGame extends Application
         runAnimation.GetCurrentUVs()
         attackAnimation.GetCurrentUVs();
         // console.log(this.idleAnimation.GetSprite().UVs)
-        this.m_Renderer2D.DrawSprite(new Vector3(200,100,1), this.size, new Vector4(0,0,0,1), idleAnimation.GetSprite());
+        this.m_Renderer2D.DrawSprite(new Vector3(0,100,1), this.size, new Vector4(0,0,0,1), idleAnimation.GetSprite());
         this.m_Renderer2D.DrawSprite(new Vector3(400,100,1), this.size, new Vector4(0,0,0,1), runAnimation.GetSprite());
         this.m_Renderer2D.DrawSprite(new Vector3(600,100,1), this.size, new Vector4(0,0,0,1), attackAnimation.GetSprite());
         this.m_Renderer2D.DrawSprite(new Vector3(700,100,1), this.size, new Vector4(0,0,0,1), BasicSprite) 

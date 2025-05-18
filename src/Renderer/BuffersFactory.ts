@@ -9,7 +9,7 @@ export class BufferFactory
         switch(RendererAPI.s_API)
         {
             case RENDERER_API.WEBGL:
-                return new WebGLBuffer(data);
+                return new WebGLBuffer(data, bufferType);
             case RENDERER_API.WEBGPU:
                 return new WebGPUBuffer(data, bufferType);
         }

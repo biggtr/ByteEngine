@@ -21,6 +21,10 @@ export class WebGlShader extends Shader
         this.m_Webgl.useProgram(this.m_ShaderProgram);
     }
 
+    public GetModule(): WebGLProgram | null
+    {
+        return this.m_ShaderProgram;
+    }
     public GetShaderSources(): SHADER_SOURCE 
     {
         return this.m_ShaderSources;
@@ -43,6 +47,11 @@ export class WebGlShader extends Shader
     {
         const location = this.m_Webgl.getUniformLocation(this.m_ShaderProgram as WebGLProgram, uniformName);
         this.m_Webgl.uniformMatrix3fv(location,false, data);
+    }
+    public SetMat4(uniformName: string, data: Float32Array): void
+    {
+        const location = this.m_Webgl.getUniformLocation(this.m_ShaderProgram as WebGLProgram, uniformName);
+        this.m_Webgl.uniformMatrix4fv(location,false, data);
     }
     
 

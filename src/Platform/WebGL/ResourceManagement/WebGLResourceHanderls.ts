@@ -14,7 +14,6 @@ export class WebGLTextureHandler implements ResourceHandler<Texture>
     {
         const textureImage = await this.LoadFromImage(path);
         const texture = TextureFactory.Create(textureImage);
-        texture.Init();
         if(this.m_Textures.get(name))
         {
             console.log("Texture is already loaded!..");

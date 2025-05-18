@@ -2,13 +2,14 @@ import { RenderCommand } from "./RenderCommand";
 import { Shader } from "./Shader";
 import { Geometry } from "./Geometry";
 import { OrthographicCamera } from "./Cameras";
-import { Matrix3 } from "../Math/Matrices";
-import { BUFFER_TYPE, BufferElement, BufferLayout, SHADER_DATA_TYPE } from "./Buffers";
+import { Matrix3, Matrix4 } from "../Math/Matrices";
+import { AlignTo16, BUFFER_TYPE, BufferElement, BufferLayout, SHADER_DATA_TYPE } from "./Buffers";
 import { Vector3, Vector4 } from "../Math/Vectors";
 import { RendererAPI } from "./RendererAPI";
 import { Texture } from "./Texture";
 import { IndexBufferFactory, BufferFactory } from "./BuffersFactory";
 import { GeometryFactory } from "./GeometryFactory";
+import { context } from "@/Core/Byte";
 
 export class Sprite
 {
@@ -35,7 +36,7 @@ export class Sprite
 export class Renderer2D
 {
     private m_RenderCommand: RenderCommand; 
-    private m_OrthoCamera: OrthographicCamera | null = null;
+    private m_OrthoCamera!: OrthographicCamera; 
 
     private m_QuadGeometry: Geometry | null = null;
     private m_QuadShader!: Shader;
@@ -76,7 +77,8 @@ export class Renderer2D
         }
         var modelMatrix = Matrix3.Translate(position.x, position.y).Multiply(Matrix3.Scale(size.x, size.y));
         this.m_QuadShader.Upload();
-        const viewProjection = this.m_OrthoCamera?.GetViewProjectionMatrix().GetAll();
+        const viewProjection = this.m_OrthoCamera.GetViewProjectionMatrix().m_Data;
+
         this.m_QuadShader.SetMat3("u_ViewProjection", viewProjection as Float32Array)
         this.m_QuadShader.SetMat3("u_Model", modelMatrix.GetAll());
         var quadVAO = this.GetQuadGeometry();
@@ -87,13 +89,13 @@ export class Renderer2D
     public async DrawSprite(position: Vector3, size: Vector3, color: Vector4, sprite: Sprite)
     {
         
-        var modelMatrix = Matrix3.Translate(position.x, position.y).Multiply(Matrix3.Scale(size.x, size.y));
+        var modelMatrix = Matrix4.Translate(position.x, position.y, position.z).Multiply(Matrix4.Scale(size.x, size.y, size.z));
         this.m_SpriteShader.Upload();
         const texture = sprite.Texture;
         texture.Upload();
-        const viewProjection = this.m_OrthoCamera?.GetViewProjectionMatrix().GetAll();
-        this.m_SpriteShader.SetMat3("u_ViewProjection", viewProjection as Float32Array)
-        this.m_SpriteShader.SetMat3("u_Model", modelMatrix.GetAll());
+        const viewProjection = this.m_OrthoCamera.GetViewProjectionMatrix().m_Data as Float32Array;
+        this.m_SpriteShader.SetMat4("u_ViewProjection", viewProjection)
+        this.m_SpriteShader.SetMat4("u_Model", modelMatrix.m_Data);
         this.m_SpriteShader.SetUniform1i("u_Image", 0);
         var quadVAO = this.GetQuadGeometry();
         const uvBuffer = quadVAO.GetVertexBuffers()[0]

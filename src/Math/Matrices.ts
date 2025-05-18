@@ -2,7 +2,7 @@ import { Vector3, Vector4} from "./Vectors";
 
 export class Matrix4
 {
-    private m_Data: Float32Array;
+    m_Data: Float32Array;
     constructor()
     {
         this.m_Data = new Float32Array([
@@ -18,10 +18,7 @@ export class Matrix4
     {
         return this.m_Data[col * 4 + row];
     }
-    public GetAll()
-    {
-        return this.m_Data;
-    }
+    
 
 
     /*[
@@ -54,7 +51,8 @@ export class Matrix4
                                this.m_Data[4]  * param.m_Data[1] +
                                this.m_Data[8]  * param.m_Data[2] +
                                this.m_Data[12] * param.m_Data[3];
-result.m_Data[0] = this.m_Data[1]  * param.m_Data[0] +
+
+            result.m_Data[1] = this.m_Data[1]  * param.m_Data[0] +
                                this.m_Data[5]  * param.m_Data[1] +
                                this.m_Data[9]  * param.m_Data[2] +
                                this.m_Data[13] * param.m_Data[3];
@@ -133,14 +131,33 @@ result.m_Data[0] = this.m_Data[1]  * param.m_Data[0] +
         throw new Error("Invalid parameter type for Multiply method.");
     }
 
-    public static Identity(): Matrix3
+    public static Identity(): Matrix4
     {
-        return new Matrix3();
+        return new Matrix4();
     }
 
-    public static Rotate(angle: number): Matrix4
+    public static Rotate(xAngle: number = 0, yAngle: number = 0, zAngle: number = 0): Matrix4
     {
-        var rotationMatrix = new Matrix4();
+        var xRotationMatrix = new Matrix4();
+        xRotationMatrix.m_Data[5] =  Math.cos(xAngle);
+        xRotationMatrix.m_Data[6] = -Math.sin(xAngle);
+        xRotationMatrix.m_Data[9]  = Math.sin(xAngle);
+        xRotationMatrix.m_Data[10] = Math.cos(xAngle);
+
+        var yRotationMatrix = new Matrix4();
+        yRotationMatrix.m_Data[0] = Math.cos(yAngle);
+        yRotationMatrix.m_Data[2] = -Math.sin(yAngle);
+        yRotationMatrix.m_Data[8] = Math.sin(yAngle);
+        yRotationMatrix.m_Data[10] = Math.cos(yAngle);
+
+
+        var zRotationMatrix = new Matrix4();
+        zRotationMatrix.m_Data[0] = Math.cos(zAngle);
+        zRotationMatrix.m_Data[1] = Math.sin(zAngle);
+        zRotationMatrix.m_Data[4] = -Math.sin(zAngle);
+        zRotationMatrix.m_Data[5] = Math.cos(zAngle);
+
+        const rotationMatrix = zRotationMatrix.Multiply(yRotationMatrix).Multiply(xRotationMatrix);
         return rotationMatrix;
     }
     public static Scale(sx: number, sy: number, sz: number): Matrix4
@@ -159,17 +176,19 @@ result.m_Data[0] = this.m_Data[1]  * param.m_Data[0] +
         translationMatrix.m_Data[14] = tz;
         return translationMatrix;
     }
-    //public static Ortho(left: number, right: number, bot: number, top: number): Matrix3
-    //{
-    //    var horizontalLength = 1 / right - left;
-    //    var verticalLength = 1 / top - bot;
-    //    var orthoMatrix = new Matrix3();
-    //    orthoMatrix.m_Data[0] = 2 * horizontalLength;
-    //    orthoMatrix.m_Data[6] = -(right + left) * horizontalLength;
-    //    orthoMatrix.m_Data[4] = 2 * verticalLength;
-    //    orthoMatrix.m_Data[6] = -(top + bot) * horizontalLength;
-    //    return orthoMatrix;
-    //}
+    public static Ortho(left: number, right: number, bot: number, top: number, zNear: number, zFar: number): Matrix4
+    {
+       var orthoMatrix = new Matrix4();
+
+       orthoMatrix.m_Data[0] = 2 / (right -left);
+       orthoMatrix.m_Data[5] = 2 / (top - bot);
+       orthoMatrix.m_Data[10] = 2 / (zFar - zNear);
+       orthoMatrix.m_Data[12] = -(right + left) / right - left;
+       orthoMatrix.m_Data[13] = -(top + bot) / top - bot;
+       orthoMatrix.m_Data[14] = -(zFar + zNear) / zFar - zNear;
+       return orthoMatrix;
+
+    }
 
     
 }

@@ -22,7 +22,7 @@ async function main()
     const rendererAPI = RendererAPIFactory.Create();
     var renderer2D = new Renderer2D(rendererAPI as WebGLRendererAPI);
 
-    const camera2D = new OrthographicCamera(0, webgl.canvas.width, 0, webgl.canvas.height);
+    const camera2D = new OrthographicCamera(0, webgl.canvas.width, 0, webgl.canvas.height, 0.0, 1.0);
 
     //resouceManager
     const resourceManager = new ResourceManager();

@@ -1,19 +1,21 @@
 import { context } from "@/Core/Byte";
-import { BufferLayout, IndexBuffer, VertexBuffer } from "@/Renderer/Buffers";
+import { AlignTo16, BUFFER_TYPE, BufferLayout, IndexBuffer, VertexBuffer } from "@/Renderer/Buffers";
 
 export class WebGLVertexBuffer extends VertexBuffer
 {
     private m_Buffer: WebGLBuffer;
-    private m_Webgl: WebGLRenderingContext;
-    private m_BufferLayout: BufferLayout | null = null;
+    private m_Webgl: WebGL2RenderingContext;
+    private m_Data: Float32Array
+    private m_BufferLayout!: BufferLayout; 
+    private m_BufferType: BUFFER_TYPE;
 
-    constructor(data: Float32Array)
+    constructor(data: Float32Array, bufferType: BUFFER_TYPE)
     {
         super()
+        this.m_BufferType = bufferType;
         this.m_Webgl = context.GetContext() as WebGL2RenderingContext;
         this.m_Buffer = this.m_Webgl.createBuffer();
-        this.m_Webgl.bindBuffer(this.m_Webgl.ARRAY_BUFFER, this.m_Buffer);
-        this.m_Webgl.bufferData(this.m_Webgl.ARRAY_BUFFER, data, this.m_Webgl.STATIC_DRAW);
+        this.m_Data = data
     }
     public GetBuffer(): WebGLBuffer
     {
@@ -21,8 +23,26 @@ export class WebGLVertexBuffer extends VertexBuffer
     }
     public Upload(): void
     {
-
-        this.m_Webgl.bindBuffer(this.m_Webgl.ARRAY_BUFFER, this.m_Buffer);
+        switch(this.m_BufferType)
+        {
+            case BUFFER_TYPE.VERTEX:
+                this.m_Webgl.bindBuffer(this.m_Webgl.ARRAY_BUFFER, this.m_Buffer);
+                this.m_Webgl.bufferData(this.m_Webgl.ARRAY_BUFFER, this.m_Data, this.m_Webgl.STATIC_DRAW);
+                break;
+            case BUFFER_TYPE.UNIFORM:
+                this.m_Webgl.bindBuffer(this.m_Webgl.UNIFORM_BUFFER, this.m_Buffer);
+                this.m_Webgl.bufferData(
+                    this.m_Webgl.UNIFORM_BUFFER,
+                    AlignTo16(this.m_BufferLayout.GetStride()),
+                    this.m_Webgl.DYNAMIC_DRAW
+                );
+                this.m_Webgl.bufferData(
+                    this.m_Webgl.UNIFORM_BUFFER,
+                    this.m_Data,
+                    this.m_Webgl.DYNAMIC_DRAW
+                )
+                break;
+        }
     }
 
     public UpdateSubData(data: Float32Array, offset: number)
@@ -56,6 +76,10 @@ export class WebGLIndexBuffer extends IndexBuffer
         this.m_Webgl.bufferData(this.m_Webgl.ELEMENT_ARRAY_BUFFER, indices, this.m_Webgl.STATIC_DRAW);
     }
 
+    public GetBuffer(): WebGLBuffer
+    {
+        return this.m_IndexBuffer;
+    }
     public Upload(): void 
     {
         this.m_Webgl.bindBuffer(this.m_Webgl.ELEMENT_ARRAY_BUFFER, this.m_IndexBuffer);
