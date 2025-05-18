@@ -33,11 +33,6 @@ export class WebGLVertexBuffer extends VertexBuffer
                 this.m_Webgl.bindBuffer(this.m_Webgl.UNIFORM_BUFFER, this.m_Buffer);
                 this.m_Webgl.bufferData(
                     this.m_Webgl.UNIFORM_BUFFER,
-                    AlignTo16(this.m_BufferLayout.GetStride()),
-                    this.m_Webgl.DYNAMIC_DRAW
-                );
-                this.m_Webgl.bufferData(
-                    this.m_Webgl.UNIFORM_BUFFER,
                     this.m_Data,
                     this.m_Webgl.DYNAMIC_DRAW
                 )

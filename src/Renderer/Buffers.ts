@@ -76,7 +76,7 @@ export class BufferElement
 }
 export class BufferLayout
 {
-    private m_BufferLayoutElements: BufferElement[];
+    m_BufferLayoutElements: BufferElement[];
     private m_Stride: number;
     constructor(elements: {type: SHADER_DATA_TYPE, name: string}[])
     {
@@ -105,10 +105,6 @@ export class BufferLayout
             prevOffsetInBytes += element.Size; 
             // console.log(`Padding ${element.Padding} element offset ${element.Offset} next offset ${offset}`)
         })
-    }
-    public GetBufferElements(): Array<BufferElement>
-    {
-        return this.m_BufferLayoutElements;
     }
 
     public GetStride(): number

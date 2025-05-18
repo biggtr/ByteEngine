@@ -5,13 +5,13 @@ precision mediump float;
 layout(location = 0) in vec2 a_position;  
 layout(location = 1) in vec2 a_texCoord;     
 
-uniform mat4 u_Model;
-uniform mat4 u_ViewProjection;
-// layout(std140) uniform Transform
-// {
-//    mat4 u_Model;
-//    mat4 u_ViewProjection;
-// };
+// uniform mat4 u_Model;
+// uniform mat4 u_ViewProjection;
+layout(std140) uniform Transform
+{
+   mat4 u_ViewProjection;
+   mat4 u_Model;
+};
 out vec2 v_texCoord;
 
 void main() {

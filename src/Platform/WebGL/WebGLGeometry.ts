@@ -41,7 +41,7 @@ export class WebGLGeometry extends Geometry
     {
         vertexBuffer.Upload();
         const bufferLayout = vertexBuffer.GetLayout() as BufferLayout;
-        const bufferElements = bufferLayout.GetBufferElements() as Array<BufferElement>
+        const bufferElements = bufferLayout.m_BufferLayoutElements;
         for(let location = 0; location < bufferElements.length; location++)
         {
             this.m_Webgl.bindVertexArray(this.m_VertexArray);

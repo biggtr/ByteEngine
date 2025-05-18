@@ -94,8 +94,26 @@ export class Renderer2D
         const texture = sprite.Texture;
         texture.Upload();
         const viewProjection = this.m_OrthoCamera.GetViewProjectionMatrix().m_Data as Float32Array;
-        this.m_SpriteShader.SetMat4("u_ViewProjection", viewProjection)
-        this.m_SpriteShader.SetMat4("u_Model", modelMatrix.m_Data);
+        const uniformLayout = new BufferLayout([
+            {type: SHADER_DATA_TYPE.MAT4, name:"viewProjection"},
+            {type: SHADER_DATA_TYPE.MAT4, name:"modelMatrix"}
+        ])
+        var uniformData = new Float32Array(uniformLayout.GetStride() / 4);
+        uniformData.set(viewProjection, uniformLayout.m_BufferLayoutElements[0].Offset);
+        uniformData.set(modelMatrix.m_Data, uniformLayout.m_BufferLayoutElements[1].Offset);
+        var uniformBuffer = BufferFactory.Create(uniformData, BUFFER_TYPE.UNIFORM)
+        uniformBuffer.SetLayout(uniformLayout);
+        uniformBuffer.Upload()
+        
+        const gl = context.GetContext() as WebGL2RenderingContext
+        gl.bindBufferBase(gl.UNIFORM_BUFFER, 0, uniformBuffer.GetBuffer()); // Bind to binding point 0
+
+        // Get block index & bind to program
+        const blockIndex = gl.getUniformBlockIndex(this.m_SpriteShader.GetModule(), 'Transform');
+        console.log("blockIndex", blockIndex); // should NOT be -1
+        gl.uniformBlockBinding(this.m_SpriteShader.GetModule(), blockIndex, 0); // Match buffer to shader
+        // this.m_SpriteShader.SetMat4("u_ViewProjection", viewProjection)
+        // this.m_SpriteShader.SetMat4("u_Model", modelMatrix.m_Data);
         this.m_SpriteShader.SetUniform1i("u_Image", 0);
         var quadVAO = this.GetQuadGeometry();
         const uvBuffer = quadVAO.GetVertexBuffers()[0]

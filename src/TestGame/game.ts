@@ -31,7 +31,7 @@ export class TestGame extends Application
         this.m_Renderer2D = engineComponents.Renderer2D;
         this.m_Input = engineComponents.InputSystem;
         this.m_Camera2D = engineComponents.OrthoCamera;
-        this.m_Camera2D.SetPosition(new Vector3(-200,-200,1))
+        this.m_Camera2D.SetPosition(new Vector3(-300,-200,1))
 
         this.m_ResourceManager = engineComponents.ResourceManager;
 
@@ -71,9 +71,9 @@ export class TestGame extends Application
         attackAnimation.GetCurrentUVs();
         // console.log(this.idleAnimation.GetSprite().UVs)
         this.m_Renderer2D.DrawSprite(new Vector3(0,100,1), this.size, new Vector4(0,0,0,1), idleAnimation.GetSprite());
-        this.m_Renderer2D.DrawSprite(new Vector3(400,100,1), this.size, new Vector4(0,0,0,1), runAnimation.GetSprite());
-        this.m_Renderer2D.DrawSprite(new Vector3(600,100,1), this.size, new Vector4(0,0,0,1), attackAnimation.GetSprite());
-        this.m_Renderer2D.DrawSprite(new Vector3(700,100,1), this.size, new Vector4(0,0,0,1), BasicSprite) 
+        this.m_Renderer2D.DrawSprite(new Vector3(200,100,1), this.size, new Vector4(0,0,0,1), runAnimation.GetSprite());
+        this.m_Renderer2D.DrawSprite(new Vector3(400,100,1), this.size, new Vector4(0,0,0,1), attackAnimation.GetSprite());
+        this.m_Renderer2D.DrawSprite(new Vector3(600,100,1), this.size, new Vector4(0,0,0,1), BasicSprite) 
        
     }
 
