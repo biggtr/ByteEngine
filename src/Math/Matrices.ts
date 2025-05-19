@@ -39,8 +39,8 @@ export class Matrix4
             return new Vector4(
                 this.m_Data[0] * param.x + this.m_Data[4] * param.y + this.m_Data[8]  * param.z + this.m_Data[12] * param.w,
                 this.m_Data[1] * param.x + this.m_Data[5] * param.y + this.m_Data[9]  * param.z + this.m_Data[13] * param.w,
-                this.m_Data[2] * param.x + this.m_Data[6] * param.y + this.m_Data[10] * param.z + this.m_Data[13] * param.w,
-                this.m_Data[3] * param.x + this.m_Data[7] * param.y + this.m_Data[11] * param.z + this.m_Data[13] * param.w
+                this.m_Data[2] * param.x + this.m_Data[6] * param.y + this.m_Data[10] * param.z + this.m_Data[14] * param.w,
+                this.m_Data[3] * param.x + this.m_Data[7] * param.y + this.m_Data[11] * param.z + this.m_Data[15] * param.w
             )
         }
         else if(param instanceof Matrix4) // both matrices is in column major layout
@@ -102,10 +102,10 @@ export class Matrix4
                                 this.m_Data[10] * param.m_Data[10] +
                                 this.m_Data[14] * param.m_Data[11];
 
-            result.m_Data[11] = this.m_Data[2]  * param.m_Data[4] +
-                                this.m_Data[7]  * param.m_Data[5] +
-                                this.m_Data[11] * param.m_Data[6] +
-                                this.m_Data[15] * param.m_Data[7];
+            result.m_Data[11] = this.m_Data[3]  * param.m_Data[8] +
+                                this.m_Data[7]  * param.m_Data[9] +
+                                this.m_Data[11] * param.m_Data[10] +
+                                this.m_Data[15] * param.m_Data[11];
 
             result.m_Data[12] = this.m_Data[0]  * param.m_Data[12] +
                                 this.m_Data[4]  * param.m_Data[13] +
@@ -122,7 +122,7 @@ export class Matrix4
                                 this.m_Data[10] * param.m_Data[14] +
                                 this.m_Data[14] * param.m_Data[15];
 
-            result.m_Data[15] = this.m_Data[2]  * param.m_Data[12] +
+            result.m_Data[15] = this.m_Data[3]  * param.m_Data[12] +
                                 this.m_Data[7]  * param.m_Data[13] +
                                 this.m_Data[11] * param.m_Data[14] +
                                 this.m_Data[15] * param.m_Data[15];

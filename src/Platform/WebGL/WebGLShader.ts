@@ -29,30 +29,6 @@ export class WebGlShader extends Shader
     {
         return this.m_ShaderSources;
     }
-    public GetAttributeLocation(attributeName: string) : GLint
-    {
-        return this.m_Webgl.getAttribLocation(this.m_ShaderProgram as WebGLProgram, attributeName);
-    }
-
-    public GetUniformLocation(uniformName: string) : WebGLUniformLocation | null
-    {
-        return this.m_Webgl.getUniformLocation(this.m_ShaderProgram as WebGLProgram, uniformName);
-    }
-    public SetUniform1i(uniformName: string, data: number)
-    {
-        const location = this.m_Webgl.getUniformLocation(this.m_ShaderProgram as WebGLProgram, uniformName);
-        this.m_Webgl.uniform1i(location, data);
-    }
-    public SetMat3(uniformName: string, data: Float32Array): void
-    {
-        const location = this.m_Webgl.getUniformLocation(this.m_ShaderProgram as WebGLProgram, uniformName);
-        this.m_Webgl.uniformMatrix3fv(location,false, data);
-    }
-    public SetMat4(uniformName: string, data: Float32Array): void
-    {
-        const location = this.m_Webgl.getUniformLocation(this.m_ShaderProgram as WebGLProgram, uniformName);
-        this.m_Webgl.uniformMatrix4fv(location,false, data);
-    }
     
 
     private CompileShader(shaderSource: string, type: number) : WebGLShader | null

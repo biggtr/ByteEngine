@@ -14,6 +14,13 @@ import { BindGroup, RESOURCE_TYPE, SHADER_TYPE } from "./BindGroup";
 import { BindGroupFactory } from "./BindGroupFactory";
 import { RenderPipelineFactory } from "./RenderPipelineFactory";
 
+const uniformLayout = new BufferLayout([
+            {type: SHADER_DATA_TYPE.MAT4, name:"viewProjection"},
+            {type: SHADER_DATA_TYPE.MAT4, name:"modelMatrix"}
+        ])
+        
+var uniformData = new Float32Array(uniformLayout.GetStride() / 4);
+
 export class Sprite
 {
     public Position: Vector3;
@@ -32,7 +39,6 @@ export class Sprite
             1.0, 0.0, // bot right
             1.0, 1.0, // top right
             0.0, 1.0, // top left
-
         ])
     }
 }
@@ -59,9 +65,13 @@ export class Renderer2D
     public BeginScene(camera: OrthographicCamera)
     {
         this.m_OrthoCamera = camera;
+        this.m_RenderCommand.BeginScene();
     }
 
-    public EndScene(){}
+    public EndScene()
+    {
+        this.m_RenderCommand.EndScene();
+    }
 
     
     public SetClearColor(color: Vector4): void
@@ -74,45 +84,44 @@ export class Renderer2D
     }
     public DrawQuad(position: Vector3, size: Vector3, color: Vector4): void
     {
-        if (!this.m_QuadShader) 
-        {
-            throw new Error("Quad shader not initialized!");
-        }
-        var modelMatrix = Matrix3.Translate(position.x, position.y).Multiply(Matrix3.Scale(size.x, size.y));
-        this.m_QuadShader.Upload();
-        const viewProjection = this.m_OrthoCamera.GetViewProjectionMatrix().m_Data;
-
-        this.m_QuadShader.SetMat3("u_ViewProjection", viewProjection as Float32Array)
-        this.m_QuadShader.SetMat3("u_Model", modelMatrix.GetAll());
-        var quadVAO = this.GetQuadGeometry();
-        quadVAO.Upload();
-        this.m_RenderCommand.DrawIndexed(quadVAO);
-    }
-
-    public async DrawSprite(position: Vector3, size: Vector3, color: Vector4, sprite: Sprite)
-    {
         
         var modelMatrix = Matrix4.Translate(position.x, position.y, position.z).Multiply(Matrix4.Scale(size.x, size.y, size.z));
-        this.m_SpriteShader.Upload();
-        const texture = sprite.Texture;
-        const viewProjection = this.m_OrthoCamera.GetViewProjectionMatrix().m_Data; 
-        const uniformLayout = new BufferLayout([
-            {type: SHADER_DATA_TYPE.MAT4, name:"viewProjection"},
-            {type: SHADER_DATA_TYPE.MAT4, name:"modelMatrix"}
-        ])
-        
-        var uniformData = new Float32Array(uniformLayout.GetStride() / 4);
-        uniformData.set(viewProjection, uniformLayout.m_BufferLayoutElements[0].Offset);
-        uniformData.set(modelMatrix.m_Data, uniformLayout.m_BufferLayoutElements[1].Offset);
+        const viewProjection = this.m_OrthoCamera.GetViewProjectionMatrix().m_Data;
+
+        uniformData.set(viewProjection, uniformLayout.m_BufferLayoutElements[0].Offset + uniformLayout.m_BufferLayoutElements[0].Padding);
+        uniformData.set(modelMatrix.m_Data, uniformLayout.m_BufferLayoutElements[1].Offset+ uniformLayout.m_BufferLayoutElements[1].Padding);
         var uniformBuffer = BufferFactory.Create(uniformData, BUFFER_TYPE.UNIFORM)
         uniformBuffer.SetLayout(uniformLayout);
         uniformBuffer.Upload()
         
         const bindGroup = BindGroupFactory.Create();
         bindGroup.AddGroupLayout([
-            { Name: "Transform", Binding: 0, Visibility: (SHADER_TYPE.VERTEX | SHADER_TYPE.FRAGMENT), ResourceType:RESOURCE_TYPE.BUFFER, Data: uniformBuffer.GetBuffer()},
-            { Name: "u_Image", Binding: 0, Visibility: SHADER_TYPE.FRAGMENT, ResourceType:RESOURCE_TYPE.TEXTURE, Data: texture },
-            { Name: "texture", Binding: 0, Visibility: SHADER_TYPE.FRAGMENT, ResourceType:RESOURCE_TYPE.SAMPLER, Data: texture },
+            { Name: "Transforms", Binding: 0, Visibility: SHADER_TYPE.VERTEX, ResourceType:RESOURCE_TYPE.BUFFER, Data: uniformBuffer},
+        ])
+        
+        var quadGeometry = this.GetQuadGeometry();
+        const pipeline = RenderPipelineFactory.Create(quadGeometry, this.m_QuadShader, bindGroup);
+        this.m_RenderCommand.DrawIndexed(pipeline); 
+    }
+
+    public async DrawSprite(position: Vector3, size: Vector3, color: Vector4, sprite: Sprite)
+    {
+        
+        var modelMatrix = Matrix4.Translate(position.x, position.y, position.z).Multiply(Matrix4.Scale(size.x, size.y, size.z));
+        const texture = sprite.Texture;
+        const viewProjection = this.m_OrthoCamera.GetViewProjectionMatrix().m_Data; 
+        
+        uniformData.set(viewProjection, uniformLayout.m_BufferLayoutElements[0].Offset + uniformLayout.m_BufferLayoutElements[0].Padding);
+        uniformData.set(modelMatrix.m_Data, uniformLayout.m_BufferLayoutElements[1].Offset + uniformLayout.m_BufferLayoutElements[1].Padding);
+        var uniformBuffer = BufferFactory.Create(uniformData, BUFFER_TYPE.UNIFORM)
+        uniformBuffer.SetLayout(uniformLayout);
+        uniformBuffer.Upload();
+        
+        const bindGroup = BindGroupFactory.Create();
+        bindGroup.AddGroupLayout([
+            { Name: "Transforms", Binding: 0, Visibility: SHADER_TYPE.VERTEX, ResourceType:RESOURCE_TYPE.BUFFER, Data: uniformBuffer},
+            { Name: "u_Image", Binding: 1, Visibility: SHADER_TYPE.FRAGMENT, ResourceType:RESOURCE_TYPE.SAMPLER, Data: texture },
+            { Name: "texture", Binding: 2, Visibility: SHADER_TYPE.FRAGMENT, ResourceType:RESOURCE_TYPE.TEXTURE, Data: texture },
         ])
         
         var quadGeometry = this.GetQuadGeometry();
@@ -128,7 +137,8 @@ export class Renderer2D
             uvBuffer.UpdateSubData(new Float32Array([sprite.UVs[i*2], sprite.UVs[i*2+1]]), vertexUVOffset) 
         }
         const pipeline = RenderPipelineFactory.Create(quadGeometry, this.m_SpriteShader, bindGroup);
-        this.m_RenderCommand.DrawIndexed(quadGeometry);
+
+        this.m_RenderCommand.DrawIndexed(pipeline);
     }
     private CreateQuadGeometry(): Geometry
     {
@@ -154,9 +164,13 @@ export class Renderer2D
             {type: SHADER_DATA_TYPE.FLOAT2, name: "position"},
             {type: SHADER_DATA_TYPE.FLOAT2, name: "texture"}
         ]);
+        vertexBuffer.Upload();
         vertexBuffer.SetLayout(bufferLayout);
 
+
+        indexBuffer.Upload();
         geometry.SetIndexBuffer(indexBuffer);
+
         geometry.AddVertexBuffer(vertexBuffer);
         
         return geometry;

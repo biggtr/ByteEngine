@@ -5,13 +5,13 @@ precision mediump float;
 layout(location = 0) in vec2 a_position;  
 layout(location = 1) in vec2 a_texCoord;     
 
-// uniform mat4 u_Model;
-// uniform mat4 u_ViewProjection;
-layout(std140) uniform Transform
+layout(std140) uniform Transforms
 {
    mat4 u_ViewProjection;
    mat4 u_Model;
 };
+
+
 out vec2 v_texCoord;
 
 void main() {
@@ -21,8 +21,7 @@ void main() {
     
     gl_Position = transformed;
     
-    v_texCoord = a_texCoord;
-}
+    v_texCoord = a_texCoord;}
 
 #Fragment
 #version 300 es
@@ -31,9 +30,8 @@ precision highp float;
  
 in vec2 v_texCoord;
  
-uniform sampler2D u_Image;
 out vec4 outColor;
  
 void main() {
-   outColor = texture(u_Image, v_texCoord);
+   outColor = vec4(1.0,0.0,0.0,1.0);
 }

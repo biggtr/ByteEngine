@@ -1,6 +1,8 @@
 import { context } from "@/Core/Byte";
 import { BindGroup, BindGroupLayout, RESOURCE_TYPE, SHADER_TYPE } from "@/Renderer/BindGroup";
 import { WebGPUContextData } from "@/Renderer/GraphicsContext";
+import { WebGPUBuffer } from "./WebGPUBuffers";
+import { WebGPUTexture } from "./WebGPUTexture";
 
 function GetShaderTypeWebGPU(shaderType: SHADER_TYPE): number
 {
@@ -44,7 +46,7 @@ export class WebGPUBindGroup extends BindGroup
            switch(entry.ResourceType)
            {
                case RESOURCE_TYPE.BUFFER:
-
+                   const uniformBuffer = entry.Data as WebGPUBuffer
                    bindGroupLayoutEntries.push({
                         binding: entry.Binding,
                         visibility: GetShaderTypeWebGPU(entry.Visibility),
@@ -53,10 +55,11 @@ export class WebGPUBindGroup extends BindGroup
 
                    bindGroupEntries.push({
                        binding: entry.Binding,
-                       resource : { buffer: entry.Data as GPUBuffer}
+                       resource : { buffer: uniformBuffer.GetBuffer() }
                   });
                   break;
                case RESOURCE_TYPE.TEXTURE:
+                   const texture = entry.Data as WebGPUTexture
 
                    bindGroupLayoutEntries.push({
                         binding: entry.Binding,
@@ -66,10 +69,11 @@ export class WebGPUBindGroup extends BindGroup
 
                    bindGroupEntries.push({
                         binding: entry.Binding,
-                        resource: entry.Data as GPUTextureView
+                        resource: texture.m_View
                    });     
                    break;
                case RESOURCE_TYPE.SAMPLER:
+                   const textureSampler = entry.Data as WebGPUTexture
                    bindGroupLayoutEntries.push({
                         binding: entry.Binding,
                         visibility: GetShaderTypeWebGPU(entry.Visibility),
@@ -78,7 +82,7 @@ export class WebGPUBindGroup extends BindGroup
 
                    bindGroupEntries.push({
                        binding: entry.Binding,
-                       resource: entry.Data as GPUSampler
+                       resource: textureSampler.m_Sampler
                    });
                    break;
            }

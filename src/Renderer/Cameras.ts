@@ -14,13 +14,9 @@ export class OrthographicCamera
         this.m_ProjectionMatrix = Matrix4.Ortho(left, right, bottom, top, zNear, zFar);
         this.m_ViewMatrix = new Matrix4();
         this.m_ViewProjection = new Matrix4();
-    }
-
-    public SetProjectionMatrix(left: number, right : number, bottom: number, top: number, zNear: number, zFar: number)
-    {
-        this.m_ProjectionMatrix = Matrix4.Ortho(left, right, bottom, top, zNear, zFar);
         this.RecalculateViewProjectionMatrix();
     }
+
     public GetProjectionMatrix()
     {
         return this.m_ProjectionMatrix;

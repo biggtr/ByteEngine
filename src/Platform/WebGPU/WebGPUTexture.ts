@@ -25,6 +25,11 @@ export class WebGPUTexture extends Texture
             size: {width: this.m_ImgSource.width, height: this.m_ImgSource.height},
             usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.RENDER_ATTACHMENT
         })
+        this.m_Device.queue.copyExternalImageToTexture(
+                    { source: this.m_ImgSource },
+                    { texture: this.m_Texture },
+                    { width: this.m_ImgSource.width, height: this.m_ImgSource.height}
+                )
         this.m_Sampler = this.m_Device.createSampler({
             minFilter: "linear",
             magFilter: "linear",
@@ -33,13 +38,10 @@ export class WebGPUTexture extends Texture
         })
         this.m_View = this.m_Texture.createView();
     }
-    public async Init(): Promise<void> 
+    
+    public GetSampler() 
     {
-        this.m_Device.queue.copyExternalImageToTexture(
-            { source: this.m_ImgSource },
-            { texture: this.m_Texture },
-            { width: this.m_ImgSource.width, height: this.m_ImgSource.height}
-        )
+        return this.m_Sampler;
     }
     public Upload(slot: GLenum = 0): void 
     {

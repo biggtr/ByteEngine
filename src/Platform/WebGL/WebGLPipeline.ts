@@ -11,6 +11,8 @@ export class WebGLPipeline extends RenderPipeline
 {
     private m_Webgl: WebGL2RenderingContext;
     private m_BindGroup: BindGroupLayout[];
+    private m_Geometry: Geometry;
+    private m_Shader: Shader;
 
     constructor(geometry: Geometry, shader: Shader, bindGroup: BindGroup)
     {
@@ -19,13 +21,18 @@ export class WebGLPipeline extends RenderPipeline
 
 
         this.m_BindGroup = bindGroup.GetBindGroup();
+        this.m_Geometry = geometry;
+        this.m_Shader = shader;
+
+        this.m_Shader.Upload();
         for(let element of this.m_BindGroup)
         {
             switch(element.ResourceType)
             {
                case RESOURCE_TYPE.BUFFER:
-                    const uniformBuffer = element.Data as WebGLBuffer
-                    m_Webgl.bindBufferBase(m_Webgl.UNIFORM_BUFFER, element.Binding, uniformBuffer); // Bind to binding point 0
+                    const uniformBuffer = element.Data as WebGlBuffer
+                    uniformBuffer.Upload()
+                    m_Webgl.bindBufferBase(m_Webgl.UNIFORM_BUFFER, element.Binding, uniformBuffer.GetBuffer()); // Bind to binding point 0
 
                     // Get block index & bind to program
                     const blockIndex = m_Webgl.getUniformBlockIndex(shader.GetModule(), element.Name);
@@ -34,23 +41,27 @@ export class WebGLPipeline extends RenderPipeline
                case RESOURCE_TYPE.TEXTURE:
                case RESOURCE_TYPE.SAMPLER:
                    const texture = element.Data as Texture
-                   texture.Upload();
-                   m_Webgl.getUniformLocation(shader.GetModule(), element.Name)
-                   shader.SetUniform1i(element.Name, element.Binding); // gonna use binding number as a slot for sampler and textures 
+                   texture.Upload(element.Binding);
+                   const location = m_Webgl.getUniformLocation(shader.GetModule(), element.Name)
+                   m_Webgl.uniform1i(location, element.Binding); // gonna use binding number as a slot for sampler and textures 
                break;
-
-
-
             }
         }
     }
 
+    public GetGeometry(): Geometry 
+    {
+        return this.m_Geometry;
+    }
+    public GetShaderModule(): Shader 
+    {
+        return this.m_Shader;
+    }
     public GetRenderPipeline() 
     {
 
     }
     public GetBindGroup() 
     {
-        throw new Error("Method not implemented.");
     }
 }

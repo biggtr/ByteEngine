@@ -4,6 +4,7 @@ export interface WebGPUContextData
     Adapter: GPUAdapter;
     Device: GPUDevice;
     Context: GPUCanvasContext;
+    Canvas: HTMLCanvasElement
 }
 export abstract class GraphicsContext
 {

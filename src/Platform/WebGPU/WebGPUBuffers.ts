@@ -2,7 +2,7 @@ import { context } from "@/Core/Byte";
 import { AlignTo16, BUFFER_TYPE, BufferLayout, IndexBuffer, SHADER_DATA_TYPE, Buffer } from "@/Renderer/Buffers";
 import { WebGPUContextData } from "@/Renderer/GraphicsContext";
 
-function GetShaderTypeWebGPU(shaderType: SHADER_DATA_TYPE): GPUVertexFormat
+function GetShaderTypeWebGPU(shaderType: SHADER_DATA_TYPE): GPUVertexFormat | null
 {
 
     switch (shaderType) 
@@ -11,7 +11,7 @@ function GetShaderTypeWebGPU(shaderType: SHADER_DATA_TYPE): GPUVertexFormat
         case SHADER_DATA_TYPE.FLOAT2:  return "float32x2";
         case SHADER_DATA_TYPE.FLOAT3:  return "float32x3";
         case SHADER_DATA_TYPE.FLOAT4:  return "float32x4";
-        default: throw new Error("Unknown type!");
+        default: return null
     }
 
 }
@@ -62,14 +62,18 @@ export class WebGPUBuffer extends Buffer
     public SetLayout(bufferLayout: BufferLayout): void 
     {
         this.m_BufferLayout = bufferLayout;
-        console.log(this.m_BufferLayout)
         const bufferElements = bufferLayout.m_BufferLayoutElements;
         const attributes: GPUVertexAttribute[] = [];
         for(let location = 0; location < bufferElements.length; location++)
         {
             const element = bufferElements[location];
+            const format = GetShaderTypeWebGPU(element.Type)
+            if(!format)
+            {
+                continue;
+            }
             attributes.push({
-                format: GetShaderTypeWebGPU(element.Type),
+                format: format,
                 offset: element.OffsetInBytes,
                 shaderLocation: location,
             })

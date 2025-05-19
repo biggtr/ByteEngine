@@ -10,10 +10,21 @@ export class WebGPUContext extends GraphicsContext
     {
         super();
         this.m_HtmlCanvas = document.getElementById(canvasID) as HTMLCanvasElement;
+        
     }
 
     public async Init() : Promise<void>
     {
+        const dpr = window.devicePixelRatio || 1;
+
+        // Set canvas size in CSS pixels
+        this.m_HtmlCanvas.style.width = window.innerWidth + "px";
+        this.m_HtmlCanvas.style.height = window.innerHeight + "px";
+
+        // Set canvas size in actual pixels considering device pixel ratio
+        this.m_HtmlCanvas.width = Math.floor(window.innerWidth * dpr);
+        this.m_HtmlCanvas.height = Math.floor(window.innerHeight * dpr);
+        
         console.log("Initializing WebGPU...!");
         const entry = navigator.gpu;
         if(!entry)
@@ -41,6 +52,7 @@ export class WebGPUContext extends GraphicsContext
             format: navigator.gpu.getPreferredCanvasFormat(),
             alphaMode: "opaque",
             
+            
 
         };
         context.configure(canvasConfigurations);
@@ -48,6 +60,7 @@ export class WebGPUContext extends GraphicsContext
             Adapter: adapter,
             Device: device,
             Context: context,
+            Canvas: this.m_HtmlCanvas
         };
     }
     public GetContext(): WebGPUContextData

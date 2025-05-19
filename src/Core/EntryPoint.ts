@@ -1,30 +1,23 @@
 import { Input } from "@/Input/Inputs";
-import { WebGLRendererAPI } from "@/Platform/WebGL/WebGLRendererAPI";
 import { OrthographicCamera } from "@/Renderer/Cameras";
 import { Renderer2D } from "@/Renderer/Renderer2D";
 import { RendererAPIFactory } from "@/Renderer/RendererAPIFactory";
-import { ShaderHandler, TextureHandler } from "@/ResourceManagement/ResourceHandlers";
-import { HANDLER_TYPE, ResourceManager } from "@/ResourceManagement/ResourceManager";
 import { TestGame } from "@/TestGame/game";
-import { context } from "./Byte";
-import { BufferElement, BufferLayout, SHADER_DATA_TYPE } from "@/Renderer/Buffers";
+import { ResourceManager } from "@/ResourceManagement/ResourceManager";
 
 async function main() 
 {
-
-
     const input = new Input();
     input.Initialize();
 
-    console.log("entry point ..")
     
-    const webgl = context.GetContext() as WebGL2RenderingContext;
     const rendererAPI = RendererAPIFactory.Create();
-    var renderer2D = new Renderer2D(rendererAPI as WebGLRendererAPI);
+    var renderer2D = new Renderer2D(rendererAPI);
 
-    const camera2D = new OrthographicCamera(0, webgl.canvas.width, 0, webgl.canvas.height, 0.0, 1.0);
+    const width = document.getElementById("canvas")?.clientWidth as number
+    const height = document.getElementById("canvas")?.clientHeight as number 
+    const camera2D = new OrthographicCamera(0, width, 0, height, 0.0, 1.0);
 
-    //resouceManager
     const resourceManager = new ResourceManager();
     resourceManager.Init();
 

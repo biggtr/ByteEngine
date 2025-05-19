@@ -12,13 +12,17 @@ export class WebGPUPipeline extends RenderPipeline
     private m_Device: GPUDevice;
     private m_PipelineLayout: GPUPipelineLayout;
     private m_Pipeline: GPURenderPipeline;
-    private m_BindGroup: BindGroup
+    private m_BindGroup: BindGroup;
+    private m_Geometry: Geometry;
+    private m_Shader: Shader;
     constructor(geometry: Geometry, shader: Shader, bindGroup: BindGroup)
     {
         super()
         const webgpuContext = context.GetContext() as WebGPUContextData;
         this.m_Device = webgpuContext.Device;
         this.m_BindGroup = bindGroup;
+        this.m_Geometry = geometry;
+        this.m_Shader = shader;
         this.m_PipelineLayout = this.m_Device.createPipelineLayout({
             label: "Pipeline Layout",
             bindGroupLayouts: [ bindGroup.GetBindGroupLayout()]
@@ -39,6 +43,14 @@ export class WebGPUPipeline extends RenderPipeline
 
         })
 
+    }
+    public GetGeometry(): Geometry 
+    {
+        return this.m_Geometry;
+    }
+    public GetShaderModule(): Shader 
+    {
+        return this.m_Shader;
     }
     public GetRenderPipeline(): GPURenderPipeline
     {

@@ -7,6 +7,7 @@ import { HANDLER_TYPE, ResourceManager } from "@/ResourceManagement/ResourceMana
 import { Animation } from "@/Animation/Animation";
 import { ResourceHandler } from "@/ResourceManagement/ResourceHandlers";
 import { Shader } from "@/Renderer/Shader";
+import { RENDERER_API, RendererAPI } from "@/Renderer/RendererAPI";
 
 var BasicSprite: Sprite; 
 var idleAnimation: Animation;
@@ -43,8 +44,17 @@ export class TestGame extends Application
         await textureManager.Load("basic", "/assets/textures/basic.png");
 
         const shaderManager = this.m_ResourceManager.GetHandler(HANDLER_TYPE.SHADER) as ResourceHandler<Shader>;
-        await shaderManager.Load("Quad", "/assets/shaders/QuadShader.glsl");
-        await shaderManager.Load("Sprite", "/assets/shaders/SpriteShader.glsl");
+        switch(RendererAPI.s_API)
+        {
+            case RENDERER_API.WEBGL:
+                await shaderManager.Load("Quad", "/assets/shaders/Quad.glsl");
+                await shaderManager.Load("Sprite", "/assets/shaders/Sprite.glsl");
+                break;
+            case RENDERER_API.WEBGPU:
+                await shaderManager.Load("Quad", "/assets/shaders/Quad.wgsl");
+                await shaderManager.Load("Sprite", "/assets/shaders/Sprite.wgsl");
+                break;
+        }
         this.m_Renderer2D.Init(
             {
                 quadShader: shaderManager.Get("Quad"),
@@ -58,7 +68,7 @@ export class TestGame extends Application
         // console.log(this.sprite.UVs)
         idleAnimation = new Animation("Idle",10,0.01,32,32,new Sprite(idleTexture, new Vector3(320, 32, 1))) //10 frames
         runAnimation = new Animation("Run", 16, 0.01,32,32, new Sprite(runTexture, new Vector3(512,32,1))); // 16 frames
-        attackAnimation = new Animation("Attack", 1, 0.06,32,32, new Sprite(attackTexture, new Vector3(224,32,1)));
+        attackAnimation = new Animation("Attack", 7, 0.06,32,32, new Sprite(attackTexture, new Vector3(224,32,1)));
         const BasicTexture = this.m_ResourceManager.GetHandler(HANDLER_TYPE.TEXTURE).Get("basic");
         BasicSprite = new Sprite(BasicTexture);
     }
@@ -69,12 +79,14 @@ export class TestGame extends Application
         idleAnimation.GetCurrentUVs();
         runAnimation.GetCurrentUVs()
         attackAnimation.GetCurrentUVs();
-        // console.log(this.idleAnimation.GetSprite().UVs)
         this.m_Renderer2D.DrawSprite(new Vector3(0,100,1), this.size, new Vector4(0,0,0,1), idleAnimation.GetSprite());
         this.m_Renderer2D.DrawSprite(new Vector3(200,100,1), this.size, new Vector4(0,0,0,1), runAnimation.GetSprite());
         this.m_Renderer2D.DrawSprite(new Vector3(400,100,1), this.size, new Vector4(0,0,0,1), attackAnimation.GetSprite());
         this.m_Renderer2D.DrawSprite(new Vector3(600,100,1), this.size, new Vector4(0,0,0,1), BasicSprite) 
-       
+        this.m_Renderer2D.DrawSprite(new Vector3(500,400,1), this.size, new Vector4(0,0,0,1), BasicSprite) 
+        this.m_Renderer2D.DrawSprite(new Vector3(200,400,1), this.size, new Vector4(0,0,0,1), BasicSprite) 
+        this.m_Renderer2D.EndScene();
+      
     }
 
     protected OnUpdate(deltaTime: number): void
