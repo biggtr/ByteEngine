@@ -74,7 +74,7 @@ export class TestGame extends Application
         // const attackTexture = textureManager.Get("attack");
         // console.log(this.sprite.UVs)
         this.m_Player = this.m_EntityManager.AddEntity(ENTITY_TYPE.PLAYER);
-        this.m_PlayerSprite = this.m_EntityManager.AddComponent(this.m_Player, COMPONENT_TYPE.SPRITE) as CSprite; // change it to generic rather than casting to right component type each time 
+        this.m_PlayerSprite = this.m_EntityManager.AddComponent(this.m_Player, COMPONENT_TYPE.SPRITE); // change it to generic rather than casting to right component type each time 
         // const playerAnimations = this.m_EntityManager.AddComponent(player, COMPONENT_TYPE.ANIMATION) as CAnimation;
 
         basicTexture = this.m_ResourceManager.GetHandler(HANDLER_TYPE.TEXTURE).Get("basic");

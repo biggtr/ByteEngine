@@ -2,6 +2,12 @@ import { CAnimation, Component, COMPONENT_TYPE, CSprite, CTransform } from "./Co
 import { Entity, ENTITY_TYPE } from "./Entity";
 
 
+type ComponentMap = 
+{
+    [COMPONENT_TYPE.SPRITE]: CSprite;
+    [COMPONENT_TYPE.ANIMATION]: CAnimation;
+    [COMPONENT_TYPE.TRANFORM]: CTransform;
+}
 // alot of memory waste cuz some indexes is gonna be empty to solve use maps but its slower
 interface SparseSet<T extends Component>
 {
@@ -39,13 +45,13 @@ export class EntityManager
     }
 
 
-    public AddComponent(entityId: number, componentType: COMPONENT_TYPE): Component | null
+    public AddComponent<K extends keyof ComponentMap>(entityId: number, componentType: K): ComponentMap[K]
     {
         const entity = this.m_Entities[entityId];
         // if entity has the comp already return
         if(entity.HasSpecComponent(componentType))
         {
-            return null;
+            return this.GetComponent<K>(entityId, componentType)!;
         }
         entity.ComponentMask |= componentType;
 
@@ -62,10 +68,10 @@ export class EntityManager
         const denseIndex = sparseSet?.Dense.length;
         sparseSet?.Dense.push(newComponent);
         sparseSet.Sparse[entityId] = denseIndex;
-        return newComponent;
+        return newComponent as ComponentMap[K];
     }
     
-    public GetComponent<T extends Component>(entityId: number, componentType: COMPONENT_TYPE): T | null 
+    public GetComponent<K extends keyof ComponentMap>(entityId: number, componentType: COMPONENT_TYPE): ComponentMap[K] | null
     {
         const entity = this.m_Entities[entityId];
 
@@ -78,8 +84,7 @@ export class EntityManager
         if(!sparseSet) return null
         const denseIndex = sparseSet.Sparse[entityId];
         if(denseIndex == undefined) return null;
-        return sparseSet?.Dense[denseIndex] as T;
-
+        return sparseSet?.Dense[denseIndex] as ComponentMap[K];
     }
     
 
