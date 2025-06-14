@@ -2,15 +2,14 @@ import { RenderCommand } from "./RenderCommand";
 import { Shader } from "./Shader";
 import { Geometry } from "./Geometry";
 import { OrthographicCamera } from "./Cameras";
-import { Matrix3, Matrix4 } from "../Math/Matrices";
-import { AlignTo16, BUFFER_TYPE, BufferElement, BufferLayout, SHADER_DATA_TYPE } from "./Buffers";
+import {  Matrix4 } from "../Math/Matrices";
+import { BUFFER_TYPE,  BufferLayout, SHADER_DATA_TYPE } from "./Buffers";
 import { Vector3, Vector4 } from "../Math/Vectors";
 import { RendererAPI } from "./RendererAPI";
 import { Texture } from "./Texture";
 import { IndexBufferFactory, BufferFactory } from "./BuffersFactory";
 import { GeometryFactory } from "./GeometryFactory";
-import { context } from "@/Core/Byte";
-import { BindGroup, RESOURCE_TYPE, SHADER_TYPE } from "./BindGroup";
+import {  RESOURCE_TYPE, SHADER_TYPE } from "./BindGroup";
 import { BindGroupFactory } from "./BindGroupFactory";
 import { RenderPipelineFactory } from "./RenderPipelineFactory";
 
@@ -21,27 +20,6 @@ const uniformLayout = new BufferLayout([
         
 var uniformData = new Float32Array(uniformLayout.GetStride() / 4);
 
-export class Sprite
-{
-    public Position: Vector3;
-    public Size: Vector3;
-    public Color: Vector4;
-    public Texture: Texture
-    public UVs: Float32Array;
-    constructor(texture: Texture,size: Vector3 = new Vector3(1,1,1), position: Vector3 = new Vector3(1,1,1),  color: Vector4= new Vector4(0,0,0,0)) 
-    {
-        this.Texture = texture;
-        this.Position = position;
-        this.Size = size;
-        this.Color = color;
-        this.UVs = new Float32Array([
-            0.0, 0.0, // bot left
-            1.0, 0.0, // bot right
-            1.0, 1.0, // top right
-            0.0, 1.0, // top left
-        ])
-    }
-}
 export class Renderer2D
 {
     private m_RenderCommand: RenderCommand; 

@@ -1,82 +1,60 @@
-import { Vector3, } from "@/Math/Vectors";
-import { Sprite } from "@/Renderer/Renderer2D";
-import { Texture } from "@/Renderer/Texture";
+import { CSprite } from "@/Scene/Components";
 
 
 
-export class Animation
+export interface Animation
 {
-    private m_Name: string;
-    private m_TotalFrames: number;
-    private m_CurrentFrame: number;
-    private m_FrameWidth: number;
-    private m_FrameHeight: number;
-    private m_FrameDuration: number;
-    private m_IsLooping: boolean;
-    private m_IsPlaying: boolean;
-    private m_ElapsedTime: number;
-    private m_Sprite: Sprite;
-    constructor(animationName: string, 
-                totalFrames: number,
-                frameDuration: number,
-                frameWidth: number,
-                frameHeight: number,
-                sprite: Sprite,
-               )
+    m_Name: string;
+    m_TotalFrames: number;
+    m_CurrentFrame: number;
+    m_FrameWidth: number;
+    m_FrameHeight: number;
+    m_FrameDuration: number;
+    m_IsLooping: boolean;
+    m_IsPlaying: boolean;
+    m_ElapsedTime: number;
+    Speed: number;
+}
+
+export class AnimationManager
+{
 
 
+    public Update(animation: Animation, sprite: CSprite, deltaTime: number): void
     {
-        this.m_Name = animationName;
-        this.m_TotalFrames = totalFrames;
-        this.m_CurrentFrame = 0;
-        this.m_FrameWidth = frameWidth;
-        this.m_FrameHeight = frameHeight;
-        this.m_FrameDuration = frameDuration;
-        this.m_IsLooping = true;
-        this.m_IsPlaying = true;
-        this.m_ElapsedTime = 0;
-        this.m_Sprite = sprite;
-    }
-
-    public Update(deltaTime: number): void
-    {
-        if(!this.m_IsPlaying)
+        if(!animation.m_IsPlaying)
         {
             return;
         }
-        this.m_ElapsedTime += deltaTime;
-        if(this.m_ElapsedTime >= this.m_FrameDuration)
+        animation.m_ElapsedTime += deltaTime;
+        this.GetCurrentUVs(animation, sprite);
+        if(animation.m_ElapsedTime >= animation.m_FrameDuration)
         {
-            this.m_CurrentFrame++;
-            this.m_ElapsedTime = 0;
+            animation.m_CurrentFrame++;
+            animation.m_ElapsedTime = 0;
 
-            if(this.m_CurrentFrame == this.m_TotalFrames)
+            if(animation.m_CurrentFrame == animation.m_TotalFrames)
             {
-                if(this.m_IsLooping)
+                if(animation.m_IsLooping)
                 {
-                    this.m_CurrentFrame = 0;
+                    animation.m_CurrentFrame = 0;
                 }
                 else
                 {
-                    this.m_CurrentFrame = this.m_TotalFrames - 1;
-                    this.Pause();
+                    animation.m_CurrentFrame = animation.m_TotalFrames - 1;
+                    animation.m_IsPlaying = false; // pause the animation
                 }
             }
         }
-            
-
     }
-    public GetSprite(): Sprite
+    
+    private GetCurrentUVs(animation: Animation, sprite: CSprite): void
     {
-        return this.m_Sprite;
-    }
-    public GetCurrentUVs(): void
-    {
-        const column = Math.floor(this.m_Sprite.Size.x / this.m_FrameWidth);
-        const row = Math.floor(this.m_Sprite.Size.y / this.m_FrameHeight);
+        const column = Math.floor(sprite.Size.x / animation.m_FrameWidth);
+        const row = Math.floor(sprite.Size.y / animation.m_FrameHeight);
 
-        const x = this.m_CurrentFrame % column;
-        const y = Math.floor(this.m_CurrentFrame / column);
+        const x = animation.m_CurrentFrame % column;
+        const y = Math.floor(animation.m_CurrentFrame / column);
 
         // console.log(this.m_CurrentFrame);
         //normalize uv coords to use them directly by my rendering system
@@ -91,16 +69,7 @@ export class Animation
             u2, v2, // top right
             u1, v2 // top left
         ]);
-        this.m_Sprite.UVs = UVs;
-
+        sprite.UVs = UVs;
     }
 
-    public Pause(): void
-    {
-        this.m_IsPlaying = false;
-    }
-
-
-
-    
 }

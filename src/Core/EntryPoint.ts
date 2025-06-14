@@ -4,7 +4,6 @@ import { Renderer2D } from "@/Renderer/Renderer2D";
 import { RendererAPIFactory } from "@/Renderer/RendererAPIFactory";
 import { TestGame } from "@/TestGame/game";
 import { ResourceManager } from "@/ResourceManagement/ResourceManager";
-
 async function main() 
 {
     const input = new Input();

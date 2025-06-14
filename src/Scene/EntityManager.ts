@@ -1,61 +1,86 @@
+import { CAnimation, Component, COMPONENT_TYPE, CSprite, CTransform } from "./Components";
 import { Entity, ENTITY_TYPE } from "./Entity";
 
+
+// alot of memory waste cuz some indexes is gonna be empty to solve use maps but its slower
+interface SparseSet<T extends Component>
+{
+    Dense: T[];
+    Sparse: number[]; // index to component in the dense array at inx: 5 => 3 == entity_5's component is at index 3 in dense array
+}
+function CreateComponent(componentType: COMPONENT_TYPE): Component
+{
+    switch(componentType)
+    {
+        case COMPONENT_TYPE.SPRITE:
+            return new CSprite();
+        case COMPONENT_TYPE.TRANFORM:
+            return new CTransform();
+        case COMPONENT_TYPE.ANIMATION:
+            return new CAnimation();
+    }
+}
 export class EntityManager
 {
-    private m_EntitiesQueue: Entity[] = [];
     private m_Entities: Entity[] = [];
-    private m_SortedEntities: Map<ENTITY_TYPE, Entity[]> = new Map()
+    private Components: Map<COMPONENT_TYPE, SparseSet<Component>> = new Map(); 
+    
+    
     private m_TotalNumEntities: number = 0;
 
  
-    public AddEntity(entityType: ENTITY_TYPE): Entity 
+    public AddEntity(entityType: ENTITY_TYPE): number 
     {
         // for iterator invalidation we add new entity to queue and in update we add to m_Entities
+        const entityIndex = this.m_TotalNumEntities;
         const newEntity: Entity = new Entity(entityType, this.m_TotalNumEntities++);
-
-        this.m_EntitiesQueue.push(newEntity);
-
-            
-        return newEntity;
+        this.m_Entities.push(newEntity);
+        return entityIndex;
     }
 
-    public GetEntities(): Entity[]
+
+    public AddComponent(entityId: number, componentType: COMPONENT_TYPE): Component | null
     {
-        return this.m_Entities;
+        const entity = this.m_Entities[entityId];
+        // if entity has the comp already return
+        if(entity.HasSpecComponent(componentType))
+        {
+            return null;
+        }
+        entity.ComponentMask |= componentType;
+
+        const newComponent = CreateComponent(componentType);
+        let sparseSet = this.Components.get(componentType);
+        if(!sparseSet)
+        {
+            sparseSet = {
+                Dense: [],
+                Sparse: [],
+            }
+            this.Components.set(componentType, sparseSet);
+        }
+        const denseIndex = sparseSet?.Dense.length;
+        sparseSet?.Dense.push(newComponent);
+        sparseSet.Sparse[entityId] = denseIndex;
+        return newComponent;
     }
     
-    public Update()
+    public GetComponent<T extends Component>(entityId: number, componentType: COMPONENT_TYPE): T | null 
     {
-        //Update the m_Entities each frame when calling this method that adds entities in queue to m_Entities
+        const entity = this.m_Entities[entityId];
 
-        for(const entity of this.m_EntitiesQueue)
+        if(!entity.HasSpecComponent(componentType))
         {
-            this.m_Entities.push(entity);
-            const entityType = entity.GetType();
-            if(this.m_SortedEntities.has(entityType))
-            {
-                this.m_SortedEntities.get(entityType)?.push(entity);
-            }
-            else
-            {
-                this.m_SortedEntities.set(entityType, [entity]);
-            }
+            return null;
         }
 
-        //Clear All dead entities and entityqueue
-        this.m_EntitiesQueue = [];
-        this.m_Entities = this.m_Entities.filter(entity => entity.IsAlive());
-        this.RemoveDeadEntitiesFromSorted();
-    }
+        const sparseSet = this.Components.get(componentType);
+        if(!sparseSet) return null
+        const denseIndex = sparseSet.Sparse[entityId];
+        if(denseIndex == undefined) return null;
+        return sparseSet?.Dense[denseIndex] as T;
 
-    private RemoveDeadEntitiesFromSorted()
-    {
-        const updatedSortedEntities = new Map<ENTITY_TYPE, Entity[]>();
-        for(const [entityType, entities] of this.m_SortedEntities)
-        {
-            const aliveEntities = entities.filter(entity => entity.IsAlive());
-            updatedSortedEntities.set(entityType, aliveEntities);
-        }
-        this.m_SortedEntities = updatedSortedEntities;
     }
+    
+
 }

@@ -1,22 +1,40 @@
+import { Animation } from "@/Animation/Animation";
 import { Vector3 } from "@/Math/Vectors";
+import { Texture } from "@/Renderer/Texture";
 
-export abstract class Component
+export enum COMPONENT_TYPE
 {
-    protected m_Exists: boolean = false;
+    TRANFORM = 1,
+    SPRITE = 1 << 1,
+    ANIMATION = 1 << 2,
 }
-
+export class Component
+{
+    Exists: boolean = false;
+}
 
 export class CTransform extends Component
 {
-    public Position: Vector3;
-    public Scale: Vector3;
-    public Rotation: number;
+    public Position: Vector3 = new Vector3();
+    public Scale: Vector3 = new Vector3();
+    public Rotation: number = 0;
+}
 
-    constructor(position: Vector3 = new Vector3(), scale: Vector3 = new Vector3(), rotation: number = 1)
-    {
-        super();
-        this.Position = position;
-        this.Scale = scale;
-        this.Rotation = rotation;
-    }
+export class CSprite extends Component
+{
+    public Position: Vector3 = new Vector3();
+    public Size: Vector3 = new Vector3();
+    public Texture!: Texture;
+    public UVs: Float32Array = 
+    new Float32Array([
+        0.0, 0.0, // bot left
+        1.0, 0.0, // bot right
+        1.0, 1.0, // top right
+        0.0, 1.0, // top left
+    ])
+}
+export class CAnimation extends Component
+{
+    Animations: Map<string, Animation> = new Map();
+    currentAnimation!: string; // change it to enum
 }
