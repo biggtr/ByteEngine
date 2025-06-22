@@ -1,4 +1,5 @@
 import { context } from "@/Core/Byte";
+import { Vector2 } from "@/Math/Vectors";
 import { WebGPUContextData } from "@/Renderer/GraphicsContext";
 import { Texture } from "@/Renderer/Texture";
 
@@ -11,13 +12,16 @@ export class WebGPUTexture extends Texture
     public m_View!: GPUTextureView;
     public m_Sampler!: GPUSampler;
     private m_ImgSource: ImageBitmap;
+    private m_Size: Vector2;
     
     constructor(sourceImage: ImageBitmap)
     {
         super();
         this.m_ImgSource = sourceImage;
+        this.m_Size = new Vector2(sourceImage.width, sourceImage.height);
         const webgpuContext = context.GetContext() as WebGPUContextData;
         this.m_Device = webgpuContext.Device;
+
 
         this.m_Texture = this.m_Device.createTexture({
             label: "Texture..!",
@@ -39,6 +43,10 @@ export class WebGPUTexture extends Texture
         this.m_View = this.m_Texture.createView();
     }
     
+    public GetSize(): Vector2 
+    {
+        return this.m_Size;
+    }
     public GetSampler() 
     {
         return this.m_Sampler;

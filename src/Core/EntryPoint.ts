@@ -4,6 +4,7 @@ import { Renderer2D } from "@/Renderer/Renderer2D";
 import { RendererAPIFactory } from "@/Renderer/RendererAPIFactory";
 import { TestGame } from "@/TestGame/game";
 import { ResourceManager } from "@/ResourceManagement/ResourceManager";
+import { context } from "./Byte";
 async function main() 
 {
     const input = new Input();
@@ -13,10 +14,18 @@ async function main()
     const rendererAPI = RendererAPIFactory.Create();
     var renderer2D = new Renderer2D(rendererAPI);
 
-    const width = document.getElementById("canvas")?.clientWidth as number
-    const height = document.getElementById("canvas")?.clientHeight as number 
-    const camera2D = new OrthographicCamera(0, width, 0, height, 0.0, 1.0);
-
+    const width = context.GetWidth()
+    const height = context.GetHeight()
+    
+    console.log(`Width : ${width}, height: ${height}`)
+    const camera2D = new OrthographicCamera(
+        -width / 2, 
+        width / 2,
+        -height / 2,
+        height / 2,
+        0.1,  
+        100
+    );
     const resourceManager = new ResourceManager();
     resourceManager.Init();
 

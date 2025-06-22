@@ -12,6 +12,7 @@ import { GeometryFactory } from "./GeometryFactory";
 import {  RESOURCE_TYPE, SHADER_TYPE } from "./BindGroup";
 import { BindGroupFactory } from "./BindGroupFactory";
 import { RenderPipelineFactory } from "./RenderPipelineFactory";
+import { CSprite } from "@/Scene/Components";
 
 const uniformLayout = new BufferLayout([
             {type: SHADER_DATA_TYPE.MAT4, name:"viewProjection"},
@@ -62,8 +63,9 @@ export class Renderer2D
     }
     public DrawQuad(position: Vector3, size: Vector3, color: Vector4): void
     {
-        
-        var modelMatrix = Matrix4.Translate(position.x, position.y, position.z).Multiply(Matrix4.Scale(size.x, size.y, size.z));
+        // Apply translation first and then scaling so that scaling does not affect the translation vector.
+        var modelMatrix = Matrix4.Translate(position.x, position.y, position.z)
+                          .Multiply(Matrix4.Scale(size.x, size.y, size.z));       
         const viewProjection = this.m_OrthoCamera.GetViewProjectionMatrix().m_Data;
 
         uniformData.set(viewProjection, uniformLayout.m_BufferLayoutElements[0].Offset + uniformLayout.m_BufferLayoutElements[0].Padding);
@@ -82,10 +84,11 @@ export class Renderer2D
         this.m_RenderCommand.DrawIndexed(pipeline); 
     }
 
-    public async DrawSprite(position: Vector3, size: Vector3, color: Vector4, sprite: Sprite)
+    public async DrawSprite(position: Vector3, size: Vector3, color: Vector4, sprite: CSprite)
     {
-        
-        var modelMatrix = Matrix4.Translate(position.x, position.y, position.z).Multiply(Matrix4.Scale(size.x, size.y, size.z));
+        // Apply translation first and then scaling to avoid scaling the translation component.
+        var modelMatrix = Matrix4.Translate(position.x, position.y, position.z)
+                          .Multiply(Matrix4.Scale(size.x, size.y, size.z));       
         const texture = sprite.Texture;
         const viewProjection = this.m_OrthoCamera.GetViewProjectionMatrix().m_Data; 
         

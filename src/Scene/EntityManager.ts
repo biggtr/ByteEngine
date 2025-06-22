@@ -71,7 +71,7 @@ export class EntityManager
         return newComponent as ComponentMap[K];
     }
     
-    public GetComponent<K extends keyof ComponentMap>(entityId: number, componentType: COMPONENT_TYPE): ComponentMap[K] | null
+    public GetComponent<K extends keyof ComponentMap>(entityId: number, componentType: K): ComponentMap[K] | null
     {
         const entity = this.m_Entities[entityId];
 

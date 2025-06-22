@@ -1,17 +1,20 @@
 import { context } from "@/Core/Byte";
+import { Vector2 } from "@/Math/Vectors";
 import { Texture } from "@/Renderer/Texture";
 
 export class WebGlTexture extends Texture
 {
 
-    m_Webgl: WebGL2RenderingContext;
-    m_Texture: WebGLTexture;
-    m_Sampler: WebGLSampler;
+    private m_Webgl: WebGL2RenderingContext;
+    private m_Texture: WebGLTexture;
+    private m_Sampler: WebGLSampler;
+    private m_Size: Vector2;
     private m_ImgSource: ImageBitmap;
     constructor(sourceImage: ImageBitmap)
     {
         super();
         this.m_ImgSource = sourceImage;
+        this.m_Size = new Vector2(sourceImage.width, sourceImage.height);
         this.m_Webgl = context.GetContext() as WebGL2RenderingContext;
         this.m_Texture = this.m_Webgl.createTexture();
         this.m_Webgl.bindTexture(this.m_Webgl.TEXTURE_2D, this.m_Texture);
@@ -42,5 +45,9 @@ export class WebGlTexture extends Texture
     {
         this.m_Webgl.bindTexture(this.m_Webgl.TEXTURE_2D, 0);
         this.m_Webgl.deleteTexture(this.m_Texture);
+    }
+    public GetSize(): Vector2
+    {
+        return this.m_Size;
     }
 }

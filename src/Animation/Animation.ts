@@ -1,3 +1,5 @@
+import { Vector2, Vector3 } from "@/Math/Vectors";
+import { Texture } from "@/Renderer/Texture";
 import { CSprite } from "@/Scene/Components";
 
 
@@ -5,6 +7,7 @@ import { CSprite } from "@/Scene/Components";
 export interface Animation
 {
     m_Name: string;
+    m_Texture: Texture;
     m_TotalFrames: number;
     m_CurrentFrame: number;
     m_FrameWidth: number;
@@ -13,9 +16,30 @@ export interface Animation
     m_IsLooping: boolean;
     m_IsPlaying: boolean;
     m_ElapsedTime: number;
-    Speed: number;
+    m_Speed: number;
+    m_SheetSize: Vector2
 }
-
+export function CreateAnimationClip(name: string, texture: Texture,
+                                    totalFrames: number, frameWidth: number,
+                                    frameHeight: number, frameDuration: number,
+                                    sheetWidth: number, sheetHeight: number,
+                                    isLooping: boolean = true, speed: number = 1,): Animation
+{
+    return {
+        m_Name: name,
+        m_Texture: texture,
+        m_TotalFrames: totalFrames,
+        m_CurrentFrame: 0,
+        m_FrameWidth: frameWidth,
+        m_FrameHeight: frameHeight,
+        m_FrameDuration: frameDuration,
+        m_IsLooping: isLooping,
+        m_IsPlaying: true,
+        m_ElapsedTime: 0,
+        m_Speed: speed,
+        m_SheetSize: new Vector2(sheetWidth, sheetHeight),
+    }
+}
 export class AnimationManager
 {
 
@@ -27,7 +51,6 @@ export class AnimationManager
             return;
         }
         animation.m_ElapsedTime += deltaTime;
-        this.GetCurrentUVs(animation, sprite);
         if(animation.m_ElapsedTime >= animation.m_FrameDuration)
         {
             animation.m_CurrentFrame++;
@@ -46,12 +69,17 @@ export class AnimationManager
                 }
             }
         }
+        sprite.Texture = animation.m_Texture;
+        // console.log(sprite.Size);
+        // console.log(`animation name: ${animation.m_Name} size: x = ${sprite.Texture.GetSize().x} y = ${sprite.Texture.GetSize().y}`);
+        // console.log(`animation name: ${animation.m_Name} spritesize: x = ${sprite.Size.x} y = ${sprite.Size.y}`);
+        sprite.UVs = this.GetCurrentUVs(animation, animation.m_SheetSize);
     }
     
-    private GetCurrentUVs(animation: Animation, sprite: CSprite): void
+    private GetCurrentUVs(animation: Animation, sheetSize : Vector2): Float32Array 
     {
-        const column = Math.floor(sprite.Size.x / animation.m_FrameWidth);
-        const row = Math.floor(sprite.Size.y / animation.m_FrameHeight);
+        const column = Math.floor(sheetSize.x / animation.m_FrameWidth);
+        const row = Math.floor(sheetSize.y / animation.m_FrameHeight);
 
         const x = animation.m_CurrentFrame % column;
         const y = Math.floor(animation.m_CurrentFrame / column);
@@ -69,7 +97,7 @@ export class AnimationManager
             u2, v2, // top right
             u1, v2 // top left
         ]);
-        sprite.UVs = UVs;
+        return UVs;
     }
 
 }

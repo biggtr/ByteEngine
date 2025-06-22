@@ -36,5 +36,5 @@ export class CSprite extends Component
 export class CAnimation extends Component
 {
     Animations: Map<string, Animation> = new Map();
-    currentAnimation!: string; // change it to enum
+    ActiveClip!: string; // change it to enum
 }

@@ -182,10 +182,11 @@ export class Matrix4
 
        orthoMatrix.m_Data[0] = 2 / (right -left);
        orthoMatrix.m_Data[5] = 2 / (top - bot);
-       orthoMatrix.m_Data[10] = 2 / (zFar - zNear);
-       orthoMatrix.m_Data[12] = -(right + left) / right - left;
-       orthoMatrix.m_Data[13] = -(top + bot) / top - bot;
-       orthoMatrix.m_Data[14] = -(zFar + zNear) / zFar - zNear;
+       orthoMatrix.m_Data[10] = -2 / (zFar - zNear);
+       orthoMatrix.m_Data[12] = -(right + left) / (right - left);
+       orthoMatrix.m_Data[13] = -(top + bot) / (top - bot);
+       orthoMatrix.m_Data[14] = -(zFar + zNear) / (zFar - zNear);
+       orthoMatrix.m_Data[15] = 1;
        return orthoMatrix;
 
     }
