@@ -10,78 +10,46 @@ import { Shader } from "@/Renderer/Shader";
 import { RENDERER_API, RendererAPI } from "@/Renderer/RendererAPI";
 import { EntityManager } from "@/Scene/EntityManager";
 import { ENTITY_TYPE } from "@/Scene/Entity";
-import { CAnimation, COMPONENT_TYPE, CSprite } from "@/Scene/Components";
+import { CAnimation, Component, COMPONENT_TYPE, CPhysicsBody, CSprite } from "@/Scene/Components";
 import { Texture } from "@/Renderer/Texture";
 import { Matrix4 } from "@/Math/Matrices";
+import { BytePhysics } from "@/Physics/PhysicsSystem";
 
 var basicTexture: Texture;
 var idleAnimation: Animation;
 var attackAnimation: Animation;
 var runAnimation: Animation;
 
-var PLAYER_SIZE = new Vector3(400, 400, 1);
+var PLAYER_SIZE = new Vector3(200, 200, 1);
 var playerPosition = new Vector3(0,0,-5);
+const PUSH_FORCE = new Vector3(0,0);
 //Ugly Class Will remove it in future just for testing 
 export class TestGame extends Application
 {
-    private m_Renderer2D!: Renderer2D;
-    private m_Input!: Input;
-    private m_Camera2D!: OrthographicCamera;
-    private m_ResourceManager!: ResourceManager;
     private m_EntityManager!: EntityManager;
-    private m_AnimationManager!: AnimationManager
+    private m_AnimationManager!: AnimationManager;
     private m_Player!: number;
     private m_IsFaceLeft: boolean = false;
 
-    protected async OnInit(engineComponents: EngineComponents): Promise<void>
+    protected async OnInit(): Promise<void>
     {
-        if(!engineComponents.Renderer2D || !engineComponents.InputSystem || !engineComponents.OrthoCamera || !engineComponents.ResourceManager)
-        {
-            throw new Error("EngineComponents not initialized properly..");
-        }
-        const A = Matrix4.Translate(10, 0, 0);
-        const B = Matrix4.Rotate(0, 0, 90);
-        console.log( A.Multiply(B) );
-        this.m_Renderer2D = engineComponents.Renderer2D;
-        this.m_Input = engineComponents.InputSystem;
-        this.m_Camera2D = engineComponents.OrthoCamera;
-        this.m_Camera2D.SetPosition(new Vector3(0,0,-1));
-        this.m_ResourceManager = engineComponents.ResourceManager;
+        
         this.m_EntityManager = new EntityManager();
         this.m_AnimationManager = new AnimationManager()
 
         const textureManager = this.m_ResourceManager.GetHandler(HANDLER_TYPE.TEXTURE);
-        await textureManager.Load("idle", "/assets/textures/Sprites/IDLE.png");
-        await textureManager.Load("run", "/assets/textures/Sprites/RUN.png");
-        await textureManager.Load("attack", "/assets/textures/Sprites/ATTACK 1.png");
-
+        const idleTexture = await textureManager.Load("idle", "/assets/textures/Sprites/IDLE.png");
+        const runTexture = await textureManager.Load("run", "/assets/textures/Sprites/RUN.png");
+        const attackTexture = await textureManager.Load("attack", "/assets/textures/Sprites/ATTACK 1.png");
         await textureManager.Load("basic", "/assets/textures/basic.png");
-
-        const shaderManager = this.m_ResourceManager.GetHandler(HANDLER_TYPE.SHADER) as ResourceHandler<Shader>;
-        switch(RendererAPI.s_API)
-        {
-            case RENDERER_API.WEBGL:
-                await shaderManager.Load("Quad", "/assets/shaders/Quad.glsl");
-                await shaderManager.Load("Sprite", "/assets/shaders/Sprite.glsl");
-                break;
-            case RENDERER_API.WEBGPU:
-                await shaderManager.Load("Quad", "/assets/shaders/Quad.wgsl");
-                await shaderManager.Load("Sprite", "/assets/shaders/Sprite.wgsl");
-                break;
-        }
-        this.m_Renderer2D.Init(
-            {
-                quadShader: shaderManager.Get("Quad"),
-                spriteShader: shaderManager.Get("Sprite") 
-            }
-        )
         
-        const idleTexture = textureManager.Get("idle");
-        const runTexture = textureManager.Get("run");
-        const attackTexture = textureManager.Get("attack");
-        // console.log(this.sprite.UVs)
         this.m_Player = this.m_EntityManager.AddEntity(ENTITY_TYPE.PLAYER);
         const sprite = this.m_EntityManager.AddComponent(this.m_Player, COMPONENT_TYPE.SPRITE)
+        const physicsBody = this.m_EntityManager.AddComponent(this.m_Player, COMPONENT_TYPE.PHYSICS);
+        physicsBody.Position = new Vector3(0,0,-5);
+        physicsBody.Velocity = new Vector3(10,10, 0);
+        this.m_BytePhysics.AddBody(physicsBody);
+
         const playerAnimations = this.m_EntityManager.AddComponent(this.m_Player, COMPONENT_TYPE.ANIMATION);
         if(sprite)
         {
@@ -109,22 +77,25 @@ export class TestGame extends Application
         PLAYER_SIZE.y,
         PLAYER_SIZE.z
         );    
-        // this.m_Renderer2D.DrawQuad(new Vector3(0, 0, -5), PLAYER_SIZE,
-        // new Vector4(1, 0, 0, 1));   // z = –5
+        this.m_Renderer2D.DrawQuad(new Vector3(0, 0, -5), PLAYER_SIZE,
+        new Vector4(1, 0, 0, 1));   // z = –5
         if(sprite)
-            this.m_Renderer2D.DrawSprite(playerPosition, PLAYER_SIZE, new Vector4(1,0,0,0), sprite);
+            this.m_Renderer2D.DrawSprite(playerPosition, renderSize, new Vector4(1,0,0,0), sprite);
         this.m_Renderer2D.EndScene();
       
     }
 
     protected OnUpdate(deltaTime: number): void
     {
-        // console.log("Player Position:", playerPosition);
-        // console.log("Camera Position:", this.m_Camera2D.GetPosition());
+        PUSH_FORCE.x = 0;
+        PUSH_FORCE.y = 0;
+        console.log("Player Position:", playerPosition);
+        console.log("Camera Position:", this.m_Camera2D.GetPosition());
         const anim = this.m_EntityManager.GetComponent(this.m_Player, COMPONENT_TYPE.ANIMATION);
         const sprite = this.m_EntityManager.GetComponent(this.m_Player, COMPONENT_TYPE.SPRITE);
+        const physicsBody = this.m_EntityManager.GetComponent(this.m_Player, COMPONENT_TYPE.PHYSICS);
 
-        if(anim && sprite)
+        if(anim && sprite && physicsBody)
         {
             const currentClip = anim.Animations.get(anim.ActiveClip);
             if(currentClip)
@@ -133,37 +104,36 @@ export class TestGame extends Application
             }
 
         }
-        var movement = new Vector3(0,0,0);
-        // const prevCameraPosition: Vector3 = this.m_Camera2D.GetPosition();
-        const moveSpeed = 600;
         if (this.m_Input.IsKeyPressed("KeyW"))
         {
-          movement.y += moveSpeed * deltaTime;
+            PUSH_FORCE.y = 50;
         }
         if (this.m_Input.IsKeyPressed("KeyS"))
         {
-          movement.y -= moveSpeed * deltaTime; 
+            PUSH_FORCE.y = -50;
         }
         if (this.m_Input.IsKeyPressed("KeyA")) 
         {
-          movement.x -= moveSpeed * deltaTime; 
-          this.m_IsFaceLeft = true;
+            PUSH_FORCE.x = -50;
+            this.m_IsFaceLeft = true;
         }
         if (this.m_Input.IsKeyPressed("KeyD")) 
         {
-          movement.x += moveSpeed * deltaTime; 
-          this.m_IsFaceLeft = false;
+            PUSH_FORCE.x = 50;
+            this.m_IsFaceLeft = false;
         }
 
-        if(movement.x !== 0 || movement.y !== 0)
+        if (PUSH_FORCE.x !== 0 || PUSH_FORCE.y !== 0) 
         {
+            this.m_BytePhysics.AddForce(physicsBody as CPhysicsBody, PUSH_FORCE);
             this.SetAnimationClip("Run");
-        }
-        else
+        } 
+        else 
         {
             this.SetAnimationClip("Idle")
+            physicsBody!.Velocity = new Vector3() 
         }
-        playerPosition = Vector3.Add(playerPosition, movement);
+        playerPosition = physicsBody?.Position as Vector3;
         this.m_Camera2D.SetPosition(new Vector3(playerPosition.x, playerPosition.y, -1));
     }
     private SetAnimationClip(name: string): void

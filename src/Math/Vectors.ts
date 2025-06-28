@@ -53,7 +53,7 @@ export class Vector3
     x: number;
     y: number;
     z: number;
-    constructor(x: number = 1, y: number = 1, z: number = 1)
+    constructor(x: number = 0, y: number = 0, z: number = 0)
     {
         this.x = x;
         this.y = y;
@@ -68,6 +68,14 @@ export class Vector3
         return new Vector3(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
     }
 
+    static Multiply(v1: Vector3, scalar: number): Vector3
+    {
+        return new Vector3(v1.x * scalar, v1.y * scalar, v1.z * scalar);
+    }
+    static Divide(v1: Vector3, scalar: number): Vector3
+    {
+        return new Vector3(v1.x * scalar, v1.y * scalar, v1.z * scalar);
+    }
     static Dot(v1: Vector3, v2: Vector3): number
     {
         return (v1.x * v2.x + v1.y * v2.y + v1.z * v2.z );

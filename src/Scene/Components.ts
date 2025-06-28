@@ -7,6 +7,7 @@ export enum COMPONENT_TYPE
     TRANFORM = 1,
     SPRITE = 1 << 1,
     ANIMATION = 1 << 2,
+    PHYSICS = 1 << 3,
 }
 export class Component
 {
@@ -37,4 +38,15 @@ export class CAnimation extends Component
 {
     Animations: Map<string, Animation> = new Map();
     ActiveClip!: string; // change it to enum
+}
+
+export class CPhysicsBody extends Component
+{
+    Acceleration: Vector3 = new Vector3();
+    Velocity: Vector3 = new Vector3();
+    Position: Vector3 = new Vector3();
+
+    SumForces: Vector3 = new Vector3();
+    Mass: number = 1;
+    InverseMass: number = 1 / this.Mass; // should not be zero to avoid inf value
 }

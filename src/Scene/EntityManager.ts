@@ -1,4 +1,4 @@
-import { CAnimation, Component, COMPONENT_TYPE, CSprite, CTransform } from "./Components";
+import { CAnimation, Component, COMPONENT_TYPE, CPhysicsBody, CSprite, CTransform } from "./Components";
 import { Entity, ENTITY_TYPE } from "./Entity";
 
 
@@ -7,6 +7,7 @@ type ComponentMap =
     [COMPONENT_TYPE.SPRITE]: CSprite;
     [COMPONENT_TYPE.ANIMATION]: CAnimation;
     [COMPONENT_TYPE.TRANFORM]: CTransform;
+    [COMPONENT_TYPE.PHYSICS]: CPhysicsBody;
 }
 // alot of memory waste cuz some indexes is gonna be empty to solve use maps but its slower
 interface SparseSet<T extends Component>
@@ -24,6 +25,8 @@ function CreateComponent(componentType: COMPONENT_TYPE): Component
             return new CTransform();
         case COMPONENT_TYPE.ANIMATION:
             return new CAnimation();
+        case COMPONENT_TYPE.PHYSICS:
+            return new CPhysicsBody;
     }
 }
 export class EntityManager

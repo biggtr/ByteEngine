@@ -10,7 +10,7 @@ export class WebGLTextureHandler implements ResourceHandler<Texture>
     constructor()
     {
     } 
-    async Load(name: string, path: string): Promise<void>
+    async Load(name: string, path: string): Promise<Texture>
     {
         const textureImage = await this.LoadFromImage(path);
         const texture = TextureFactory.Create(textureImage);
@@ -19,6 +19,7 @@ export class WebGLTextureHandler implements ResourceHandler<Texture>
             console.log("Texture is already loaded!..");
         }
         this.m_Textures.set(name, texture);
+        return texture;
     }
     Get(name: string): Texture 
     {

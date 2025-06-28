@@ -5,10 +5,9 @@ import { RendererAPIFactory } from "@/Renderer/RendererAPIFactory";
 import { TestGame } from "@/TestGame/game";
 import { ResourceManager } from "@/ResourceManagement/ResourceManager";
 import { context } from "./Byte";
+import { BytePhysics } from "@/Physics/PhysicsSystem";
 async function main() 
 {
-    const input = new Input();
-    input.Initialize();
 
     
     const rendererAPI = RendererAPIFactory.Create();
@@ -30,12 +29,13 @@ async function main()
     resourceManager.Init();
 
 
+
     let app = new TestGame();
-    await app.Init({ Renderer2D: renderer2D,
-                   InputSystem: input,
-                   OrthoCamera: camera2D,
-                   ResourceManager: resourceManager,
-                   });
+    await app.Init({ 
+        Renderer2D: renderer2D,
+        OrthoCamera: camera2D,
+        ResourceManager: resourceManager,
+        });
     app.Run();
 
 
