@@ -70,15 +70,19 @@ export class TestGame extends Application
     {        
         
         const sprite = this.m_EntityManager.GetComponent(this.m_Player, COMPONENT_TYPE.SPRITE);
-      
+        
         this.m_Renderer2D.BeginScene(this.m_Camera2D);
+        this.m_Renderer2D.DrawQuad(
+                    new Vector3(0, 0, -10), 
+                    new Vector3(1920, 1080, 1), 
+                    new Vector4(1, 0, 0, 1),
+                    true
+                );
         const renderSize = new Vector3(
         this.m_IsFaceLeft ? -PLAYER_SIZE.x : PLAYER_SIZE.x,
         PLAYER_SIZE.y,
         PLAYER_SIZE.z
         );    
-        this.m_Renderer2D.DrawQuad(new Vector3(0, 0, -5), PLAYER_SIZE,
-        new Vector4(1, 0, 0, 1));   // z = –5
         if(sprite)
             this.m_Renderer2D.DrawSprite(playerPosition, renderSize, new Vector4(1,0,0,0), sprite);
         this.m_Renderer2D.EndScene();

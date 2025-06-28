@@ -24,7 +24,7 @@ var uniformData = new Float32Array(uniformLayout.GetStride() / 4);
 export class Renderer2D
 {
     private m_RenderCommand: RenderCommand; 
-    private m_OrthoCamera!: OrthographicCamera; 
+    private m_OrthoCamera?: OrthographicCamera; 
 
     private m_QuadGeometry: Geometry | null = null;
     private m_QuadShader!: Shader;
@@ -39,6 +39,7 @@ export class Renderer2D
         this.m_QuadShader = Shaders.quadShader;
         this.m_SpriteShader = Shaders.spriteShader; 
         this.m_QuadGeometry = this.CreateQuadGeometry();
+        console.log("Quad Shader:", this.m_QuadShader);
     }
 
     public BeginScene(camera: OrthographicCamera)
@@ -61,29 +62,42 @@ export class Renderer2D
     {
         this.m_RenderCommand.Clear();
     }
-    public DrawQuad(position: Vector3, size: Vector3, color: Vector4): void
+    public DrawQuad(position: Vector3, size: Vector3, color: Vector4, isBackground: boolean): void
     {
-        // Apply translation first and then scaling so that scaling does not affect the translation vector.
-        var modelMatrix = Matrix4.Translate(position.x, position.y, position.z)
-                          .Multiply(Matrix4.Scale(size.x, size.y, size.z));       
-        const viewProjection = this.m_OrthoCamera.GetViewProjectionMatrix().m_Data;
+        const camera = this.m_OrthoCamera!;
+        let viewProjection: Matrix4;
+        let modelMatrix: Matrix4;
 
-        uniformData.set(viewProjection, uniformLayout.m_BufferLayoutElements[0].Offset + uniformLayout.m_BufferLayoutElements[0].Padding);
-        uniformData.set(modelMatrix.m_Data, uniformLayout.m_BufferLayoutElements[1].Offset+ uniformLayout.m_BufferLayoutElements[1].Padding);
-        var uniformBuffer = BufferFactory.Create(uniformData, BUFFER_TYPE.UNIFORM)
+        if (isBackground)
+        {
+            viewProjection = camera.GetProjectionMatrix(); // no camera movement
+            modelMatrix = Matrix4.Translate(position.x, position.y, position.z)
+             .Multiply(Matrix4.Scale(size.x, size.y, size.z));        
+        }
+        else
+        {
+            viewProjection = camera.GetViewProjectionMatrix();
+            modelMatrix = Matrix4.Translate(position.x, position.y, position.z)
+                         .Multiply(Matrix4.Scale(size.x, size.y, size.z));
+        }
+
+        uniformData.set(viewProjection.m_Data, uniformLayout.m_BufferLayoutElements[0].Offset + uniformLayout.m_BufferLayoutElements[0].Padding);
+        uniformData.set(modelMatrix.m_Data, uniformLayout.m_BufferLayoutElements[1].Offset + uniformLayout.m_BufferLayoutElements[1].Padding);
+
+        var uniformBuffer = BufferFactory.Create(uniformData, BUFFER_TYPE.UNIFORM);
         uniformBuffer.SetLayout(uniformLayout);
-        uniformBuffer.Upload()
-        
+        uniformBuffer.Upload();
+
         const bindGroup = BindGroupFactory.Create();
         bindGroup.AddGroupLayout([
-            { Name: "Transforms", Binding: 0, Visibility: SHADER_TYPE.VERTEX, ResourceType:RESOURCE_TYPE.BUFFER, Data: uniformBuffer},
-        ])
-        
-        var quadGeometry = this.GetQuadGeometry();
-        const pipeline = RenderPipelineFactory.Create(quadGeometry, this.m_QuadShader, bindGroup);
-        this.m_RenderCommand.DrawIndexed(pipeline); 
-    }
+            { Name: "Transforms", Binding: 0, Visibility: SHADER_TYPE.VERTEX, ResourceType:RESOURCE_TYPE.BUFFER, Data: uniformBuffer },
+        ]);
 
+        const quadGeometry = this.GetQuadGeometry();
+        const pipeline = RenderPipelineFactory.Create(quadGeometry, this.m_QuadShader, bindGroup);
+        this.m_RenderCommand.DrawIndexed(pipeline);
+    }
+    
     public async DrawSprite(position: Vector3, size: Vector3, color: Vector4, sprite: CSprite)
     {
         // Apply translation first and then scaling to avoid scaling the translation component.
