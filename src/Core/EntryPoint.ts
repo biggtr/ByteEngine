@@ -31,7 +31,7 @@ async function main()
 
 
     let app = new TestGame();
-    await app.Init({ 
+    await app.Init(width, height, { 
         Renderer2D: renderer2D,
         OrthoCamera: camera2D,
         ResourceManager: resourceManager,

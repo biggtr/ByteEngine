@@ -1,5 +1,5 @@
 import { Input } from "@/Input/Inputs";
-import { Vector3 } from "@/Math/Vectors";
+import { Vector3, Vector4 } from "@/Math/Vectors";
 import { BytePhysics } from "@/Physics/PhysicsSystem";
 import { OrthographicCamera } from "@/Renderer/Cameras";
 import { Renderer2D } from "@/Renderer/Renderer2D";
@@ -24,6 +24,8 @@ export abstract class Application
     protected m_Renderer2D!: Renderer2D;
     protected m_Camera2D!: OrthographicCamera;
     protected m_ResourceManager!: ResourceManager;
+    protected m_Width!: number;
+    protected m_Height!: number;
     constructor()
     {
         this.m_AccumulatedTime = 0
@@ -31,8 +33,10 @@ export abstract class Application
         this.m_IsRunning = false;
     }
 
-    public async Init(engineComponents: EngineComponents): Promise<void> 
+    public async Init(width: number, height:number, engineComponents: EngineComponents): Promise<void> 
     {
+        this.m_Width = width;
+        this.m_Height = height;
         this.m_Input = new Input();
         this.m_Input.Initialize();
         this.m_BytePhysics = new BytePhysics();
@@ -112,6 +116,8 @@ export abstract class Application
 
     public Render(): void 
     {
+        this.m_Renderer2D.Clear();
+        this.m_Renderer2D.SetClearColor(new Vector4(1,1,1,1));
         this.OnRender();
     }
 

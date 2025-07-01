@@ -1,5 +1,4 @@
 import { Vector4 } from "../Math/Vectors";
-import { Geometry } from "./Geometry";
 import { RendererAPI } from "./RendererAPI";
 import { RenderPipeline } from "./RenderPipeline";
 
@@ -13,18 +12,15 @@ export class RenderCommand
     {
         this.m_RendererAPI = rendererAPI;
     }
-
-    public BeginScene(): void
-    {
-        this.m_RendererAPI.BeginScene();
-    }
     
     ClearColor(color: Vector4): void
     {
+        this.m_RendererAPI.ClearColor(color);
     }
 
     Clear(): void 
     {
+        this.m_RendererAPI.Clear();
     }
 
     DrawIndexed(pipeline: RenderPipeline): void
@@ -32,10 +28,6 @@ export class RenderCommand
         this.m_RendererAPI.DrawIndexed(pipeline);
     }
 
-    public EndScene(): void
-    {
-        this.m_RendererAPI.EndScene()
-    }
 
    
 }

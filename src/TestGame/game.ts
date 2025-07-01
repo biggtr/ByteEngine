@@ -1,29 +1,40 @@
-import { Application, EngineComponents } from "@/Core/Application";
-import { Input } from "@/Input/Inputs";
+import { Application } from "@/Core/Application";
 import { Vector3, Vector4 } from "@/Math/Vectors";
-import { OrthographicCamera } from "@/Renderer/Cameras";
-import { Renderer2D } from "@/Renderer/Renderer2D";
-import { HANDLER_TYPE, ResourceManager } from "@/ResourceManagement/ResourceManager";
 import { Animation, AnimationManager, CreateAnimationClip } from "@/Animation/Animation";
-import { ResourceHandler } from "@/ResourceManagement/ResourceHandlers";
-import { Shader } from "@/Renderer/Shader";
-import { RENDERER_API, RendererAPI } from "@/Renderer/RendererAPI";
 import { EntityManager } from "@/Scene/EntityManager";
 import { ENTITY_TYPE } from "@/Scene/Entity";
-import { CAnimation, Component, COMPONENT_TYPE, CPhysicsBody, CSprite } from "@/Scene/Components";
-import { Texture } from "@/Renderer/Texture";
-import { Matrix4 } from "@/Math/Matrices";
-import { BytePhysics } from "@/Physics/PhysicsSystem";
+import { COMPONENT_TYPE, CPhysicsBody, CSprite, } from "@/Scene/Components";
+import { HANDLER_TYPE } from "@/ResourceManagement/ResourceManager";
+import { SPRITE_TYPE } from "@/Renderer/Renderer2D";
 
-var basicTexture: Texture;
 var idleAnimation: Animation;
 var attackAnimation: Animation;
 var runAnimation: Animation;
+var staticSprite: CSprite = new CSprite();
+var PLAYER_SIZE = new Vector3(80, 80, 1);
 
-var PLAYER_SIZE = new Vector3(200, 200, 1);
 var playerPosition = new Vector3(0,0,-5);
 const PUSH_FORCE = new Vector3(0,0);
 //Ugly Class Will remove it in future just for testing 
+
+const TILEMAP_COUNT_X = 17;
+const TILEMAP_COUNT_Y = 9;
+const tileMap: number[][] = [
+    [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+    [1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+    [1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1],
+    [1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+];
+
+const tileWidth = 70;
+const tileHeight= 70;
+
+
 export class TestGame extends Application
 {
     private m_EntityManager!: EntityManager;
@@ -64,27 +75,51 @@ export class TestGame extends Application
         playerAnimations?.Animations.set(idleAnimation.m_Name, idleAnimation);
         playerAnimations?.Animations.set(runAnimation.m_Name, runAnimation);
         playerAnimations?.Animations.set(attackAnimation.m_Name, attackAnimation);
+
+        staticSprite.Texture = idleTexture;
     }
 
     protected OnRender(): void
     {        
-        
         const sprite = this.m_EntityManager.GetComponent(this.m_Player, COMPONENT_TYPE.SPRITE);
         
+        
         this.m_Renderer2D.BeginScene(this.m_Camera2D);
-        this.m_Renderer2D.DrawQuad(
-                    new Vector3(0, 0, -10), 
-                    new Vector3(1920, 1080, 1), 
-                    new Vector4(1, 0, 0, 1),
-                    true
-                );
         const renderSize = new Vector3(
         this.m_IsFaceLeft ? -PLAYER_SIZE.x : PLAYER_SIZE.x,
         PLAYER_SIZE.y,
         PLAYER_SIZE.z
         );    
+
+        for (let row = 0; row < TILEMAP_COUNT_Y; row++) 
+        {
+            for (let col = 0; col < TILEMAP_COUNT_X; col++) 
+            {
+                if(tileMap[row][col] == 1)
+                {
+                    const posX = col * tileWidth + tileWidth * 0.5;
+                    const posY = row * tileHeight + tileHeight * 0.5;
+                    this.m_Renderer2D.DrawQuad(
+                        new Vector3(posX, posY, -10),
+                        new Vector3(tileWidth, tileHeight, 1),
+                        new Vector4(1.0, 1.0, 0.0, 1.0),
+                        SPRITE_TYPE.DYNAMIC
+                    );
+                }
+            }
+        }
+        
+        // A static quad at screen top-left corner
+        this.m_Renderer2D.DrawQuad(
+            new Vector3(-this.m_Width / 2 + 120, 0, -10), // Static screen space
+            new Vector3(100, 100, 1), 
+            new Vector4(0, 0, 1, 1), 
+            SPRITE_TYPE.STATIC
+        );
         if(sprite)
-            this.m_Renderer2D.DrawSprite(playerPosition, renderSize, new Vector4(1,0,0,0), sprite);
+        {
+            this.m_Renderer2D.DrawSprite(playerPosition, renderSize, new Vector4(1,0,0,0), sprite, SPRITE_TYPE.DYNAMIC);
+        }
         this.m_Renderer2D.EndScene();
       
     }
@@ -93,8 +128,6 @@ export class TestGame extends Application
     {
         PUSH_FORCE.x = 0;
         PUSH_FORCE.y = 0;
-        console.log("Player Position:", playerPosition);
-        console.log("Camera Position:", this.m_Camera2D.GetPosition());
         const anim = this.m_EntityManager.GetComponent(this.m_Player, COMPONENT_TYPE.ANIMATION);
         const sprite = this.m_EntityManager.GetComponent(this.m_Player, COMPONENT_TYPE.SPRITE);
         const physicsBody = this.m_EntityManager.GetComponent(this.m_Player, COMPONENT_TYPE.PHYSICS);

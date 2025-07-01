@@ -1,6 +1,7 @@
 import { RendererAPI } from "@/Renderer/RendererAPI";
 import { context } from "@/Core/Byte";
 import { RenderPipeline } from "@/Renderer/RenderPipeline";
+import { Vector4 } from "@/Math/Vectors";
 
 export class WebGLRendererAPI extends RendererAPI
 {
@@ -12,14 +13,14 @@ export class WebGLRendererAPI extends RendererAPI
         this.m_Webgl = context.GetContext() as WebGL2RenderingContext;
     }
 
-    public BeginScene(): void 
+    public ClearColor(color: Vector4): void 
     {
-        this.m_Webgl.clearColor(1.0, 1.0, 1.0, 1.0);
-        this.m_Webgl.clear(this.m_Webgl.COLOR_BUFFER_BIT);
+        this.m_Webgl.clearColor(color.x, color.y, color.z, color.w);
     }
-    public EndScene(): void 
-    {
 
+    public Clear(): void 
+    {
+        this.m_Webgl.clear(this.m_Webgl.COLOR_BUFFER_BIT);
     }
 
 

@@ -18,21 +18,22 @@ export function GetShaderDataTypeSize(type: SHADER_DATA_TYPE): number
 {
     switch (type)
     {
-        case SHADER_DATA_TYPE.FLOAT:   return 4 * 1;
+        case SHADER_DATA_TYPE.FLOAT:   return 4;
         case SHADER_DATA_TYPE.FLOAT2:  return 4 * 2;
         case SHADER_DATA_TYPE.FLOAT3:  return 4 * 3;
         case SHADER_DATA_TYPE.FLOAT4:  return 4 * 4;
-        case SHADER_DATA_TYPE.MAT2:    return 4 * 4;
-        case SHADER_DATA_TYPE.MAT3:    return 3 * 4 * 4;
-        case SHADER_DATA_TYPE.MAT4:    return 4 * 4 * 4;
+        case SHADER_DATA_TYPE.MAT2:    return 4 * 4;       // 2x2
+        case SHADER_DATA_TYPE.MAT3:    return 4 * 4 * 3;   // 3x4
+        case SHADER_DATA_TYPE.MAT4:    return 4 * 4 * 4;   // 4x4
         case SHADER_DATA_TYPE.INT2:    return 4 * 2;
         case SHADER_DATA_TYPE.INT3:    return 4 * 3;
         case SHADER_DATA_TYPE.INT4:    return 4 * 4;
-        case SHADER_DATA_TYPE.BOOL:    return 1;
+        case SHADER_DATA_TYPE.BOOL:    return 4;
         case SHADER_DATA_TYPE.NONE:    return 0;
         default: throw new Error("Unknown type!");
     }
 }
+
 export class BufferElement 
 {
     AttributeName: string

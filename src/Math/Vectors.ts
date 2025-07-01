@@ -90,16 +90,23 @@ export class Vector3
         )
     }
 
-    Magnitude(): number 
+    public Magnitude(): number 
     {
         this.m_Magnitude = Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
         return this.m_Magnitude;
     } 
 
-    Normalize(): Vector3
+    public MagnitudeSquared(): number
     {
+        const magnitudeSquared = this.x * this.x + this.y * this.y + this.z * this.z
+        return magnitudeSquared;
+    }
 
-        if(this.m_Magnitude === 0)
+
+    public Normalize(): Vector3
+    {
+        const magnitude = this.Magnitude();
+        if(magnitude === 0)
         {
             return new Vector3(0,0,0);
         }

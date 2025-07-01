@@ -1,3 +1,4 @@
+import { Vector4 } from "@/Math/Vectors";
 import { RenderPipeline } from "./RenderPipeline";
 
 
@@ -9,8 +10,7 @@ export abstract class RendererAPI
 {
     public static s_API: RENDERER_API = RENDERER_API.WEBGL;
 
-        
-    public abstract BeginScene(): void;
-    public abstract DrawIndexed(pipeline: RenderPipeline): void
-    public abstract EndScene(): void;
+    public abstract ClearColor(color: Vector4): void;
+    public abstract Clear(): void;
+    public abstract DrawIndexed(pipeline: RenderPipeline): void;
 }

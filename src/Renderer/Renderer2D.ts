@@ -3,7 +3,7 @@ import { Shader } from "./Shader";
 import { Geometry } from "./Geometry";
 import { OrthographicCamera } from "./Cameras";
 import {  Matrix4 } from "../Math/Matrices";
-import { BUFFER_TYPE,  BufferLayout, SHADER_DATA_TYPE } from "./Buffers";
+import { BUFFER_TYPE,  BufferLayout, GetShaderDataTypeSize, SHADER_DATA_TYPE } from "./Buffers";
 import { Vector3, Vector4 } from "../Math/Vectors";
 import { RendererAPI } from "./RendererAPI";
 import { Texture } from "./Texture";
@@ -14,12 +14,20 @@ import { BindGroupFactory } from "./BindGroupFactory";
 import { RenderPipelineFactory } from "./RenderPipelineFactory";
 import { CSprite } from "@/Scene/Components";
 
+export enum SPRITE_TYPE
+{
+    STATIC,
+    DYNAMIC
+}
+
 const uniformLayout = new BufferLayout([
             {type: SHADER_DATA_TYPE.MAT4, name:"viewProjection"},
-            {type: SHADER_DATA_TYPE.MAT4, name:"modelMatrix"}
+            {type: SHADER_DATA_TYPE.MAT4, name:"modelMatrix"},
+            {type: SHADER_DATA_TYPE.FLOAT4, name: "color" },        
         ])
         
 var uniformData = new Float32Array(uniformLayout.GetStride() / 4);
+console.log(`uniform layout stride ${uniformLayout.GetStride()}`)
 
 export class Renderer2D
 {
@@ -45,12 +53,10 @@ export class Renderer2D
     public BeginScene(camera: OrthographicCamera)
     {
         this.m_OrthoCamera = camera;
-        this.m_RenderCommand.BeginScene();
     }
 
     public EndScene()
     {
-        this.m_RenderCommand.EndScene();
     }
 
     
@@ -62,28 +68,29 @@ export class Renderer2D
     {
         this.m_RenderCommand.Clear();
     }
-    public DrawQuad(position: Vector3, size: Vector3, color: Vector4, isBackground: boolean): void
+    public DrawQuad(position: Vector3, size: Vector3, color: Vector4, renderType: SPRITE_TYPE): void
     {
         const camera = this.m_OrthoCamera!;
         let viewProjection: Matrix4;
         let modelMatrix: Matrix4;
 
-        if (isBackground)
+        switch(renderType)
         {
-            viewProjection = camera.GetProjectionMatrix(); // no camera movement
-            modelMatrix = Matrix4.Translate(position.x, position.y, position.z)
-             .Multiply(Matrix4.Scale(size.x, size.y, size.z));        
-        }
-        else
-        {
-            viewProjection = camera.GetViewProjectionMatrix();
-            modelMatrix = Matrix4.Translate(position.x, position.y, position.z)
-                         .Multiply(Matrix4.Scale(size.x, size.y, size.z));
+            case SPRITE_TYPE.STATIC:
+                viewProjection = camera.GetProjectionMatrix(); // no camera movement
+                modelMatrix = Matrix4.Translate(position.x, position.y, position.z)
+                 .Multiply(Matrix4.Scale(size.x, size.y, size.z));        
+                 break;
+            case SPRITE_TYPE.DYNAMIC:
+                viewProjection = camera.GetViewProjectionMatrix();
+                modelMatrix = Matrix4.Translate(position.x, position.y, position.z)
+                             .Multiply(Matrix4.Scale(size.x, size.y, size.z));
+                break;
         }
 
-        uniformData.set(viewProjection.m_Data, uniformLayout.m_BufferLayoutElements[0].Offset + uniformLayout.m_BufferLayoutElements[0].Padding);
-        uniformData.set(modelMatrix.m_Data, uniformLayout.m_BufferLayoutElements[1].Offset + uniformLayout.m_BufferLayoutElements[1].Padding);
-
+        uniformData.set(viewProjection.m_Data, uniformLayout.m_BufferLayoutElements[0].Offset);
+        uniformData.set(modelMatrix.m_Data, uniformLayout.m_BufferLayoutElements[1].Offset);
+        uniformData.set([color.x, color.y, color.z, color.w], uniformLayout.m_BufferLayoutElements[2].Offset);
         var uniformBuffer = BufferFactory.Create(uniformData, BUFFER_TYPE.UNIFORM);
         uniformBuffer.SetLayout(uniformLayout);
         uniformBuffer.Upload();
@@ -98,15 +105,29 @@ export class Renderer2D
         this.m_RenderCommand.DrawIndexed(pipeline);
     }
     
-    public async DrawSprite(position: Vector3, size: Vector3, color: Vector4, sprite: CSprite)
+    public async DrawSprite(position: Vector3, size: Vector3, color: Vector4, sprite: CSprite, renderType: SPRITE_TYPE)
     {
-        // Apply translation first and then scaling to avoid scaling the translation component.
-        var modelMatrix = Matrix4.Translate(position.x, position.y, position.z)
-                          .Multiply(Matrix4.Scale(size.x, size.y, size.z));       
+                   
         const texture = sprite.Texture;
-        const viewProjection = this.m_OrthoCamera.GetViewProjectionMatrix().m_Data; 
-        
-        uniformData.set(viewProjection, uniformLayout.m_BufferLayoutElements[0].Offset + uniformLayout.m_BufferLayoutElements[0].Padding);
+       
+        const camera = this.m_OrthoCamera!;
+        let viewProjection: Matrix4;
+        let modelMatrix: Matrix4;
+
+        switch(renderType)
+        {
+            case SPRITE_TYPE.STATIC:
+                viewProjection = camera.GetProjectionMatrix(); // no camera movement
+                modelMatrix = Matrix4.Translate(position.x, position.y, position.z)
+                 .Multiply(Matrix4.Scale(size.x, size.y, size.z));        
+                 break;
+            case SPRITE_TYPE.DYNAMIC:
+                viewProjection = camera.GetViewProjectionMatrix();
+                modelMatrix = Matrix4.Translate(position.x, position.y, position.z)
+                             .Multiply(Matrix4.Scale(size.x, size.y, size.z));
+                break;
+        }
+        uniformData.set(viewProjection.m_Data, uniformLayout.m_BufferLayoutElements[0].Offset + uniformLayout.m_BufferLayoutElements[0].Padding);
         uniformData.set(modelMatrix.m_Data, uniformLayout.m_BufferLayoutElements[1].Offset + uniformLayout.m_BufferLayoutElements[1].Padding);
         var uniformBuffer = BufferFactory.Create(uniformData, BUFFER_TYPE.UNIFORM)
         uniformBuffer.SetLayout(uniformLayout);
