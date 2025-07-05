@@ -2,10 +2,11 @@ import { Input } from "@/Input/Inputs";
 import { OrthographicCamera } from "@/Renderer/Cameras";
 import { Renderer2D } from "@/Renderer/Renderer2D";
 import { RendererAPIFactory } from "@/Renderer/RendererAPIFactory";
-import { TestGame } from "@/TestGame/game";
 import { ResourceManager } from "@/ResourceManagement/ResourceManager";
 import { context } from "./Byte";
 import { BytePhysics } from "@/Physics/PhysicsSystem";
+import { TestGame } from "@/Examples/game";
+import { SnakeGame } from "@/Examples/Snake/SnakeGame";
 async function main() 
 {
 
@@ -30,7 +31,14 @@ async function main()
 
 
 
-    let app = new TestGame();
+    // let app = new TestGame();
+    // await app.Init(width, height, { 
+    //     Renderer2D: renderer2D,
+    //     OrthoCamera: camera2D,
+    //     ResourceManager: resourceManager,
+    //     });
+
+    let app = new SnakeGame();
     await app.Init(width, height, { 
         Renderer2D: renderer2D,
         OrthoCamera: camera2D,

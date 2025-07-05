@@ -15,11 +15,37 @@ var PLAYER_SIZE = new Vector3(80, 80, 1);
 
 var playerPosition: Vector3 = new Vector3(0,0,-5);
 const PUSH_FORCE = new Vector3(0,0);
-//Ugly Class Will remove it in future just for testing 
 
+interface TileMap
+{
+    CountX: number;
+    CountY: number;
+    Width: number;
+    Height: number;
+    Tiles: number[][];
+    TileWidth: number;
+    TileHeight: number;
+    OffsetX: number;
+    OffsetY: number;
+}
+
+function IsTileMapPointEmpty(tileMap: TileMap, pointX: number, pointY: number): boolean
+{
+    let empty: boolean = false;
+    const playerTileX = Math.floor((pointX  - tileMap.OffsetX)/ tileMap.TileWidth);
+    const playerTileY = Math.floor((pointY  - tileMap.OffsetY)/ tileMap.TileHeight);
+
+    if(playerTileX >= 0 && playerTileX < TILEMAP_COUNT_X && playerTileY >= 0 && playerTileY < TILEMAP_COUNT_Y)
+    {
+        const tileMapValue = tileMap.Tiles[playerTileY][playerTileX];
+        if(tileMapValue == 0)
+            empty = true;
+    }
+    return empty;
+}
 const TILEMAP_COUNT_X = 17;
 const TILEMAP_COUNT_Y = 9;
-const tileMap: number[][] = [
+const map: number[][] = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1],
@@ -32,13 +58,22 @@ const tileMap: number[][] = [
 ];
 
 const tileWidth = 70;
-const tileHeight= 70;
+const tileHeight = 70;
 const mapWidth = TILEMAP_COUNT_X * tileWidth;
 const mapHeight = TILEMAP_COUNT_Y * tileHeight; 
-
-const offsetX = -mapWidth * 0.5 + tileWidth * 0.5;
-const offsetY = -mapHeight * 0.5 + tileHeight * 0.5;
-
+const tileMap: TileMap = {
+    Tiles: map,
+    CountX : TILEMAP_COUNT_X,
+    CountY : TILEMAP_COUNT_Y,
+    TileWidth: tileWidth,
+    TileHeight: tileHeight,
+    Width: mapWidth,
+    Height: mapHeight,
+    OffsetX: 0,
+    OffsetY: 0
+}
+tileMap.OffsetX = -tileMap.Width * 0.5 + tileMap.TileWidth * 0.5; 
+tileMap.OffsetY = -tileMap.Height * 0.5 + tileMap.TileHeight * 0.5;
 
 export class TestGame extends Application
 {
@@ -100,13 +135,13 @@ export class TestGame extends Application
         {
             for (let col = 0; col < TILEMAP_COUNT_X; col++) 
             {
-                if(tileMap[row][col] == 1)
+                if(tileMap.Tiles[row][col] == 1)
                 {
-                    const posX = col * tileWidth + offsetX; 
-                    const posY = row * tileHeight + offsetY;
+                    const posX = col * tileMap.TileWidth + tileMap.OffsetX; 
+                    const posY = row * tileMap.TileHeight + tileMap.OffsetY;
                     this.m_Renderer2D.DrawQuad(
                         new Vector3(posX, posY, -10),
-                        new Vector3(tileWidth, tileHeight, 1),
+                        new Vector3(tileMap.TileWidth, tileMap.TileHeight, 1),
                         new Vector4(1.0, 0.0, 1.0, 1.0),
                         SPRITE_TYPE.DYNAMIC
                     );
@@ -173,17 +208,10 @@ export class TestGame extends Application
         }
         const newPlayerPosition : Vector3 = physicsBody!.Position;
 
-        const playerTileX = Math.floor((newPlayerPosition.x  - offsetX)/ tileWidth);
-        const playerTileY = Math.floor((newPlayerPosition.y  - offsetY)/ tileHeight);
-
-        let isValid: boolean = false;
-        if(playerTileX >= 0 && playerTileX < TILEMAP_COUNT_X && playerTileY >= 0 && playerTileY < TILEMAP_COUNT_Y)
-        {
-            const tileMapValue = tileMap[playerTileY][playerTileX];
-            if(tileMapValue == 0)
-                isValid = true;
-        }
-        if(isValid)
+        if(IsTileMapPointEmpty(tileMap, newPlayerPosition.x - 0.5 * PLAYER_SIZE.x , newPlayerPosition.y ) && 
+          IsTileMapPointEmpty(tileMap, newPlayerPosition.x + 0.5 * PLAYER_SIZE.x, newPlayerPosition.y)  && 
+          IsTileMapPointEmpty(tileMap, newPlayerPosition.x, newPlayerPosition.y) 
+          )
         {
             playerPosition = physicsBody!.Position;
         }

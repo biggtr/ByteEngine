@@ -90,6 +90,14 @@ export class Vector3
         )
     }
 
+    public Distance(v: Vector3): number
+    {
+        const dx: number = this.x - v.x;
+        const dy: number = this.y - v.y;
+        const dz: number = this.z - v.z;
+        return Math.sqrt(dx * dx + dy * dy + dz * dz);
+    }
+
     public Magnitude(): number 
     {
         this.m_Magnitude = Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
