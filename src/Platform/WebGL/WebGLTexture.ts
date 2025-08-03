@@ -19,7 +19,10 @@ export class WebGlTexture extends Texture
         this.m_Texture = this.m_Webgl.createTexture();
         this.m_Webgl.bindTexture(this.m_Webgl.TEXTURE_2D, this.m_Texture);
         this.m_Webgl.pixelStorei(this.m_Webgl.UNPACK_FLIP_Y_WEBGL, true);
+        this.m_Webgl.pixelStorei(this.m_Webgl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+        this.m_Webgl.pixelStorei(this.m_Webgl.UNPACK_COLORSPACE_CONVERSION_WEBGL, this.m_Webgl.NONE);
         this.m_Webgl.texImage2D(this.m_Webgl.TEXTURE_2D, 0, this.m_Webgl.RGBA,this.m_Webgl.RGBA, this.m_Webgl.UNSIGNED_BYTE, this.m_ImgSource);
+        this.m_Webgl.generateMipmap(this.m_Webgl.TEXTURE_2D);
         this.m_Webgl.bindTexture(this.m_Webgl.TEXTURE_2D, null);
 
         this.m_Sampler = this.m_Webgl.createSampler();

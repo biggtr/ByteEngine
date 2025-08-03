@@ -49,8 +49,11 @@ export class WebGLTextureHandler implements ResourceHandler<Texture>
                 throw new Error("Failed To Load Texture..!");
             }
             const blob = await response.blob(); 
-            return await createImageBitmap(blob, {colorSpaceConversion: "none", imageOrientation: "flipY"})
-
+            return await createImageBitmap(blob, {
+                colorSpaceConversion: "none", 
+                imageOrientation: "flipY",
+                premultiplyAlpha: "none"  
+            });
 
         }
         catch(error)

@@ -32,6 +32,8 @@ export class WebGLContext extends GraphicsContext
         this.m_Webgl.enable(this.m_Webgl.DEPTH_TEST);
         this.m_Webgl.disable(this.m_Webgl.CULL_FACE)
         this.m_Webgl.depthFunc(this.m_Webgl.LEQUAL);
+        this.m_Webgl.enable(this.m_Webgl.BLEND);
+        this.m_Webgl.blendFunc(this.m_Webgl.SRC_ALPHA, this.m_Webgl.ONE_MINUS_SRC_ALPHA);
         this.m_Webgl.clearDepth(1.0);
     }
     public GetWidth(): number 

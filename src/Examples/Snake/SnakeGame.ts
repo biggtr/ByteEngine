@@ -25,10 +25,9 @@ export class SnakeGame extends Application
     private SnakeSegments!: Vector3[];
     private SnakeLength: number = 1;
 
-    private FoodPosition: Vector3 = new Vector3(GetRandomNumber(-280, 280), GetRandomNumber(-100, 100), -5); 
-    private FoodSize: Vector3 = new Vector3(10, 10, 1);
+    private FoodPosition!: Vector3[]; 
+    private FoodSize: Vector3 = new Vector3(15, 15, 1);
     private FoodColor: Vector4 = new Vector4(0.0, 0.0, 1.0, 1.0);
-    private SnakeFood!: number;
     protected async OnInit(): Promise<void>
     {
         this.m_EntityManager = new EntityManager();
@@ -37,9 +36,11 @@ export class SnakeGame extends Application
         const SnakePhysicsBody = this.m_EntityManager.AddComponent(this.Snake, COMPONENT_TYPE.PHYSICS);
         SnakePhysicsBody.Position = new Vector3(0,0,-5);
         SnakePhysicsBody.Velocity = new Vector3(10,10, 0);
-
-        this.SnakeFood = this.m_EntityManager.AddEntity(ENTITY_TYPE.ENEMY);
-        this.m_EntityManager.AddComponent(this.SnakeFood, COMPONENT_TYPE.TRANFORM);
+        this.FoodPosition = [];
+        for(let i = 0; i < 5; i++)
+        {
+            this.FoodPosition.push(new Vector3(GetRandomNumber(-280, 280), GetRandomNumber(-100, 100), -5));
+        }
         this.m_BytePhysics.AddBody(SnakePhysicsBody);
         this.SnakeSegments = [];
         this.SnakeSegments.push(SnakePhysicsBody.Position);
@@ -49,11 +50,11 @@ export class SnakeGame extends Application
     {
         this.m_Renderer2D.BeginScene(this.m_Camera2D);
 
-        const food = this.m_EntityManager.GetComponent(this.SnakeFood, COMPONENT_TYPE.TRANFORM);
-        if(food)
+        for(let i = 0; i < 5; i++)
         {
-            this.m_Renderer2D.DrawQuad(this.FoodPosition, this.FoodSize, this.FoodColor, SPRITE_TYPE.DYNAMIC);
+            this.m_Renderer2D.DrawQuad(this.FoodPosition[i], this.FoodSize, this.FoodColor, SPRITE_TYPE.DYNAMIC);
         }
+       
         // Draw left wall
         this.m_Renderer2D.DrawQuad(
             new Vector3(-this.m_Width / 2 + WALL_SIZE.x / 2, 0, -10),
@@ -130,11 +131,14 @@ export class SnakeGame extends Application
             console.log("Lost")
         }
 
-        if(newPlayerPosition.Distance(this.FoodPosition) < this.FoodSize.x)
+        for(let i = 0; i < this.FoodPosition.length; i++)
         {
-            this.FoodPosition = new Vector3(GetRandomNumber(-280, 280), GetRandomNumber(-100, 100), -5); 
-            const lastSegment = this.SnakeSegments[this.SnakeLength - 1];
-            this.SnakeSegments.push(lastSegment); // add new segment with the last segment position
+            if(newPlayerPosition.Distance(this.FoodPosition[i]) < this.FoodSize.x)
+            {
+                this.FoodPosition[i] = new Vector3(GetRandomNumber(-280, 280), GetRandomNumber(-100, 100), -5); 
+                const lastSegment = this.SnakeSegments[this.SnakeLength - 1];
+                this.SnakeSegments.push(lastSegment); // add new segment with the last segment position
+            }
         }
 
         this.SnakeSegments[0] = newPlayerPosition;

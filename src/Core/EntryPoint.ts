@@ -16,7 +16,7 @@ async function main()
 
     const width = context.GetWidth()
     const height = context.GetHeight()
-    
+     
     console.log(`Width : ${width}, height: ${height}`)
     const camera2D = new OrthographicCamera(
         -width / 2, 
@@ -31,19 +31,19 @@ async function main()
 
 
 
-    // let app = new TestGame();
-    // await app.Init(width, height, { 
-    //     Renderer2D: renderer2D,
-    //     OrthoCamera: camera2D,
-    //     ResourceManager: resourceManager,
-    //     });
-
-    let app = new SnakeGame();
+    let app = new TestGame();
     await app.Init(width, height, { 
         Renderer2D: renderer2D,
         OrthoCamera: camera2D,
         ResourceManager: resourceManager,
         });
+
+    // let app = new SnakeGame();
+    // await app.Init(width, height, { 
+    //     Renderer2D: renderer2D,
+    //     OrthoCamera: camera2D,
+    //     ResourceManager: resourceManager,
+    //     });
     app.Run();
 
 
