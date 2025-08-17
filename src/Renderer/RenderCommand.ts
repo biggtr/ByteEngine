@@ -23,9 +23,9 @@ export class RenderCommand
         this.m_RendererAPI.Clear();
     }
 
-    DrawIndexed(pipeline: RenderPipeline): void
+    DrawIndexed(pipeline: RenderPipeline, indexCount: number): void
     {
-        this.m_RendererAPI.DrawIndexed(pipeline);
+        this.m_RendererAPI.DrawIndexed(pipeline, indexCount);
     }
 
 

@@ -12,5 +12,5 @@ export abstract class RendererAPI
 
     public abstract ClearColor(color: Vector4): void;
     public abstract Clear(): void;
-    public abstract DrawIndexed(pipeline: RenderPipeline): void;
+    public abstract DrawIndexed(pipeline: RenderPipeline, indexCount: number): void;
 }

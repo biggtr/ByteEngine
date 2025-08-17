@@ -7,6 +7,7 @@ import { RENDERER_API, RendererAPI } from "@/Renderer/RendererAPI";
 import { HANDLER_TYPE, ResourceManager } from "@/ResourceManagement/ResourceManager";
 
 const FIXED_TIME_STEP: number = 1/60;
+
 export interface EngineComponents
 {
     Renderer2D?: Renderer2D;
@@ -52,40 +53,26 @@ export abstract class Application
         this.m_Camera2D = engineComponents.OrthoCamera;
         this.m_Camera2D.SetPosition(new Vector3(0,0,-1));
         this.m_ResourceManager = engineComponents.ResourceManager;
-        const shaderManager = this.m_ResourceManager.GetHandler(HANDLER_TYPE.SHADER); 
-        switch(RendererAPI.s_API)
-        {
-            case RENDERER_API.WEBGL:
-                await shaderManager.Load("Quad", "/assets/shaders/Quad.glsl");
-                await shaderManager.Load("Sprite", "/assets/shaders/Sprite.glsl");
-                break;
-            case RENDERER_API.WEBGPU:
-                await shaderManager.Load("Quad", "/assets/shaders/Quad.wgsl");
-                await shaderManager.Load("Sprite", "/assets/shaders/Sprite.wgsl");
-                break;
-        }
-        this.m_Renderer2D.Init(
-            {
-                quadShader: shaderManager.Get("Quad"),
-                spriteShader: shaderManager.Get("Sprite") 
-            }
-        )
+        await this.m_Renderer2D.Init();
         await this.OnInit();
     }
 
+    private m_BoundGameLoop = (timeStamp: number) => this.GameLoop(timeStamp);
     public Run()
     {
          
         this.m_LastTime = performance.now();  //get the time after the first frame is drawn 
         this.m_IsRunning = true;
 
-        requestAnimationFrame((timeStamp) => this.GameLoop(timeStamp));
+        requestAnimationFrame(this.m_BoundGameLoop);
     }
     private GameLoop(currentTime: number): void
     {
         var deltaTime = (currentTime - this.m_LastTime) / 1000; //dividing by 1000 to convert from ms to seconds
         this.m_LastTime = currentTime;
         this.m_AccumulatedTime += deltaTime;
+
+        console.log(`FPS : ${1/deltaTime}`)
         
         let updated = false;
         while(this.m_AccumulatedTime >= FIXED_TIME_STEP)

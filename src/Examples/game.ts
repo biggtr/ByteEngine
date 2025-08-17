@@ -11,7 +11,7 @@ var idleAnimation: Animation;
 var attackAnimation: Animation;
 var runAnimation: Animation;
 var staticSprite: CSprite = new CSprite();
-var PLAYER_SIZE = new Vector3(80, 80, 1);
+var PLAYER_SIZE = new Vector3(150, 150, 1);
 
 var playerPosition: Vector3 = new Vector3(0,0,-5);
 const PUSH_FORCE = new Vector3(0,0);
@@ -151,7 +151,21 @@ export class TestGame extends Application
         
         if(sprite)
         {
-            this.m_Renderer2D.DrawSprite(playerPosition, renderSize, new Vector4(1,0,0,0), sprite, SPRITE_TYPE.DYNAMIC);
+            let x, y = 0;
+            for(let i = 0; i < 20000; i++)
+            {
+                x = (i % 50) * 100;
+                y = (i / 50) * 100;
+
+                this.m_Renderer2D.DrawSprite(
+                    new Vector3(x, y, -5),
+                    new Vector3(100, 100, 0),
+                    new Vector4(1,1,1,1),
+                    sprite,
+                    SPRITE_TYPE.DYNAMIC
+                )
+            }
+            this.m_Renderer2D.DrawSprite(playerPosition, renderSize, new Vector4(1,1,1, 1), sprite, SPRITE_TYPE.DYNAMIC);
         }
         this.m_Renderer2D.EndScene();
       
@@ -208,14 +222,14 @@ export class TestGame extends Application
         }
         const newPlayerPosition : Vector3 = physicsBody!.Position;
 
-        if(IsTileMapPointEmpty(tileMap, newPlayerPosition.x - 0.5 * PLAYER_SIZE.x , newPlayerPosition.y ) && 
-          IsTileMapPointEmpty(tileMap, newPlayerPosition.x + 0.5 * PLAYER_SIZE.x, newPlayerPosition.y)  && 
-          IsTileMapPointEmpty(tileMap, newPlayerPosition.x, newPlayerPosition.y) 
-          )
-        {
-            playerPosition = physicsBody!.Position;
-        }
-        this.m_Camera2D.SetPosition(new Vector3(0, 0, -1));
+        // if(IsTileMapPointEmpty(tileMap, newPlayerPosition.x - 0.5 * PLAYER_SIZE.x , newPlayerPosition.y ) && 
+        //   IsTileMapPointEmpty(tileMap, newPlayerPosition.x + 0.5 * PLAYER_SIZE.x, newPlayerPosition.y)  && 
+        //   IsTileMapPointEmpty(tileMap, newPlayerPosition.x, newPlayerPosition.y) 
+        //   )
+        // {
+        // }
+        playerPosition = physicsBody!.Position;
+        this.m_Camera2D.SetPosition(new Vector3(playerPosition.x, playerPosition.y, 5));
     }
     private SetAnimationClip(name: string): void
     {

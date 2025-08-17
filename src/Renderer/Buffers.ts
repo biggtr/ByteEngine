@@ -118,7 +118,7 @@ export class BufferLayout
 export abstract class Buffer
 {
     public abstract GetBuffer(): any
-    public UpdateSubData(data: Float32Array, offset: number): void{}
+    public SetData(data: Float32Array): void{}
     public abstract Upload(): void;
     public abstract SetLayout(bufferLayout: BufferLayout): void
     public abstract GetLayout(): any;

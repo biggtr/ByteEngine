@@ -96,40 +96,4 @@ export class WebGLShaderHandler implements ResourceHandler<Shader>
         }
     }
 
-    private async LoadShaderFromFile(path: string): Promise<SHADER_SOURCE>
-    {
-        const response = await fetch(path);
-        const content = await response.text();
-        return this.ParseShaderContent(content);
-    }
-
-
-    private ParseShaderContent(content: string): SHADER_SOURCE 
-    {
-
-        let vertex = "";
-
-        let fragment = "";
-        let current: "vertex" | "fragment" | null = null;
-
-        content.split('\n').forEach(line => {
-            if(line.includes('#Vertex'))
-            {
-                current = 'vertex';
-                return;
-            }
-
-        
-          
-            else if(line.includes('#Fragment'))
-            {
-                current = 'fragment';
-                return; 
-            }
-            else if(current === 'vertex') vertex += line + '\n';
-            else if(current === 'fragment') fragment += line + '\n';
-        });
-
-        return { VERTEX: vertex, FRAGMENT: fragment };
-  }
 }

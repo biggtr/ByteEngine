@@ -27,7 +27,7 @@ export class WebGlBuffer extends Buffer
         {
             case BUFFER_TYPE.VERTEX:
                 this.m_Webgl.bindBuffer(this.m_Webgl.ARRAY_BUFFER, this.m_Buffer);
-                this.m_Webgl.bufferData(this.m_Webgl.ARRAY_BUFFER, this.m_Data, this.m_Webgl.STATIC_DRAW);
+                this.m_Webgl.bufferData(this.m_Webgl.ARRAY_BUFFER, this.m_Data, this.m_Webgl.DYNAMIC_DRAW);
                 break;
             case BUFFER_TYPE.UNIFORM:
                 this.m_Webgl.bindBuffer(this.m_Webgl.UNIFORM_BUFFER, this.m_Buffer);
@@ -40,10 +40,10 @@ export class WebGlBuffer extends Buffer
         }
     }
 
-    public UpdateSubData(data: Float32Array, offset: number)
+    public SetData(data: Float32Array)
     {
         this.m_Webgl.bindBuffer(this.m_Webgl.ARRAY_BUFFER, this.m_Buffer);
-        this.m_Webgl.bufferSubData(this.m_Webgl.ARRAY_BUFFER, offset, data);
+        this.m_Webgl.bufferSubData(this.m_Webgl.ARRAY_BUFFER, 0, data);
     }
     public SetLayout(bufferLayout: BufferLayout)
     {

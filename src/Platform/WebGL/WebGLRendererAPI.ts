@@ -24,7 +24,7 @@ export class WebGLRendererAPI extends RendererAPI
     }
 
 
-    DrawIndexed(pipeline: RenderPipeline): void
+    DrawIndexed(pipeline: RenderPipeline, indexCount: number): void
     {
         const shader = pipeline.GetShaderModule();
         shader.Upload();
@@ -35,7 +35,7 @@ export class WebGLRendererAPI extends RendererAPI
         const indexBuffer = geometry.GetIndexBuffer();
         indexBuffer.Upload()
 
-        this.m_Webgl.drawElements(this.m_Webgl.TRIANGLES, indexBuffer.GetIndicesCount() ,this.m_Webgl.UNSIGNED_INT, 0);
+        this.m_Webgl.drawElements(this.m_Webgl.TRIANGLES, indexCount ,this.m_Webgl.UNSIGNED_INT, 0);
     }
 
 

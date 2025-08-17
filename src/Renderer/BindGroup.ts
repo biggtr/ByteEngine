@@ -6,11 +6,12 @@ export enum SHADER_TYPE
 }
 export enum RESOURCE_TYPE
 {
-    BUFFER, TEXTURE, SAMPLER, STORAGE_TEXTURE, EXTERNAL_TEXTURE
+    BUFFER, TEXTURE, SAMPLER, STORAGE_TEXTURE, EXTERNAL_TEXTURE,
+    TEXTURE_ARRAY
 }
 export interface BindGroupLayout
 {
-    Name: string, //u_ModelMatrix
+    Name: string, 
     Binding: number,
     Visibility: SHADER_TYPE,
     ResourceType: RESOURCE_TYPE
